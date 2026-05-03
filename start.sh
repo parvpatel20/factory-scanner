@@ -28,8 +28,8 @@ if command -v gunicorn &>/dev/null; then
     --access-logfile - \
     --error-logfile - \
     --log-level info \
-    application:app
+    server:app
 else
   echo "==> gunicorn not found — starting with Flask dev server on http://0.0.0.0:${PORT}"
-  exec python3 application.py
+  exec python3 server.py
 fi
