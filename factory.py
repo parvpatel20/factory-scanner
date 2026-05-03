@@ -43,26 +43,27 @@ if not GROQ_API_KEY:
 OCR_PROMPT = """\
 You are an expert at reading handwritten factory production records, tally sheets, and ledger books.
 
-Your task: Carefully examine this image and extract ALL numeric data into a structured table.
+Your task: Carefully examine this image and extract ALL numeric data into a structured table that matches the sheet's row and column layout.
 
 Return ONLY valid JSON in this exact format (no markdown, no explanation, no code fences):
 {
   "rows": [
     {"label": "1", "values": [34, 32, 35, null]},
-    {"label": "2", "values": [35, 34, 37, 28]}
+    {"label": "", "values": [null, null, null, null]},
+    {"label": "3", "values": [35, 34, 37, 28]}
   ]
 }
 
 EXTRACTION RULES:
-1. Extract EVERY data row — do not skip any row, even if it looks incomplete.
-2. "label" = the row identifier from the leftmost column (row number, name, date, shift, etc.).
-3. "values" = only the numeric data cells for that row, read strictly left to right.
+1. Preserve the full data grid top-to-bottom: include EVERY body row that belongs in the table, in visual order — do not skip or merge rows. If a row is blank, only partially filled, or clearly cancelled/struck-through, still emit one JSON object for it with null for every empty or cancelled cell (never omit that row).
+2. "label" = the leftmost column text if present (row number, name, date, shift, etc.). If that cell is blank, use an empty string "" for "label". Do not renumber or collapse rows to hide blanks.
+3. "values" = numeric cells only, strictly left-to-right, one entry per printed data column — including columns that are intentionally blank on the sheet (use null for those positions so column alignment matches the image).
 4. Read handwritten digits with extra care — common confusions: 1/7, 0/6, 3/8, 4/9, 5/6.
-5. Blank, smudged, or truly unreadable cells → use null (never guess; never substitute 0 for blank).
+5. Blank, smudged, crossed-out, or truly unreadable cells → null (never guess; never substitute 0 for blank). Cancelled or voided rows still appear as a row of nulls; use "" for "label" when the label cell is blank or illegible.
 6. EXCLUDE: column header row, any pre-written totals/grand-total rows, date-only header rows.
 7. INCLUDE: all actual data values including legitimate zeros (0).
-8. All rows MUST have the same number of values; pad shorter rows with null on the right.
-9. If the table has multiple sections separated by sub-headers, include all data rows in one flat list.
+8. All rows MUST have the same number of values; pad shorter rows with null on the right until they match the widest row.
+9. If the table has multiple sections separated by sub-headers, include all data rows in one flat list in reading order; blank spacer rows between sections still count as rows (all null values).
 10. Return ONLY the raw JSON object — nothing else.\
 """
 
@@ -141,9 +142,14 @@ def normalize_rows(rows: list | None) -> list:
     out = []
     for i, row in enumerate(rows or [], start=1):
         values = row.get("values", []) if isinstance(row, dict) else []
+        if isinstance(row, dict) and "label" in row:
+            raw_lbl = row["label"]
+            label = "" if raw_lbl is None else str(raw_lbl)
+        else:
+            label = str(i)
         out.append(
             {
-                "label": str(row.get("label") or i) if isinstance(row, dict) else str(i),
+                "label": label,
                 "values": [v if v not in ("", "null") else None for v in values],
             }
         )
