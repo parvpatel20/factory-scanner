@@ -1,0 +1,15 @@
+[project]
+name = "factory-scanner"
+version = "0.1.0"
+description = "Factory Scanner — Flask app for Vercel"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.0",
+    "flask-cors>=4.0",
+    "requests>=2.31",
+    "openpyxl>=3.1",
+    "python-dotenv>=1.0",
+    "pillow>=10.0",
+    "gunicorn>=22.0",
+]

@@ -48,7 +48,7 @@ Vercel runs this app as a **Python serverless function** (Flask) and serves the 
 
 1. Put the project in a Git repository (GitHub, GitLab, or Bitbucket).
 2. **Do not commit `.env`** — it is listed in `.gitignore`. Secrets belong only in Vercel’s dashboard.
-3. Confirm the repo contains at least: `server.py`, `requirements.txt`, `public/index.html`, `vercel.json`, `runtime.txt`.
+3. Confirm the repo contains at least: `server.py`, `requirements.txt`, `pyproject.toml`, `uv.lock`, `public/index.html`, `vercel.json`, `runtime.txt`, `.python-version`.
 
 ### 2. Create a Vercel account
 
@@ -59,7 +59,7 @@ Vercel runs this app as a **Python serverless function** (Flask) and serves the 
 
 1. In the Vercel dashboard, click **Add New…** → **Project**.
 2. **Import** your Git repository (`factory-scanner` or whatever you named it).
-3. Vercel auto-detects Flask from **`server.py`** (root) — do **not** add a `functions` entry in `vercel.json` for `server.py`; that pattern only matches files under `api/` and will fail the build.
+3. Vercel auto-detects Flask from **`server.py`** (root). Do **not** add a `functions` entry in `vercel.json` for `server.py` — that glob only matches files under `api/` and triggers **“unmatched function pattern”**. Dependency installs use **`pyproject.toml` + `uv.lock`** (Vercel’s Python builder uses `uv`).
 4. Leave **Root Directory** as the repo root unless the app lives in a subfolder.
 5. **Framework Preset** can stay “Other” or whatever Vercel suggests for Python — no separate build command is required for this app.
 
@@ -99,7 +99,8 @@ Under **Project → Settings → Domains**, add your domain and follow Vercel’
 ### Vercel-specific notes
 
 - **`public/index.html`** is served from the CDN; **`server.py`** handles `/extract`, `/health`, downloads, etc.
-- **`vercel.json`** only includes the schema (no `functions` block). In the Vercel dashboard go to **Project → Settings → Functions** and set **Default / Function Max Duration** to **120 seconds** (or the highest your plan allows) so Groq vision requests can finish.
+- **`vercel.json`** only includes the schema (no `functions` block). In the dashboard: **Project → Settings → Functions** → set **Default / Function Max Duration** to **120 seconds** (or the max your plan allows) for Groq vision timeouts.
+- **Local CLI (`vercel build` / `vercel deploy`)** needs the **`uv`** binary on your PATH. Install with: `pip3 install uv` (or see [uv install](https://docs.astral.sh/uv/getting-started/installation/)). If the CLI reports `uv is required but was not found in PATH`, install `uv` and retry.
 - **`runtime.txt`** pins **Python 3.12** for consistent installs.
 - **`.vercelignore`** keeps `.env` and other junk out of uploads when using the CLI.
 - **Cold starts**: the first request after idle may be slower; this is normal on serverless free tiers.
