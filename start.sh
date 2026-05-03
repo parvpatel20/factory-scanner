@@ -20,7 +20,7 @@ PORT="${PORT:-5050}"
 WORKERS="${WEB_CONCURRENCY:-2}"
 
 if command -v gunicorn &>/dev/null; then
-  echo "==> Starting Factory Manager on http://0.0.0.0:${PORT} (gunicorn, ${WORKERS} workers)"
+  echo "==> Starting Factory Scanner on http://0.0.0.0:${PORT} (gunicorn, ${WORKERS} workers)"
   exec gunicorn \
     --bind "0.0.0.0:${PORT}" \
     --workers "${WORKERS}" \

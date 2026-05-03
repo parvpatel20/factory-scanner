@@ -22,10 +22,12 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-log = logging.getLogger("factory-manager")
+log = logging.getLogger("factory-scanner")
 
 # ── App ───────────────────────────────────────────────────────────────────────
-app = Flask(__name__, static_folder="static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+app = Flask(__name__, static_folder=PUBLIC_DIR, static_url_path="/_static")
 CORS(app, resources={r"/api/*": {"origins": "*"}, r"/*": {"origins": "*"}})
 
 app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024  # 20 MB hard limit
@@ -233,7 +235,7 @@ def add_security_headers(response):
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
-    return send_from_directory("static", "index.html")
+    return send_from_directory(PUBLIC_DIR, "index.html")
 
 
 @app.route("/health")
@@ -355,5 +357,5 @@ def download_all_excels():
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5050))
-    log.info("Starting Factory Manager (dev) on http://localhost:%d", port)
+    log.info("Starting Factory Scanner (dev) on http://localhost:%d", port)
     app.run(host="0.0.0.0", debug=False, port=port)

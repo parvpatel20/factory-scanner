@@ -1,68 +1,122 @@
 # Factory Scanner
 
-Upload up to 5 factory notebook images, extract the row values with Groq vision, review and correct each table, then download separate Excel files with row totals, column totals, and a grand total.
+Upload up to 5 factory notebook images, extract row values with Groq vision, review and correct each table, then download separate Excel files with row totals, column totals, and a grand total.
 
-## Setup
+## Local setup
 
-Install Python 3.8 or newer, then install the dependencies:
+Install Python 3.12+ (recommended), then:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-The app includes a default Groq key in the local backend. No key entry is shown in the browser.
+Create a `.env` file (copy from `.env.example`) and set at least:
 
-## Run
-
-### Mac / Linux
-
-```bash
-python3 server.py
+```text
+GROQ_API_KEY=your_key_here
 ```
 
-You can also run:
+Optional: `GROQ_MODEL`, `PORT`, `WEB_CONCURRENCY`.
+
+## Run locally
+
+**Mac / Linux**
 
 ```bash
 ./start.sh
 ```
 
-### Windows
+or:
+
+```bash
+python3 server.py
+```
+
+**Windows**
 
 ```bat
-python server.py
+start.bat
 ```
 
-You can also double-click `start.bat`.
+Open the app at **http://localhost:5050** (or the `PORT` you set).
 
-Open the app at:
+## Deploy on Vercel (free Hobby plan)
 
-```text
-http://localhost:5000
-```
+Vercel runs this app as a **Python serverless function** (Flask) and serves the UI from the **`public/`** folder. Follow these steps end to end.
 
-## Use
+### 1. Prepare the repository
 
-1. Upload 1 to 5 clear photos of the notebook or factory sheets.
-2. Click `Extract selected images`.
-3. Open any image page from the image list.
-4. Review the editable table and correct any wrong cells.
-5. The row totals, column totals, and grand total update as you type.
-6. Click `Download this Excel` for one image, or `Download all Excels` to get a zip containing one workbook per extracted image.
+1. Put the project in a Git repository (GitHub, GitLab, or Bitbucket).
+2. **Do not commit `.env`** — it is listed in `.gitignore`. Secrets belong only in Vercel’s dashboard.
+3. Confirm the repo contains at least: `server.py`, `requirements.txt`, `public/index.html`, `vercel.json`, `runtime.txt`.
 
-## Configuration
+### 2. Create a Vercel account
 
-`GROQ_API_KEY` is optional. If set, it overrides the default key configured in the server.
+1. Go to [https://vercel.com](https://vercel.com) and sign up (GitHub login is fine).
+2. Verify your email if asked.
 
-`GROQ_MODEL` is optional. By default the app uses:
+### 3. Import the project
 
-```text
-meta-llama/llama-4-scout-17b-16e-instruct
-```
+1. In the Vercel dashboard, click **Add New…** → **Project**.
+2. **Import** your Git repository (`factory-scanner` or whatever you named it).
+3. Vercel should **auto-detect** a Flask/Python project (`server.py` with `app`).
+4. Leave **Root Directory** as the repo root unless the app lives in a subfolder.
+5. **Framework Preset** can stay “Other” or whatever Vercel suggests for Python — no separate build command is required for this app.
+
+### 4. Configure environment variables (required)
+
+On the import screen (or later under **Project → Settings → Environment Variables**), add:
+
+| Name | Value | Environments |
+|------|--------|----------------|
+| `GROQ_API_KEY` | Your Groq API key | Production, Preview, Development |
+
+Optional:
+
+| Name | Value |
+|------|--------|
+| `GROQ_MODEL` | e.g. `meta-llama/llama-4-scout-17b-16e-instruct` |
+
+Save. Without `GROQ_API_KEY`, `/extract` will return an error.
+
+### 5. Deploy
+
+1. Click **Deploy**.
+2. Wait for the build to finish. Open the production URL Vercel shows (e.g. `https://factory-scanner-xxx.vercel.app`).
+
+### 6. Smoke test after deploy
+
+1. Open the production URL — you should see the Factory Scanner UI.
+2. Call **https://your-app.vercel.app/health** — expect JSON with `"ok": true` and your model name.
+3. Upload a small test image and run **Read Numbers** once to confirm Groq works with the env var.
+
+### 7. Optional: custom domain
+
+Under **Project → Settings → Domains**, add your domain and follow Vercel’s DNS instructions.
+
+---
+
+### Vercel-specific notes
+
+- **`public/index.html`** is served from the edge CDN; API routes (`/extract`, `/health`, `/download-excel`, etc.) are handled by **`server.py`**.
+- **`vercel.json`** sets **`maxDuration`: 120** seconds for the Python function so Groq vision calls can finish (within [Vercel function duration limits](https://vercel.com/docs/functions/configuring-functions/duration)).
+- **`runtime.txt`** pins **Python 3.12** for consistent installs.
+- **`.vercelignore`** keeps `.env` and other junk out of uploads when using the CLI.
+- **Cold starts**: the first request after idle may be slower; this is normal on serverless free tiers.
+- **Alternatives**: If you prefer a traditional always-on process (e.g. long-running workers, WebSockets), consider [Railway](https://railway.app) or [Render](https://render.com) with the included `Procfile` / `gunicorn` setup instead.
+
+## Configuration summary
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GROQ_API_KEY` | Yes (prod) | Groq API key |
+| `GROQ_MODEL` | No | Vision model ID |
+| `PORT` | No | Local port (default `5050`) |
+| `WEB_CONCURRENCY` | No | Gunicorn workers for `./start.sh` |
 
 ## Tips
 
-- Better lighting and a straight-on photo improve extraction accuracy.
-- The app compresses large images locally before sending them to Groq.
-- Use `Create blank table` when you want to enter values manually.
-- Use the back buttons to return to upload, the image list, or a previous image page without losing completed tables.
-- Downloaded Excel files contain formulas for totals, so later edits in Excel keep totals correct.
+- Good lighting and a straight-on photo improve extraction accuracy.
+- Images are compressed and enhanced before sending to Groq.
+- Use **Create blank table** to enter values manually.
+- Downloaded Excel files use formulas for totals.
