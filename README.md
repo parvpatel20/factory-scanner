@@ -29,7 +29,7 @@ Optional: `GROQ_MODEL`, `PORT`, `WEB_CONCURRENCY`.
 or:
 
 ```bash
-python3 server.py
+python3 application.py
 ```
 
 **Windows**
@@ -48,7 +48,7 @@ Vercel runs this app as a **Python serverless function** (Flask) and serves the 
 
 1. Put the project in a Git repository (GitHub, GitLab, or Bitbucket).
 2. **Do not commit `.env`** — it is listed in `.gitignore`. Secrets belong only in Vercel’s dashboard.
-3. Confirm the repo contains at least: `server.py`, `requirements.txt`, `public/index.html`, `vercel.json`, `runtime.txt`.
+3. Confirm the repo contains at least: `application.py`, `api/index.py`, `requirements.txt`, `public/index.html`, `vercel.json`, `runtime.txt`.
 
 ### 2. Create a Vercel account
 
@@ -59,7 +59,7 @@ Vercel runs this app as a **Python serverless function** (Flask) and serves the 
 
 1. In the Vercel dashboard, click **Add New…** → **Project**.
 2. **Import** your Git repository (`factory-scanner` or whatever you named it).
-3. Vercel should **auto-detect** a Flask/Python project (`server.py` with `app`).
+3. Vercel should detect the Python project; the serverless entry is **`api/index.py`**, which imports the Flask `app` from **`application.py`**.
 4. Leave **Root Directory** as the repo root unless the app lives in a subfolder.
 5. **Framework Preset** can stay “Other” or whatever Vercel suggests for Python — no separate build command is required for this app.
 
@@ -98,8 +98,8 @@ Under **Project → Settings → Domains**, add your domain and follow Vercel’
 
 ### Vercel-specific notes
 
-- **`public/index.html`** is served from the edge CDN; API routes (`/extract`, `/health`, `/download-excel`, etc.) are handled by **`server.py`**.
-- **`vercel.json`** sets **`maxDuration`: 120** seconds for the Python function so Groq vision calls can finish (within [Vercel function duration limits](https://vercel.com/docs/functions/configuring-functions/duration)).
+- **`public/index.html`** is served from the edge CDN; API routes (`/extract`, `/health`, `/download-excel`, etc.) are rewritten to **`api/index.py`**, which runs the Flask app in **`application.py`**.
+- **`vercel.json`** sets **`maxDuration`: 120** on `api/index.py` and **rewrites** dynamic routes to `/api` so Groq calls can finish (within [Vercel function duration limits](https://vercel.com/docs/functions/configuring-functions/duration)).
 - **`runtime.txt`** pins **Python 3.12** for consistent installs.
 - **`.vercelignore`** keeps `.env` and other junk out of uploads when using the CLI.
 - **Cold starts**: the first request after idle may be slower; this is normal on serverless free tiers.
