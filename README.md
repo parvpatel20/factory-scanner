@@ -29,7 +29,7 @@ Optional: `GROQ_MODEL`, `PORT`, `WEB_CONCURRENCY`.
 or:
 
 ```bash
-python3 server.py
+python3 factory.py
 ```
 
 **Windows**
@@ -48,7 +48,7 @@ Vercel runs this app as a **Python serverless function** (Flask) and serves the 
 
 1. Put the project in a Git repository (GitHub, GitLab, or Bitbucket).
 2. **Do not commit `.env`** — it is listed in `.gitignore`. Secrets belong only in Vercel’s dashboard.
-3. Confirm the repo contains at least: `server.py`, `requirements.txt`, `pyproject.toml`, `uv.lock`, `public/index.html`, `vercel.json`, `runtime.txt`, `.python-version`.
+3. Confirm the repo contains at least: `factory.py`, `api/index.py`, `requirements.txt`, `pyproject.toml`, `uv.lock`, `public/index.html`, `vercel.json`, `runtime.txt`, `.python-version`.
 
 ### 2. Create a Vercel account
 
@@ -59,7 +59,7 @@ Vercel runs this app as a **Python serverless function** (Flask) and serves the 
 
 1. In the Vercel dashboard, click **Add New…** → **Project**.
 2. **Import** your Git repository (`factory-scanner` or whatever you named it).
-3. Vercel auto-detects Flask from **`server.py`** (root). Do **not** add a `functions` entry in `vercel.json` for `server.py` — that glob only matches files under `api/` and triggers **“unmatched function pattern”**. Dependency installs use **`pyproject.toml` + `uv.lock`** (Vercel’s Python builder uses `uv`).
+3. Routing: **`vercel.json`** rewrites all paths to **`/api/index`**, which runs **`api/index.py`** — that file imports the Flask `app` from **`factory.py`**. The Flask app file is **not** named `server.py` at the repo root so Vercel does not register two conflicting Python entrypoints. Dependency installs use **`pyproject.toml` + `uv.lock`** (`uv`).
 4. Leave **Root Directory** as the repo root unless the app lives in a subfolder.
 5. **Framework Preset** can stay “Other” or whatever Vercel suggests for Python — no separate build command is required for this app.
 
@@ -98,7 +98,7 @@ Under **Project → Settings → Domains**, add your domain and follow Vercel’
 
 ### Vercel-specific notes
 
-- **`public/index.html`** is served from the CDN; **`server.py`** handles `/extract`, `/health`, downloads, etc.
+- **`public/index.html`** is also returned by Flask for **`GET /`** (same UI). API routes (`/extract`, `/health`, downloads, etc.) are handled by **`factory.py`** via the rewrite to **`api/index`**.
 - **`vercel.json`** only includes the schema (no `functions` block). In the dashboard: **Project → Settings → Functions** → set **Default / Function Max Duration** to **120 seconds** (or the max your plan allows) for Groq vision timeouts.
 - **Local CLI (`vercel build` / `vercel deploy`)** needs the **`uv`** binary on your PATH. Install with: `pip3 install uv` (or see [uv install](https://docs.astral.sh/uv/getting-started/installation/)). If the CLI reports `uv is required but was not found in PATH`, install `uv` and retry.
 - **`runtime.txt`** pins **Python 3.12** for consistent installs.
