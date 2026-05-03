@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Factory Manager</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:       #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-muted: #EFF6FF;
+    --success:       #16A34A;
+    --success-hover: #15803D;
+    --success-muted: #F0FDF4;
+    --danger:        #DC2626;
+    --danger-hover:  #B91C1C;
+    --danger-muted:  #FEF2F2;
+    --warning:       #D97706;
+    --warning-muted: #FFFBEB;
+    --gray-50:  #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+    --white: #FFFFFF;
+    --radius-sm: 6px;
+    --radius:    10px;
+    --radius-lg: 14px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+    --shadow:    0 1px 4px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
+  }
+
+  html { font-size: 14px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input { font: inherit; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: 56px;
+    background: var(--gray-900);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  }
+  .topbar-logo {
+    width: 32px; height: 32px;
+    background: var(--primary);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .topbar-title { font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: -.2px; }
+  .topbar-sub   { font-size: 12px; color: var(--gray-400); margin-left: 6px; }
+  @media (max-width: 540px) { .topbar-sub { display: none; } }
+
+  /* ── STEP BAR ── */
+  .stepbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .stepbar::-webkit-scrollbar { display: none; }
+  .steps {
+    display: flex;
+    min-width: max-content;
+    padding: 0 16px;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 13px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-400);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+    user-select: none;
+  }
+  .step-badge {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800;
+    background: var(--gray-200);
+    color: var(--gray-500);
+    flex-shrink: 0;
+    transition: .15s;
+  }
+  .step.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .step.active .step-badge { background: var(--primary); color: var(--white); }
+  .step.done { color: var(--success); border-bottom-color: var(--success); }
+  .step.done .step-badge { background: var(--success); color: var(--white); }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width: 960px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  /* ── ALERT BANNER ── */
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .alert svg { flex-shrink: 0; margin-top: 1px; }
+  .alert.info    { background: var(--primary-muted); color: var(--primary);  border-color: #BFDBFE; }
+  .alert.success { background: var(--success-muted); color: var(--success);  border-color: #BBF7D0; }
+  .alert.error   { background: var(--danger-muted);  color: var(--danger);   border-color: #FECACA; }
+  .alert.warning { background: var(--warning-muted); color: var(--warning);  border-color: #FDE68A; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+  }
+  .card-header { margin-bottom: 4px; }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title svg { color: var(--gray-500); }
+  .card-desc { font-size: 13px; color: var(--gray-500); margin-top: 3px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    text-decoration: none;
+  }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn:active:not(:disabled) { transform: scale(.98); }
+
+  .btn-primary { background: var(--primary); color: var(--white); border-color: var(--primary); box-shadow: 0 1px 2px rgba(37,99,235,.25); }
+  .btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+  .btn-success { background: var(--success); color: var(--white); border-color: var(--success); box-shadow: 0 1px 2px rgba(22,163,74,.2); }
+  .btn-success:hover:not(:disabled) { background: var(--success-hover); border-color: var(--success-hover); }
+
+  .btn-ghost { background: transparent; color: var(--gray-700); border-color: var(--gray-300); }
+  .btn-ghost:hover:not(:disabled) { background: var(--gray-50); }
+
+  .btn-danger-ghost { background: transparent; color: var(--danger); border-color: #FECACA; }
+  .btn-danger-ghost:hover:not(:disabled) { background: var(--danger-muted); }
+
+  .btn-lg { height: 46px; padding: 0 22px; font-size: 14px; border-radius: var(--radius); }
+  .btn-sm { height: 32px; padding: 0 12px; font-size: 12px; border-radius: var(--radius-sm); }
+
+  /* ── BUTTON GROUP ── */
+  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .btn-group.mt0 { margin-top: 0; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--gray-200); margin: 16px 0; }
+
+  /* ── HOW-TO STRIP ── */
+  .how-to {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .how-step { text-align: center; }
+  .how-step-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--primary-muted);
+    color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+  }
+  .how-step-num { font-size: 11px; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; }
+  .how-step-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-top: 2px; }
+  @media (max-width: 560px) { .how-to { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ── DROP ZONE ── */
+  .drop-zone {
+    display: block;
+    width: 100%;
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-lg);
+    background: var(--gray-50);
+    padding: 44px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    -webkit-tap-highlight-color: transparent;
+    margin-bottom: 16px;
+  }
+  .drop-zone:hover, .drop-zone.drag { border-color: var(--primary); background: var(--primary-muted); }
+  .drop-zone:hover .dz-icon, .drop-zone.drag .dz-icon { color: var(--primary); }
+  .drop-zone input { display: none; }
+  .dz-icon { color: var(--gray-400); margin: 0 auto 12px; display: block; transition: color .15s; }
+  .dz-head { font-size: 15px; font-weight: 700; color: var(--gray-700); margin-bottom: 4px; }
+  .dz-sub { font-size: 13px; color: var(--gray-400); }
+
+  /* ── THUMB GRID ── */
+  .thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .thumb {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--white);
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .thumb img { width: 100%; height: 96px; object-fit: cover; display: block; background: var(--gray-800); }
+  .thumb-body { padding: 7px 9px 8px; }
+  .thumb-name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--gray-800); }
+  .thumb-meta { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+  .thumb-remove {
+    position: absolute; top: 5px; right: 5px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.5);
+    color: var(--white);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .12s;
+  }
+  .thumb-remove:hover { background: var(--danger); }
+
+  /* ── DOC LIST ── */
+  .doc-list { display: flex; flex-direction: column; gap: 10px; }
+  .doc-row {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color .12s;
+  }
+  .doc-row:hover { border-color: var(--gray-300); }
+  .doc-thumb { width: 72px; height: 56px; object-fit: cover; border-radius: var(--radius-sm); background: var(--gray-800); display: block; }
+  .doc-name { font-size: 14px; font-weight: 700; color: var(--gray-900); overflow-wrap: anywhere; }
+  .doc-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .doc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  @media (max-width: 620px) {
+    .doc-row { grid-template-columns: 56px 1fr; }
+    .doc-thumb { width: 56px; height: 44px; }
+    .doc-actions { grid-column: 1/-1; }
+  }
+
+  /* ── STATUS BADGE ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2px;
+  }
+  .badge-done    { background: var(--success-muted); color: var(--success); }
+  .badge-pending { background: var(--gray-100);      color: var(--gray-500); }
+  .badge-busy    { background: var(--primary-muted); color: var(--primary); }
+  .badge-error   { background: var(--danger-muted);  color: var(--danger); }
+
+  /* ── LOADER ── */
+  .loader {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 56px 24px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 4px solid var(--gray-200);
+    border-top-color: var(--primary);
+    animation: spin .7s linear infinite;
+    margin: 0 auto 18px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-title  { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .loader-detail { font-size: 13px; color: var(--gray-500); }
+
+  /* ── REVIEW LAYOUT ── */
+  .review-grid {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .image-panel {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    position: sticky;
+    top: 72px;
+    box-shadow: var(--shadow-sm);
+  }
+  .image-panel img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    background: var(--gray-800);
+    display: block;
+  }
+  .image-hint {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 10px;
+    line-height: 1.5;
+    display: flex;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  .image-hint svg { flex-shrink: 0; margin-top: 1px; }
+  @media (max-width: 680px) {
+    .review-grid { grid-template-columns: 1fr; }
+    .image-panel { position: static; }
+  }
+
+  /* ── STATS ── */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .stat {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); }
+  .stat-value { font-size: 22px; font-weight: 900; color: var(--gray-900); margin-top: 3px; }
+  .stat.highlight { border-color: #BBF7D0; background: var(--success-muted); }
+  .stat.highlight .stat-label { color: var(--success); }
+  .stat.highlight .stat-value { color: var(--success); }
+
+  /* ── TABLE ── */
+  .tbl-controls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .tbl-wrap {
+    overflow: auto;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    max-height: 54vh;
+    box-shadow: var(--shadow-sm);
+  }
+  table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    position: sticky; top: 0; z-index: 1;
+    background: var(--gray-50);
+    color: var(--gray-500);
+    padding: 9px 8px;
+    border-right: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .4px;
+    text-align: center;
+  }
+  td {
+    padding: 2px;
+    border-right: 1px solid var(--gray-100);
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--white);
+    text-align: center;
+  }
+  tr:last-child td { border-bottom: 0; }
+  th:last-child, td:last-child { border-right: 0; }
+  .label-cell { background: var(--gray-50); }
+  .label-input {
+    width: 68px; border: 0; background: transparent;
+    text-align: center; font-weight: 700; font-size: 13px;
+    color: var(--gray-800); padding: 8px 4px; border-radius: 4px;
+  }
+  .label-input:focus { outline: 2px solid var(--primary); background: var(--white); }
+  .cell {
+    width: 70px; border: 0; border-radius: 4px;
+    padding: 8px 4px; text-align: center;
+    background: transparent; font-size: 13px; color: var(--gray-800);
+  }
+  .cell:focus { outline: 2px solid var(--primary); background: var(--white); }
+  .cell.changed { background: #FEF9C3; color: #92400E; font-weight: 700; }
+  .td-total { background: var(--success-muted); color: var(--success); font-weight: 800; min-width: 80px; }
+  .td-col-total { background: var(--gray-50); font-weight: 700; color: var(--gray-700); }
+  .td-grand { background: #DCFCE7; color: var(--success); font-weight: 900; font-size: 14px; }
+  .td-footer-label { background: var(--gray-50); font-weight: 700; color: var(--gray-600); padding: 8px; }
+  .tbl-hint { font-size: 12px; color: var(--gray-400); margin-top: 10px; display: flex; align-items: center; gap: 5px; }
+
+  /* ── MANUAL ── */
+  .manual-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 12px; font-weight: 700; color: var(--gray-600); }
+  .num-input {
+    width: 100px; border: 1px solid var(--gray-300); border-radius: var(--radius);
+    padding: 8px 10px; font-size: 14px; background: var(--white); color: var(--gray-900);
+  }
+  .num-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+
+  /* ── PAGE-HEADER ── */
+  .page-header {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .page-header-text { flex: 1; min-width: 0; }
+  .page-title { font-size: 16px; font-weight: 800; color: var(--gray-900); }
+  .page-sub   { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ── UTILITY ── */
+  .hide { display: none !important; }
+  .mt8  { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .text-muted { color: var(--gray-400); font-size: 13px; }
+  .empty-state { padding: 32px; text-align: center; color: var(--gray-400); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+    </svg>
+  </div>
+  <span class="topbar-title">Factory Manager</span>
+  <span class="topbar-sub">Photo to Excel — powered by AI</span>
+</header>
+
+<!-- STEP BAR -->
+<nav class="stepbar" aria-label="Progress">
+  <div class="steps">
+    <div class="step active" id="step1">
+      <div class="step-badge">1</div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Add Photos
+    </div>
+    <div class="step" id="step2">
+      <div class="step-badge">2</div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      All Photos
+    </div>
+    <div class="step" id="step3">
+      <div class="step-badge">3</div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Verify &amp; Edit
+    </div>
+    <div class="step" id="step4">
+      <div class="step-badge">4</div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div id="status-area"></div>
+
+  <!-- ══════════════════════════════════════════ PAGE 1 — UPLOAD -->
+  <section id="upload-page">
+
+    <!-- How-to guide -->
+    <div class="how-to">
+      <div class="how-step">
+        <div class="how-step-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div class="how-step-num">Step 1</div>
+        <div class="how-step-label">Take a clear photo of your factory register</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div class="how-step-num">Step 2</div>
+        <div class="how-step-label">Upload the photo and press Read Numbers</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <div class="how-step-num">Step 3</div>
+        <div class="how-step-label">Check and fix any wrong numbers in the table</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <div class="how-step-num">Step 4</div>
+        <div class="how-step-label">Download the Excel file</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload factory sheet photos
+        </div>
+        <div class="card-desc">Select up to 5 photos (JPG, PNG, WEBP). Each photo becomes a separate Excel file.</div>
+      </div>
+      <div class="divider"></div>
+
+      <label class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept="image/*" multiple />
+        <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="dz-head">Click to select photos</div>
+        <div class="dz-sub">or drag and drop files here &nbsp;·&nbsp; Max 5 photos</div>
+      </label>
+
+      <div id="empty-thumbs" class="text-muted mt8">No photos selected yet.</div>
+      <div class="thumb-grid mt8" id="selected-thumbs"></div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary btn-lg" id="extract-btn" onclick="extractAll()" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Read Numbers in Photos
+      </button>
+      <button class="btn btn-ghost btn-lg" id="continue-btn" onclick="showList()" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        View All Photos
+      </button>
+      <button class="btn btn-ghost" onclick="showManual()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Create Blank Table
+      </button>
+      <button class="btn btn-danger-ghost btn-sm" onclick="resetAll()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Clear All
+      </button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ MANUAL PAGE -->
+  <section class="card hide" id="manual-page">
+    <div class="card-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Create blank table
+    </div>
+    <div class="card-desc" style="margin-bottom:16px;">Specify the number of rows and columns, then enter values manually.</div>
+    <div class="manual-row">
+      <div class="field">
+        <label for="man-rows">Rows</label>
+        <input class="num-input" type="number" id="man-rows" value="10" min="1" max="300" />
+      </div>
+      <div class="field">
+        <label for="man-cols">Columns</label>
+        <input class="num-input" type="number" id="man-cols" value="12" min="1" max="80" />
+      </div>
+      <button class="btn btn-primary" onclick="buildManual()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Create Table
+      </button>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-ghost btn-sm" onclick="showUpload()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Upload
+      </button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ LOADER -->
+  <div class="loader hide" id="loader-page">
+    <div class="spinner"></div>
+    <div class="loader-title" id="loader-title">Reading photo…</div>
+    <div class="loader-detail" id="loader-detail">This may take a moment. Please wait.</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ PAGE 2 — LIST -->
+  <section class="hide" id="list-page">
+    <div class="page-header">
+      <div class="page-header-text">
+        <div class="page-title">All Photos</div>
+        <div class="page-sub">Open a photo to verify the extracted numbers, then download its Excel.</div>
+      </div>
+      <div class="btn-group mt0">
+        <button class="btn btn-primary" id="extract-missing-btn" onclick="extractMissing()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Read Remaining
+        </button>
+        <button class="btn btn-success" id="download-all-btn" onclick="downloadAllExcels()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+          Download All (ZIP)
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="showUpload()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+      </div>
+    </div>
+    <div class="doc-list" id="doc-list"></div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ PAGE 3 — REVIEW -->
+  <section class="hide" id="review-page">
+    <div class="page-header">
+      <div class="page-header-text">
+        <div class="page-title" id="review-title"></div>
+        <div class="page-sub" id="review-subtitle"></div>
+      </div>
+      <div class="btn-group mt0">
+        <button class="btn btn-success btn-lg" onclick="downloadCurrentExcel()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Excel
+        </button>
+        <button class="btn btn-ghost" onclick="showList()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          All Photos
+        </button>
+      </div>
+    </div>
+
+    <div class="review-grid">
+      <!-- Image -->
+      <div class="image-panel">
+        <img id="review-image" alt="Uploaded factory sheet" />
+        <div class="image-hint">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Compare this image with the table on the right to verify numbers.
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-ghost btn-sm" id="extract-current-btn" onclick="extractCurrent()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Re-read this photo
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Rows</div>
+            <div class="stat-value" id="stat-rows">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Columns</div>
+            <div class="stat-value" id="stat-cols">0</div>
+          </div>
+          <div class="stat highlight">
+            <div class="stat-label">Grand Total</div>
+            <div class="stat-value" id="stat-grand">0</div>
+          </div>
+        </div>
+
+        <div class="tbl-controls">
+          <button class="btn btn-ghost btn-sm" onclick="addRow()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Row
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="addCol()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Column
+          </button>
+          <button class="btn btn-danger-ghost btn-sm" onclick="removeLastRow()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Remove Row
+          </button>
+          <button class="btn btn-danger-ghost btn-sm" onclick="removeLastCol()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Remove Column
+          </button>
+        </div>
+
+        <div class="tbl-wrap">
+          <table id="main-table"></table>
+        </div>
+        <div class="tbl-hint">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Click any cell to edit it. Cells highlighted in yellow were changed from the original.
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ── ICON HELPER ── */
+const ICONS = {
+  check:    `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`,
+  xcircle:  `<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>`,
+  clock:    `<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
+  pending:  `<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>`,
+  alert:    `<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`,
+  info:     `<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>`,
+  download: `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>`,
+  eye:      `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`,
+  scan:     `<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>`,
+  refresh:  `<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>`,
+  x:        `<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`,
+};
+function icon(name, size = 14) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+}
+
+/* ── STATE ── */
+const MAX_IMAGES = 5;
+let documents = [];
+let currentIndex = -1;
+let nextId = 1;
+const BLANK_IMG = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="200"%3E%3Crect width="320" height="200" fill="%231F2937"/%3E%3C/svg%3E';
+
+/* ── DRAG-AND-DROP ── */
+const dropZone  = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+/* ── STEPS ── */
+function setStep(n) {
+  ['step1','step2','step3','step4'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (i + 1 < n) el.className = 'step done';
+    else if (i + 1 === n) el.className = 'step active';
+    else el.className = 'step';
+  });
+}
+
+/* ── PAGES ── */
+function showPage(id) {
+  ['upload-page','manual-page','loader-page','list-page','review-page'].forEach(pid => {
+    document.getElementById(pid).classList.toggle('hide', pid !== id);
+  });
+}
+
+/* ── ALERTS ── */
+function showStatus(msg, type = 'info') {
+  const iconMap = { info: 'info', success: 'check', error: 'xcircle', warning: 'alert' };
+  document.getElementById('status-area').innerHTML =
+    `<div class="alert ${type}" role="alert">${icon(iconMap[type] || 'info', 16)}<span>${escapeHtml(msg)}</span></div>`;
+}
+function clearStatus() { document.getElementById('status-area').innerHTML = ''; }
+function escapeHtml(v) {
+  return String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ── FILE HANDLING ── */
+async function handleFiles(list) {
+  const imgs = Array.from(list || []).filter(f => f.type.startsWith('image/'));
+  if (!imgs.length) { showStatus('Please select valid image files (JPG, PNG, WEBP).', 'error'); return; }
+  const slots = MAX_IMAGES - documents.length;
+  if (slots <= 0) { showStatus('Maximum 5 photos already added. Remove one before adding more.', 'error'); return; }
+  const accepted = imgs.slice(0, slots);
+  if (imgs.length > accepted.length) showStatus(`Only ${accepted.length} photo(s) added — limit is 5.`, 'warning');
+  for (const file of accepted) {
+    try {
+      const c = await compressImage(file);
+      documents.push({
+        id: nextId++,
+        filename: file.name.replace(/\.[^.]+$/, '') || `image-${documents.length + 1}`,
+        originalName: file.name,
+        preview: c.dataUrl, imageBase64: c.base64,
+        mediaType: c.type, bytes: c.bytes,
+        status: 'ready', error: '',
+        tableData: [], origData: [], numCols: 0
+      });
+    } catch (err) { showStatus(`Could not read ${file.name}: ${err.message}`, 'error'); }
+  }
+  fileInput.value = '';
+  renderThumbs();
+  updateButtons();
+  if (documents.length) showStatus(`${documents.length} photo(s) ready. Press "Read Numbers in Photos" to extract data.`, 'success');
+}
+
+/* ── IMAGE COMPRESSION + CONTRAST ENHANCEMENT ── */
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('File read failed'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Image decode failed'));
+      img.onload = () => {
+        const maxSide = 2400;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width  = Math.max(1, Math.round(img.width  * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // Contrast boost for better OCR
+        const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const d = id.data;
+        const f = (259 * (45 + 255)) / (255 * (259 - 45));
+        for (let i = 0; i < d.length; i += 4) {
+          d[i]   = Math.min(255, Math.max(0, f * (d[i]   - 128) + 128));
+          d[i+1] = Math.min(255, Math.max(0, f * (d[i+1] - 128) + 128));
+          d[i+2] = Math.min(255, Math.max(0, f * (d[i+2] - 128) + 128));
+        }
+        ctx.putImageData(id, 0, 0);
+        let quality = 0.92, dataUrl = canvas.toDataURL('image/jpeg', quality);
+        while (dataUrl.length > 4 * 1024 * 1024 && quality > 0.5) {
+          quality -= 0.07;
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        resolve({ dataUrl, type: 'image/jpeg', base64: dataUrl.split(',')[1], bytes: Math.ceil(dataUrl.length * 3 / 4) });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ── THUMB RENDER ── */
+function renderThumbs() {
+  const grid = document.getElementById('selected-thumbs');
+  const empty = document.getElementById('empty-thumbs');
+  empty.classList.toggle('hide', documents.length > 0);
+  grid.innerHTML = documents.map((doc, i) => `
+    <div class="thumb">
+      <img src="${doc.preview || BLANK_IMG}" alt="preview" loading="lazy" />
+      <button class="thumb-remove" onclick="removeDocument(${i})" title="Remove" aria-label="Remove ${escapeHtml(doc.originalName)}">
+        ${icon('x', 11)}
+      </button>
+      <div class="thumb-body">
+        <div class="thumb-name" title="${escapeHtml(doc.originalName)}">${escapeHtml(doc.originalName)}</div>
+        <div class="thumb-meta">${statusLabel(doc)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function updateButtons() {
+  const has = documents.length > 0;
+  document.getElementById('extract-btn').disabled = !has;
+  document.getElementById('continue-btn').disabled = !has;
+}
+
+function removeDocument(i) {
+  documents.splice(i, 1);
+  if (currentIndex === i) currentIndex = -1;
+  else if (currentIndex > i) currentIndex--;
+  renderThumbs(); updateButtons();
+  showStatus(documents.length ? `${documents.length} photo(s) selected.` : 'All photos removed.', 'info');
+}
+
+function statusLabel(doc) {
+  if (doc.status === 'done') return `${doc.tableData.length} rows extracted`;
+  if (doc.status === 'extracting') return 'Reading…';
+  if (doc.status === 'error') return 'Error — retry';
+  if (doc.tableData.length) return `${doc.tableData.length} rows`;
+  return 'Not read yet';
+}
+
+function badgeHtml(doc) {
+  if (doc.status === 'done')       return `<span class="badge badge-done">${icon('check', 11)} Done</span>`;
+  if (doc.status === 'extracting') return `<span class="badge badge-busy">${icon('clock', 11)} Reading…</span>`;
+  if (doc.status === 'error')      return `<span class="badge badge-error">${icon('xcircle', 11)} Error</span>`;
+  return `<span class="badge badge-pending">${icon('pending', 11)} Not read</span>`;
+}
+
+/* ── EXTRACTION ── */
+async function extractAll() {
+  if (!documents.length) return;
+  showLoader('Reading photos with AI…', `Starting photo 1 of ${documents.length}`);
+  setStep(2);
+  let ok = 0;
+  for (let i = 0; i < documents.length; i++) {
+    document.getElementById('loader-detail').textContent = `Reading photo ${i + 1} of ${documents.length}: ${documents[i].originalName}`;
+    if (await extractDocument(i)) ok++;
+  }
+  showList();
+  if (ok === documents.length) showStatus(`All ${ok} photo(s) processed successfully. Open each to verify.`, 'success');
+  else showStatus(`${ok} of ${documents.length} photo(s) processed. Failed photos can be retried individually.`, ok ? 'warning' : 'error');
+}
+
+async function extractMissing() {
+  const pending = documents.map((d, i) => ({ d, i })).filter(x => x.d.status !== 'done');
+  if (!pending.length) { showStatus('All photos have already been processed.', 'success'); return; }
+  showLoader('Reading remaining photos…', '');
+  for (let j = 0; j < pending.length; j++) {
+    document.getElementById('loader-detail').textContent = `Reading ${j + 1} of ${pending.length}: ${pending[j].d.originalName}`;
+    await extractDocument(pending[j].i);
+  }
+  showList();
+}
+
+async function extractCurrent() {
+  if (!currentDoc()) return;
+  const i = currentIndex;
+  showLoader('Re-reading this photo…', documents[i].originalName);
+  const ok = await extractDocument(i);
+  openDocument(i);
+  showStatus(ok ? 'Photo re-read successfully. Review the table below.' : documents[i].error, ok ? 'success' : 'error');
+}
+
+async function extractDocument(i) {
+  const doc = documents[i];
+  if (!doc) return false;
+  doc.status = 'extracting'; doc.error = '';
+  try {
+    const resp = await fetch('/extract', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image_base64: doc.imageBase64, media_type: doc.mediaType })
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) {
+      doc.status = 'error';
+      doc.error = data.error || `Extraction failed (HTTP ${resp.status}).`;
+      return false;
+    }
+    loadRows(doc, data.rows);
+    doc.status = 'done';
+    return true;
+  } catch (err) {
+    doc.status = 'error';
+    doc.error = `Network error: ${err.message}`;
+    return false;
+  }
+}
+
+function loadRows(doc, rows) {
+  doc.tableData = (rows || []).map((r, i) => ({ label: String(r.label || i + 1), values: (r.values || []).map(toNum) }));
+  doc.numCols = Math.max(1, ...doc.tableData.map(r => r.values.length));
+  doc.tableData.forEach(r => pad(doc, r));
+  doc.origData = JSON.parse(JSON.stringify(doc.tableData));
+}
+
+/* ── NAVIGATION ── */
+function showLoader(title, detail) {
+  document.getElementById('loader-title').textContent = title;
+  document.getElementById('loader-detail').textContent = detail;
+  showPage('loader-page'); clearStatus();
+}
+function showUpload()  { showPage('upload-page'); setStep(1); renderThumbs(); updateButtons(); }
+function showManual()  { showPage('manual-page'); setStep(1); }
+
+function showList() {
+  showPage('list-page'); setStep(2);
+  renderDocList();
+}
+
+function renderDocList() {
+  const list = document.getElementById('doc-list');
+  document.getElementById('download-all-btn').disabled = !documents.some(d => d.tableData.length);
+  document.getElementById('extract-missing-btn').disabled = !documents.some(d => d.status !== 'done');
+  if (!documents.length) {
+    list.innerHTML = '<div class="empty-state">No photos added yet.</div>';
+    return;
+  }
+  list.innerHTML = documents.map((doc, i) => `
+    <div class="doc-row">
+      <img class="doc-thumb" src="${doc.preview || BLANK_IMG}" alt="preview" loading="lazy" />
+      <div>
+        <div class="doc-name">${escapeHtml(doc.originalName)}</div>
+        <div class="doc-meta">
+          ${badgeHtml(doc)}
+          ${doc.error ? `<span style="font-size:12px;color:var(--danger);">${escapeHtml(doc.error)}</span>` : ''}
+        </div>
+      </div>
+      <div class="doc-actions">
+        <button class="btn btn-primary btn-sm" onclick="openDocument(${i})">
+          ${icon('eye', 13)} Open
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="extractOneFromList(${i})">
+          ${icon(doc.status === 'done' ? 'refresh' : 'scan', 13)} ${doc.status === 'done' ? 'Re-read' : 'Read'}
+        </button>
+        <button class="btn btn-success btn-sm" onclick="downloadExcel(${i})" ${doc.tableData.length ? '' : 'disabled'}>
+          ${icon('download', 13)} Excel
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+async function extractOneFromList(i) {
+  showLoader('Reading photo…', documents[i].originalName);
+  const ok = await extractDocument(i);
+  showList();
+  showStatus(ok ? `${documents[i].originalName} processed successfully.` : documents[i].error, ok ? 'success' : 'error');
+}
+
+function openDocument(i) {
+  currentIndex = i; showPage('review-page'); setStep(3); renderReview(); clearStatus();
+}
+function currentDoc() { return documents[currentIndex] || null; }
+
+function renderReview() {
+  const doc = currentDoc();
+  if (!doc) return;
+  document.getElementById('review-title').textContent = doc.originalName;
+  document.getElementById('review-subtitle').textContent = statusLabel(doc);
+  document.getElementById('review-image').src = doc.preview || BLANK_IMG;
+  const btn = document.getElementById('extract-current-btn');
+  btn.innerHTML = `${icon('refresh', 13)} ${doc.status === 'done' ? 'Re-read this photo' : 'Read this photo'}`;
+  btn.disabled = !doc.imageBase64;
+  if (!doc.tableData.length) {
+    document.getElementById('main-table').innerHTML = '<tbody><tr><td colspan="99" style="padding:24px;text-align:center;color:var(--gray-500);font-size:13px;">No data extracted yet. Click "Read this photo" to begin.</td></tr></tbody>';
+    refreshStats(); return;
+  }
+  renderTable();
+}
+
+/* ── TABLE ── */
+function toNum(v) {
+  if (v === null || v === undefined || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+function pad(doc, row) { while (row.values.length < doc.numCols) row.values.push(null); }
+
+function renderTable() {
+  const doc = currentDoc();
+  if (!doc) return;
+  doc.numCols = Math.max(1, ...doc.tableData.map(r => r.values.length));
+  doc.tableData.forEach(r => pad(doc, r));
+  const t = document.getElementById('main-table');
+  let h = '<thead><tr><th style="min-width:68px">Row</th>';
+  for (let c = 0; c < doc.numCols; c++) h += `<th>Col ${c + 1}</th>`;
+  h += '<th>Row Total</th></tr></thead><tbody>';
+  doc.tableData.forEach((row, ri) => {
+    h += `<tr><td class="label-cell"><input class="label-input" value="${escapeHtml(row.label)}" oninput="onLabel(this,${ri})" /></td>`;
+    for (let c = 0; c < doc.numCols; c++) {
+      const v = row.values[c];
+      const ch = changed(doc, ri, c, v) ? ' changed' : '';
+      h += `<td><input class="cell${ch}" type="number" step="any" value="${v ?? ''}" oninput="onCell(this,${ri},${c})" /></td>`;
+    }
+    h += `<td class="td-total" id="rt-${ri}">${fmt(rowSum(row.values))}</td></tr>`;
+  });
+  h += `<tr><td class="td-footer-label">Total</td>`;
+  for (let c = 0; c < doc.numCols; c++) h += `<td class="td-col-total" id="ct-${c}">${fmt(colSum(doc, c))}</td>`;
+  h += `<td class="td-grand" id="grand-total">${fmt(grandTotal(doc))}</td></tr></tbody>`;
+  t.innerHTML = h;
+  refreshStats();
+}
+
+function onLabel(input, ri) { const d = currentDoc(); if (d) d.tableData[ri].label = input.value; }
+function onCell(input, ri, ci) {
+  const d = currentDoc(); if (!d) return;
+  const v = toNum(input.value);
+  d.tableData[ri].values[ci] = v;
+  input.classList.toggle('changed', changed(d, ri, ci, v));
+  refreshTotals();
+}
+function changed(doc, ri, ci, v) { const o = doc.origData[ri]?.values[ci]; return o !== undefined && v !== o; }
+function rowSum(vs) { return vs.reduce((s, v) => s + (Number(v) || 0), 0); }
+function colSum(doc, ci) { return doc.tableData.reduce((s, r) => s + (Number(r.values[ci]) || 0), 0); }
+function grandTotal(doc) { return doc.tableData.reduce((s, r) => s + rowSum(r.values), 0); }
+function fmt(v) { return Number.isInteger(v) ? String(v) : String(Number(v.toFixed(4))); }
+
+function refreshTotals() {
+  const d = currentDoc(); if (!d) return;
+  d.tableData.forEach((r, i) => { const el = document.getElementById(`rt-${i}`); if (el) el.textContent = fmt(rowSum(r.values)); });
+  for (let c = 0; c < d.numCols; c++) { const el = document.getElementById(`ct-${c}`); if (el) el.textContent = fmt(colSum(d, c)); }
+  const g = document.getElementById('grand-total'); if (g) g.textContent = fmt(grandTotal(d));
+  refreshStats();
+}
+function refreshStats() {
+  const d = currentDoc();
+  document.getElementById('stat-rows').textContent  = d?.tableData.length || 0;
+  document.getElementById('stat-cols').textContent  = d?.numCols || 0;
+  document.getElementById('stat-grand').textContent = d ? fmt(grandTotal(d)) : '0';
+}
+
+/* ── TABLE EDITING ── */
+function addRow() {
+  const d = currentDoc(); if (!d) return;
+  if (!d.numCols) d.numCols = 1;
+  const row = { label: String(d.tableData.length + 1), values: Array(d.numCols).fill(null) };
+  d.tableData.push(row); d.origData.push(JSON.parse(JSON.stringify(row)));
+  if (d.status !== 'done') d.status = 'done';
+  renderTable();
+}
+function addCol() {
+  const d = currentDoc(); if (!d) return;
+  d.numCols = (d.numCols || 0) + 1;
+  d.tableData.forEach((r, i) => { r.values.push(null); if (!d.origData[i]) d.origData[i] = { label: r.label, values: [] }; d.origData[i].values.push(null); });
+  if (!d.tableData.length) addRow(); else renderTable();
+}
+function removeLastRow() { const d = currentDoc(); if (!d || d.tableData.length <= 1) return; d.tableData.pop(); d.origData.pop(); renderTable(); }
+function removeLastCol() { const d = currentDoc(); if (!d || d.numCols <= 1) return; d.numCols--; d.tableData.forEach(r => r.values.pop()); d.origData.forEach(r => r.values.pop()); renderTable(); }
+
+/* ── DOWNLOAD ── */
+async function downloadCurrentExcel() { if (currentIndex >= 0) await downloadExcel(currentIndex); }
+
+async function downloadExcel(i) {
+  const doc = documents[i];
+  if (!doc || !doc.tableData.length) { showStatus('No data available to download for this photo.', 'error'); return; }
+  try {
+    const r = await fetch('/download-excel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows: doc.tableData, filename: doc.filename }) });
+    if (!r.ok) { const e = await r.json().catch(() => ({})); showStatus(e.error || `Download failed (HTTP ${r.status}).`, 'error'); return; }
+    await saveBlob(r, `${safeFilename(doc.filename)}.xlsx`);
+    setStep(4);
+    showStatus(`Excel file downloaded: ${doc.originalName}`, 'success');
+  } catch (err) { showStatus(`Download failed: ${err.message}`, 'error'); }
+}
+
+async function downloadAllExcels() {
+  const ready = documents.filter(d => d.tableData.length);
+  if (!ready.length) { showStatus('No processed photos available. Read photos first.', 'error'); return; }
+  try {
+    const r = await fetch('/download-all-excels', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ documents: ready.map(d => ({ filename: d.filename, rows: d.tableData })) }) });
+    if (!r.ok) { const e = await r.json().catch(() => ({})); showStatus(e.error || `Download failed (HTTP ${r.status}).`, 'error'); return; }
+    await saveBlob(r, 'factory-excels.zip');
+    setStep(4);
+    showStatus(`Downloaded ${ready.length} Excel file(s) as a ZIP archive.`, 'success');
+  } catch (err) { showStatus(`Download failed: ${err.message}`, 'error'); }
+}
+
+async function saveBlob(resp, filename) {
+  const blob = await resp.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function safeFilename(v) {
+  return String(v || 'factory-data').replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^[-._]+|[-._]+$/g, '') || 'factory-data';
+}
+
+function resetAll() {
+  documents = []; currentIndex = -1; fileInput.value = '';
+  renderThumbs(); updateButtons(); clearStatus(); showUpload();
+}
+
+function buildManual() {
+  const rows = Math.max(1, Math.min(300, Number(document.getElementById('man-rows').value) || 10));
+  const cols = Math.max(1, Math.min(80,  Number(document.getElementById('man-cols').value) || 12));
+  const doc  = {
+    id: nextId++, filename: `manual-table-${documents.length + 1}`,
+    originalName: `Manual Table ${documents.length + 1}`,
+    preview: '', imageBase64: '', mediaType: 'image/jpeg', bytes: 0,
+    status: 'done', error: '',
+    tableData: Array.from({ length: rows }, (_, i) => ({ label: String(i + 1), values: Array(cols).fill(null) })),
+    origData: [], numCols: cols
+  };
+  doc.origData = JSON.parse(JSON.stringify(doc.tableData));
+  documents.push(doc); currentIndex = documents.length - 1;
+  renderThumbs(); updateButtons(); openDocument(currentIndex);
+  showStatus('Blank table created. Enter your values and download when ready.', 'info');
+}
+</script>
+</body>
+</html>
