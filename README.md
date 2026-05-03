@@ -99,7 +99,7 @@ Under **Project → Settings → Domains**, add your domain and follow Vercel’
 ### Vercel-specific notes
 
 - **`public/index.html`** is also returned by Flask for **`GET /`** (same UI). API routes (`/extract`, `/health`, downloads, etc.) are handled by **`factory.py`** via the rewrite to **`api/index`**.
-- **`vercel.json`** only includes the schema (no `functions` block). In the dashboard: **Project → Settings → Functions** → set **Default / Function Max Duration** to **120 seconds** (or the max your plan allows) for Groq vision timeouts.
+- **`vercel.json`** uses **rewrites** only (no `functions` block — explicit `functions` paths for Python often fail the “match under `api/`” check on the build machine). Set **Function Max Duration** in the dashboard: **Project → Settings → Functions** → **120 seconds** (or your plan max) for Groq vision timeouts.
 - **Local CLI (`vercel build` / `vercel deploy`)** needs the **`uv`** binary on your PATH. Install with: `pip3 install uv` (or see [uv install](https://docs.astral.sh/uv/getting-started/installation/)). If the CLI reports `uv is required but was not found in PATH`, install `uv` and retry.
 - **`runtime.txt`** pins **Python 3.12** for consistent installs.
 - **`.vercelignore`** keeps `.env` and other junk out of uploads when using the CLI.
