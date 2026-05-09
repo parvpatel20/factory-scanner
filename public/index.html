@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Factory Scanner</title>
+<title data-i18n="docTitle">Factory Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -37,18 +40,39 @@
     --shadow:    0 1px 4px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
   }
 
-  html { font-size: 14px; -webkit-text-size-adjust: 100%; }
+  html { font-size: 15px; -webkit-text-size-adjust: 100%; }
+  html[lang="gu"] body {
+    font-family: "Noto Sans Gujarati", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  html[lang="gu"] .stat-label { text-transform: none; letter-spacing: 0; font-size: 11px; }
+  html[lang="gu"] thead th { text-transform: none; letter-spacing: 0; }
+  html[lang="gu"] .how-step-num { text-transform: none; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--gray-100);
     color: var(--gray-900);
-    line-height: 1.5;
+    line-height: 1.55;
     min-height: 100vh;
     min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
   button, input { font: inherit; }
+  a.skip-link {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  a.skip-link:focus {
+    position: fixed; width: auto; height: auto; margin: 0; clip: auto; z-index: 300;
+    top: max(12px, env(safe-area-inset-top, 12px)); left: max(12px, env(safe-area-inset-left, 12px));
+    padding: 10px 16px; background: var(--white); color: var(--primary); font-weight: 700;
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    text-decoration: none;
+  }
+  .btn:focus-visible, .drop-zone:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
 
   /* ── TOPBAR ── */
   .topbar {
@@ -75,8 +99,39 @@
     font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: -.2px;
     flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .topbar-sub   { font-size: 12px; color: var(--gray-400); margin-left: 6px; flex-shrink: 0; }
+  .topbar-sub   { font-size: 12px; color: var(--gray-400); margin-left: 10px; flex-shrink: 0; font-weight: 500; letter-spacing: .01em; }
   @media (max-width: 540px) { .topbar-sub { display: none; } }
+
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .lang-switch-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  .lang-btn {
+    min-width: 36px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.08);
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    -webkit-tap-highlight-color: transparent;
+    font-family: inherit;
+  }
+  .lang-btn:hover { color: var(--white); border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.14); }
+  .lang-btn[aria-pressed="true"] {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+    box-shadow: 0 1px 3px rgba(0,0,0,.35);
+  }
+  .step .step-label { display: inline; }
   @media (max-width: 380px) {
     .topbar { gap: 8px; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
     .topbar-title { font-size: 14px; }
@@ -102,7 +157,7 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    padding: 13px 18px;
+    padding: 13px 16px;
     font-size: 13px;
     font-weight: 600;
     color: var(--gray-400);
@@ -557,15 +612,61 @@
     .tbl-controls .btn { flex: 1 1 calc(50% - 4px); min-width: 0; justify-content: center; white-space: normal; text-align: center; line-height: 1.25; padding-left: 8px; padding-right: 8px; height: auto; min-height: 36px; padding-top: 8px; padding-bottom: 8px; }
   }
 
+  /* ── PAGE INTRO & ACTIONS ── */
+  .page-intro {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--gray-700);
+    line-height: 1.55;
+    box-shadow: var(--shadow-sm);
+  }
+  .page-intro strong { color: var(--gray-900); font-weight: 700; }
+  .action-hint {
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+  }
+  .btn-row-secondary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 14px;
+    margin-top: 4px;
+    border-top: 1px solid var(--gray-200);
+  }
+  @media (max-width: 560px) {
+    .btn-row-secondary { flex-direction: column; align-items: stretch; }
+    .btn-row-secondary .btn { width: 100%; justify-content: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation: none; border-color: var(--gray-200); border-top-color: var(--primary); }
+    .btn:active:not(:disabled) { transform: none; }
+    .step, .step-badge, .drop-zone { transition: none; }
+  }
+
   /* ── UTILITY ── */
   .hide { display: none !important; }
   .mt8  { margin-top: 8px; }
   .mt12 { margin-top: 12px; }
-  .text-muted { color: var(--gray-400); font-size: 13px; }
-  .empty-state { padding: 32px; text-align: center; color: var(--gray-400); font-size: 13px; }
+  .text-muted { color: var(--gray-500); font-size: 13px; }
+  .empty-state { padding: 32px; text-align: center; color: var(--gray-500); font-size: 14px; line-height: 1.5; }
 </style>
 </head>
 <body>
+
+<a class="skip-link" href="#main-content" data-i18n="skipLink">Skip to main content</a>
 
 <!-- TOPBAR -->
 <header class="topbar">
@@ -574,111 +675,124 @@
       <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
     </svg>
   </div>
-  <span class="topbar-title">Factory Scanner</span>
-  <span class="topbar-sub">Photo to Excel — powered by AI</span>
+  <span class="topbar-title" data-i18n="topTitle">Factory Scanner</span>
+  <span class="topbar-sub" data-i18n="topSub">Sheet photos → Excel</span>
+  <div class="lang-switch" role="group" id="lang-switch">
+    <span class="lang-switch-label" id="lang-switch-label" data-i18n="langAria">Language</span>
+    <button type="button" class="lang-btn" id="lang-btn-en" data-lang="en" aria-pressed="true" aria-controls="lang-switch-label">EN</button>
+    <button type="button" class="lang-btn" id="lang-btn-gu" data-lang="gu" aria-pressed="false">ગુજ</button>
+  </div>
 </header>
 
 <!-- STEP BAR -->
-<nav class="stepbar" aria-label="Progress">
+<nav class="stepbar" id="stepbar-nav" aria-label="Steps in this workflow">
   <div class="steps">
-    <div class="step active" id="step1">
+    <div class="step active" id="step1" aria-current="step">
       <div class="step-badge">1</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Add Photos
+      <span class="step-label" data-i18n="step1">Add photos</span>
     </div>
     <div class="step" id="step2">
       <div class="step-badge">2</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      All Photos
+      <span class="step-label" data-i18n="step2">Your photos</span>
     </div>
     <div class="step" id="step3">
       <div class="step-badge">3</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      Verify &amp; Edit
+      <span class="step-label" data-i18n="step3">Check numbers</span>
     </div>
     <div class="step" id="step4">
       <div class="step-badge">4</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download
+      <span class="step-label" data-i18n="step4">Get Excel file</span>
     </div>
   </div>
 </nav>
 
-<main class="wrap">
+<main class="wrap" id="main-content">
   <div id="status-area"></div>
 
   <!-- ══════════════════════════════════════════ PAGE 1 — UPLOAD -->
-  <section id="upload-page">
+  <section id="upload-page" aria-labelledby="upload-heading">
+
+    <div class="page-intro">
+      <strong data-i18n="introTitle">How this works.</strong>
+      <span data-i18n="introBody">Add clear photos of your factory sheet (the paper with your numbers). This app reads the numbers for you. You can correct any mistakes, then save everything as an Excel file you can open on any computer.</span>
+    </div>
 
     <!-- How-to guide -->
-    <div class="how-to">
+    <div class="how-to" id="how-to" aria-label="Quick guide in four steps">
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </div>
-        <div class="how-step-num">Step 1</div>
-        <div class="how-step-label">Take a clear photo of your factory register</div>
+        <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 1</div>
+        <div class="how-step-label" data-i18n="howLabel1">Take a steady, well-lit photo of the full sheet</div>
       </div>
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
-        <div class="how-step-num">Step 2</div>
-        <div class="how-step-label">Upload the photo and press Read Numbers</div>
+        <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 2</div>
+        <div class="how-step-label" data-i18n="howLabel2">Upload here, then tap “Read numbers from photos”</div>
       </div>
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </div>
-        <div class="how-step-num">Step 3</div>
-        <div class="how-step-label">Check and fix any wrong numbers in the table</div>
+        <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 3</div>
+        <div class="how-step-label" data-i18n="howLabel3">Open each photo and fix any wrong numbers in the table</div>
       </div>
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </div>
-        <div class="how-step-num">Step 4</div>
-        <div class="how-step-label">Download the Excel file</div>
+        <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 4</div>
+        <div class="how-step-label" data-i18n="howLabel4">Download your Excel file (one file per photo)</div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div class="card-title">
+        <div class="card-title" id="upload-heading">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Upload factory sheet photos
+          <span data-i18n="uploadTitle">Add your photos</span>
         </div>
-        <div class="card-desc">Select up to 5 photos (JPG, PNG, WEBP). Each photo becomes a separate Excel file.</div>
+        <div class="card-desc" data-i18n="uploadDesc">You can add up to 5 photos at a time. Use JPG, PNG, or WEBP. Each photo will get its own Excel file when you download.</div>
       </div>
       <div class="divider"></div>
 
       <label class="drop-zone" id="drop-zone">
         <input type="file" id="file-input" accept="image/*" multiple />
         <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <div class="dz-head">Click to select photos</div>
-        <div class="dz-sub">or drag and drop files here &nbsp;·&nbsp; Max 5 photos</div>
+        <div class="dz-head" data-i18n="dropHead">Tap here to choose photos</div>
+        <div class="dz-sub" data-i18n="dropSub">Or drag files into this box from your computer · Up to 5 photos</div>
       </label>
 
-      <div id="empty-thumbs" class="text-muted mt8">No photos selected yet.</div>
+      <div id="empty-thumbs" class="text-muted mt8" data-i18n="emptyThumbs">No photos yet. Use the box above to add some.</div>
       <div class="thumb-grid mt8" id="selected-thumbs"></div>
     </div>
 
+    <p class="action-hint" data-i18n="actionHint">Start by reading the numbers from your photos (blue button). When that finishes, open each photo to check the table, then download.</p>
     <div class="btn-group">
       <button class="btn btn-primary btn-lg" id="extract-btn" onclick="extractAll()" disabled>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Read Numbers in Photos
+        <span data-i18n="btnExtract">Read numbers from photos</span>
       </button>
       <button class="btn btn-ghost btn-lg" id="continue-btn" onclick="showList()" disabled>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        View All Photos
+        <span data-i18n="btnContinue">See your photo list</span>
       </button>
+    </div>
+    <div class="btn-row-secondary">
       <button class="btn btn-ghost" onclick="showManual()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Create Blank Table
+        <span data-i18n="btnBlank">Start from a blank table</span>
       </button>
       <button class="btn btn-danger-ghost btn-sm" onclick="resetAll()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        Clear All
+        <span data-i18n="btnRemoveAll">Remove all photos</span>
       </button>
     </div>
   </section>
@@ -687,27 +801,27 @@
   <section class="card hide" id="manual-page">
     <div class="card-title">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Create blank table
+      <span data-i18n="manualTitle">Start from an empty table</span>
     </div>
-    <div class="card-desc" style="margin-bottom:16px;">Specify the number of rows and columns, then enter values manually.</div>
+    <div class="card-desc" style="margin-bottom:16px;" data-i18n="manualDesc">Pick how many rows and columns you need. You will type the numbers yourself — no photo required.</div>
     <div class="manual-row">
       <div class="field">
-        <label for="man-rows">Rows</label>
+        <label for="man-rows" data-i18n="labelRows">Rows</label>
         <input class="num-input" type="number" id="man-rows" value="10" min="1" max="300" />
       </div>
       <div class="field">
-        <label for="man-cols">Columns</label>
+        <label for="man-cols" data-i18n="labelCols">Columns</label>
         <input class="num-input" type="number" id="man-cols" value="12" min="1" max="80" />
       </div>
       <button class="btn btn-primary" onclick="buildManual()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Create Table
+        <span data-i18n="btnBuild">Build table</span>
       </button>
     </div>
     <div class="btn-group">
       <button class="btn btn-ghost btn-sm" onclick="showUpload()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        Back to Upload
+        <span data-i18n="btnBackUpload">Back to adding photos</span>
       </button>
     </div>
   </section>
@@ -715,29 +829,29 @@
   <!-- ══════════════════════════════════════════ LOADER -->
   <div class="loader hide" id="loader-page">
     <div class="spinner"></div>
-    <div class="loader-title" id="loader-title">Reading photo…</div>
-    <div class="loader-detail" id="loader-detail">This may take a moment. Please wait.</div>
+    <div class="loader-title" id="loader-title" data-i18n="loaderTitleDefault">Working on your photo…</div>
+    <div class="loader-detail" id="loader-detail" data-i18n="loaderDetailDefault">This can take a little while. Please keep this page open.</div>
   </div>
 
   <!-- ══════════════════════════════════════════ PAGE 2 — LIST -->
   <section class="hide" id="list-page">
     <div class="page-header">
       <div class="page-header-text">
-        <div class="page-title">All Photos</div>
-        <div class="page-sub">Open a photo to verify the extracted numbers, then download its Excel.</div>
+        <div class="page-title" data-i18n="listTitle">Your photos</div>
+        <div class="page-sub" data-i18n="listSub">Open a photo to see its table and fix any mistakes. Download one Excel file per photo, or grab every file at once in a ZIP.</div>
       </div>
       <div class="btn-group mt0">
         <button class="btn btn-primary" id="extract-missing-btn" onclick="extractMissing()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Read Remaining
+          <span data-i18n="btnContinueRead">Continue reading photos</span>
         </button>
         <button class="btn btn-success" id="download-all-btn" onclick="downloadAllExcels()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
-          Download All (ZIP)
+          <span data-i18n="btnZipAll">Download all as ZIP</span>
         </button>
         <button class="btn btn-ghost btn-sm" onclick="showUpload()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          Back
+          <span data-i18n="btnBackAddPhotos">Back to add photos</span>
         </button>
       </div>
     </div>
@@ -754,11 +868,11 @@
       <div class="btn-group mt0">
         <button class="btn btn-success btn-lg" onclick="downloadCurrentExcel()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download Excel
+          <span data-i18n="btnDownloadThis">Download this Excel file</span>
         </button>
         <button class="btn btn-ghost" onclick="showList()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          All Photos
+          <span data-i18n="btnBackYourPhotos">Back to your photos</span>
         </button>
       </div>
     </div>
@@ -766,15 +880,15 @@
     <div class="review-grid">
       <!-- Image -->
       <div class="image-panel">
-        <img id="review-image" alt="Uploaded factory sheet" />
+        <img id="review-image" alt="" data-i18n-alt="reviewImgAlt" />
         <div class="image-hint">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span><span class="hint-desktop">Compare this image with the table on the right to verify numbers.</span><span class="hint-mobile">Compare this image with the table below to verify numbers.</span></span>
+          <span><span class="hint-desktop" data-i18n="reviewHintDesktop">Use this picture alongside the table on the right — make sure the numbers match.</span><span class="hint-mobile" data-i18n="reviewHintMobile">Use this picture alongside the table below — make sure the numbers match.</span></span>
         </div>
         <div class="btn-group">
           <button class="btn btn-ghost btn-sm" id="extract-current-btn" onclick="extractCurrent()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            Re-read this photo
+            <span id="extract-current-label" data-i18n="btnRereadPhoto">Re-read this photo</span>
           </button>
         </div>
       </div>
@@ -783,15 +897,15 @@
       <div>
         <div class="stats">
           <div class="stat">
-            <div class="stat-label">Rows</div>
+            <div class="stat-label" data-i18n="statRows">Rows</div>
             <div class="stat-value" id="stat-rows">0</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Columns</div>
+            <div class="stat-label" data-i18n="statCols">Columns</div>
             <div class="stat-value" id="stat-cols">0</div>
           </div>
           <div class="stat highlight">
-            <div class="stat-label">Grand Total</div>
+            <div class="stat-label" data-i18n="statGrand">Everything added</div>
             <div class="stat-value" id="stat-grand">0</div>
           </div>
         </div>
@@ -799,19 +913,19 @@
         <div class="tbl-controls">
           <button class="btn btn-ghost btn-sm" onclick="addRow()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Row
+            <span data-i18n="tblAddRow">Add Row</span>
           </button>
           <button class="btn btn-ghost btn-sm" onclick="addCol()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Column
+            <span data-i18n="tblAddCol">Add Column</span>
           </button>
           <button class="btn btn-danger-ghost btn-sm" onclick="removeLastRow()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Remove Row
+            <span data-i18n="tblRemRow">Remove Row</span>
           </button>
           <button class="btn btn-danger-ghost btn-sm" onclick="removeLastCol()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Remove Column
+            <span data-i18n="tblRemCol">Remove Column</span>
           </button>
         </div>
 
@@ -820,7 +934,7 @@
         </div>
         <div class="tbl-hint">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          Click any cell to edit it. Cells highlighted in yellow were changed from the original.
+          <span data-i18n="tblHint">Tap or click any box to change a number. Yellow means you edited that box after it was read from the photo.</span>
         </div>
       </div>
     </div>
@@ -828,6 +942,326 @@
 </main>
 
 <script>
+/* ── I18N ── */
+const LANG_STORE = 'fs_lang';
+let currentLang = 'en';
+const I18N = {
+  en: {
+    skipLink: 'Skip to main content',
+    docTitle: 'Factory Scanner',
+    topTitle: 'Factory Scanner',
+    topSub: 'Sheet photos → Excel',
+    langAria: 'Language',
+    ariaStepbar: 'Steps in this workflow',
+    howtoAria: 'Quick guide in four steps',
+    step1: 'Add photos',
+    step2: 'Your photos',
+    step3: 'Check numbers',
+    step4: 'Get Excel file',
+    introTitle: 'How this works.',
+    introBody: 'Add clear photos of your factory sheet (the paper with your numbers). This app reads the numbers for you. You can correct any mistakes, then save everything as an Excel file you can open on any computer.',
+    howStepWord: 'Step',
+    howLabel1: 'Take a steady, well-lit photo of the full sheet',
+    howLabel2: 'Upload here, then tap “Read numbers from photos”',
+    howLabel3: 'Open each photo and fix any wrong numbers in the table',
+    howLabel4: 'Download your Excel file (one file per photo)',
+    uploadTitle: 'Add your photos',
+    uploadDesc: 'You can add up to 5 photos at a time. Use JPG, PNG, or WEBP. Each photo will get its own Excel file when you download.',
+    dropHead: 'Tap here to choose photos',
+    dropSub: 'Or drag files into this box from your computer · Up to 5 photos',
+    emptyThumbs: 'No photos yet. Use the box above to add some.',
+    actionHint: 'Start by reading the numbers from your photos (blue button). When that finishes, open each photo to check the table, then download.',
+    btnExtract: 'Read numbers from photos',
+    btnContinue: 'See your photo list',
+    btnBlank: 'Start from a blank table',
+    btnRemoveAll: 'Remove all photos',
+    manualTitle: 'Start from an empty table',
+    manualDesc: 'Pick how many rows and columns you need. You will type the numbers yourself — no photo required.',
+    labelRows: 'Rows',
+    labelCols: 'Columns',
+    btnBuild: 'Build table',
+    btnBackUpload: 'Back to adding photos',
+    loaderTitleDefault: 'Working on your photo…',
+    loaderDetailDefault: 'This can take a little while. Please keep this page open.',
+    listTitle: 'Your photos',
+    listSub: 'Open a photo to see its table and fix any mistakes. Download one Excel file per photo, or grab every file at once in a ZIP.',
+    btnContinueRead: 'Continue reading photos',
+    btnZipAll: 'Download all as ZIP',
+    btnBackAddPhotos: 'Back to add photos',
+    btnDownloadThis: 'Download this Excel file',
+    btnBackYourPhotos: 'Back to your photos',
+    reviewImgAlt: 'Photo of factory sheet — compare with table',
+    reviewHintDesktop: 'Use this picture alongside the table on the right — make sure the numbers match.',
+    reviewHintMobile: 'Use this picture alongside the table below — make sure the numbers match.',
+    btnReadPhoto: 'Read this photo',
+    btnRereadPhoto: 'Re-read this photo',
+    statRows: 'Rows',
+    statCols: 'Columns',
+    statGrand: 'Everything added',
+    tblAddRow: 'Add Row',
+    tblAddCol: 'Add Column',
+    tblRemRow: 'Remove Row',
+    tblRemCol: 'Remove Column',
+    tblHint: 'Tap or click any box to change a number. Yellow means you edited that box after it was read from the photo.',
+    tblRow: 'Row',
+    tblCol: 'Col {n}',
+    tblRowTotal: 'Row Total',
+    tblFooterTotal: 'Total',
+    toastImageType: 'Please choose image files only (JPG, PNG, or WEBP).',
+    toastMax5: 'You already have 5 photos. Remove one before adding another.',
+    toastPartial5: 'Only {n} photo(s) added — limit is 5.',
+    toastReadError: 'Could not read {name}: {msg}',
+    toastReadyNext: '{n} photo(s) ready. Tap “Read numbers from photos” next.',
+    toastPhotosOnList: '{n} photo(s) on your list.',
+    toastAllRemoved: 'All photos were removed.',
+    errFileRead: 'File read failed',
+    errImageDecode: 'Image decode failed',
+    statusRowsTable: '{n} rows in the table',
+    statusReading: 'Reading numbers…',
+    statusErrRetry: 'Something went wrong — tap Read again',
+    statusRowsShort: '{n} rows',
+    statusNotReadYet: 'Numbers not read yet',
+    badgeReady: 'Ready',
+    badgeReading: 'Reading…',
+    badgeTryAgain: 'Try again',
+    badgePending: 'Not read yet',
+    loaderReadingAll: 'Reading numbers from your photos…',
+    loaderStarting: 'Starting photo 1 of {total}',
+    loaderPhotoProgress: 'Reading photo {current} of {total}: {name}',
+    loaderReadingRest: 'Reading the rest of your photos…',
+    loaderReadingRestProg: 'Reading {current} of {total}: {name}',
+    loaderReread: 'Reading this photo again…',
+    loaderReadingOne: 'Reading this photo…',
+    toastDoneAll: 'Done — {n} photo(s) read. Open each one to check the numbers look right.',
+    toastPartial: '{ok} of {total} photo(s) finished. Use “Read” on any that failed and try again.',
+    toastAllReadAlready: 'Every photo has already been read.',
+    toastRereadOk: 'This photo was read again. Check the table for any changes.',
+    listEmpty: 'You have not added any photos yet. Go back and add photos to see them listed here.',
+    thumbRemoveTitle: 'Remove',
+    thumbRemoveAria: 'Remove {name}',
+    docThumbAltPrefix: 'Thumbnail: ',
+    btnOpen: 'Open',
+    btnReread: 'Re-read',
+    btnRead: 'Read',
+    btnExcelFile: 'Excel file',
+    emptyTableMsg: 'No numbers in the table yet. Tap “Read this photo” below the picture.',
+    toastProcessedOk: '{name} processed successfully.',
+    toastNoTableYet: 'This photo does not have a table yet. Read this photo before downloading.',
+    toastDlFail: 'Download failed (HTTP {code}).',
+    toastDlOk: 'Excel file downloaded: {name}',
+    toastDlFailMsg: 'Download failed: {msg}',
+    toastDlNone: 'Nothing to download yet. Read the numbers from at least one photo first.',
+    toastZipOk: 'Downloaded {n} Excel file(s) as a ZIP archive.',
+    toastManualReady: 'Empty table ready. Type your numbers in, then download Excel when you are done.',
+    manualName: 'Manual Table {n}',
+    netError: 'Network error: {msg}',
+    extractionHttp: 'Extraction failed (HTTP {code}).'
+  },
+  gu: {
+    skipLink: 'મુખ્ય સામગ્રી પર જાઓ',
+    docTitle: 'ફેક્ટરી સ્કેનર',
+    topTitle: 'ફેક્ટરી સ્કેનર',
+    topSub: 'શીટ ફોટા → એક્સેલ',
+    langAria: 'ભાષા',
+    ariaStepbar: 'આ કામના પગલાં',
+    howtoAria: 'ચાર પગલાંમાં ઝડપી માર્ગદર્શિકા',
+    step1: 'ફોટા ઉમેરો',
+    step2: 'તમારા ફોટા',
+    step3: 'નંબર ચકાસો',
+    step4: 'એક્સેલ ફાઇલ મેળવો',
+    introTitle: 'આ કેવી રીતે કામ કરે છે.',
+    introBody: 'તમારી ફેક્ટરી શીટ (જ્યાં નંબરો હોય તે કાગળ)ના સ્પષ્ટ ફોટા ઉમેરો. આ એપ તમારા માટે નંબરો વાંચે છે. ભૂલ હોય તો સુધારો, પછી બધું એક્સેલ ફાઇલ તરીકે સાચવો — કોઈપણ કમ્પ્યુટર પર ખોલી શકાય.',
+    howStepWord: 'પગલું',
+    howLabel1: 'સંપૂર્ણ શીટનો સ્થિર, સારી રીતે પ્રકાશિત ફોટો લો',
+    howLabel2: 'અહીં અપલોડ કરો, પછી “ફોટામાંથી નંબર વાંચો” પર ટૅપ કરો',
+    howLabel3: 'દરેક ફોટો ખોલો અને કોષ્ટકમાં ખોટા નંબર સુધારો',
+    howLabel4: 'તમારી એક્સેલ ફાઇલ ડાઉનલોડ કરો (દરેક ફોટા માટે એક ફાઇલ)',
+    uploadTitle: 'તમારા ફોટા ઉમેરો',
+    uploadDesc: 'એક સાથે 5 સુધીના ફોટા મૂકી શકો છો. JPG, PNG અથવા WEBP વાપરો. ડાઉનલોડ વખતે દરેક ફોટાની પોતાની એક્સેલ ફાઇલ મળશે.',
+    dropHead: 'ફોટા પસંદ કરવા અહીં ટૅપ કરો',
+    dropSub: 'તમારા કમ્પ્યુટરમાંથી ફાઇલો આ બોક્સમાં ખેંચો · 5 સુધીના ફોટા',
+    emptyThumbs: 'હજી કોઈ ફોટો નથી. ઉમેરવા ઉપરનો બોક્સ વાપરો.',
+    actionHint: 'પહેલા ફોટામાંથી નંબર વાંચો (વાદળી બટન). પૂરું થયા પછી દરેક ફોટો ખોલી કોષ્ટક ચકાસો, પછી ડાઉનલોડ કરો.',
+    btnExtract: 'ફોટામાંથી નંબર વાંચો',
+    btnContinue: 'ફોટાની યાદી જુઓ',
+    btnBlank: 'ખાલી કોષ્ટકથી શરૂ કરો',
+    btnRemoveAll: 'બધા ફોટા કાઢી નાખો',
+    manualTitle: 'ખાલી કોષ્ટકથી શરૂ કરો',
+    manualDesc: 'કેટલી પંક્તિઓ અને સ્તંભ જોઈએ તે પસંદ કરો. નંબર તમે જ લેશો — ફોટાની જરૂર નહીં.',
+    labelRows: 'પંક્તિઓ',
+    labelCols: 'સ્તંભ',
+    btnBuild: 'કોષ્ટક બનાવો',
+    btnBackUpload: 'ફોટા ઉમેરવા પાછા',
+    loaderTitleDefault: 'તમારા ફોટા પર કામ ચાલે છે…',
+    loaderDetailDefault: 'આમાં થોડો સમય લાગી શકે. આ પેજ બંધ ન કરશો.',
+    listTitle: 'તમારા ફોટા',
+    listSub: 'ફોટો ખોલી તેનું કોષ્ટક જુઓ અને ભૂલ સુધારો. દરેક માટે એક એક્સેલ ડાઉનલોડ કરો, અથવા બધી એક સાથે ZIPમાં.',
+    btnContinueRead: 'બાકીના ફોટા વાંચો',
+    btnZipAll: 'બધું ZIPમાં ડાઉનલોડ',
+    btnBackAddPhotos: 'ફોટા ઉમેરવા પાછા',
+    btnDownloadThis: 'આ એક્સેલ ફાઇલ ડાઉનલોડ',
+    btnBackYourPhotos: 'તમારા ફોટા પાછા',
+    reviewImgAlt: 'ફેક્ટરી શીટનો ફોટો — કોષ્ટક સાથે સરખાવો',
+    reviewHintDesktop: 'આ ફોટો જમણી બાજુના કોષ્ટક સાથે સરખાવો — નંબર મેળ ખાય છે કે નહીં.',
+    reviewHintMobile: 'આ ફોટો નીચેના કોષ્ટક સાથે સરખાવો — નંબર મેળ ખાય છે કે નહીં.',
+    btnReadPhoto: 'આ ફોટો વાંચો',
+    btnRereadPhoto: 'આ ફોટો ફરીથી વાંચો',
+    statRows: 'પંક્તિઓ',
+    statCols: 'સ્તંભ',
+    statGrand: 'બધાનો સરવાળો',
+    tblAddRow: 'પંક્તિ ઉમેરો',
+    tblAddCol: 'સ્તંભ ઉમેરો',
+    tblRemRow: 'પંક્તિ કાઢો',
+    tblRemCol: 'સ્તંભ કાઢો',
+    tblHint: 'કોઈપણ બોક્સ પર ટૅપ કરી નંબર બદલો. પીળો રંગ એટલે તમે ફોટો વાંચ્યા પછી તે બોક્સ બદલ્યું.',
+    tblRow: 'પંક્તિ',
+    tblCol: 'સ્તંભ {n}',
+    tblRowTotal: 'પંક્તિ સરવાળો',
+    tblFooterTotal: 'સરવાળો',
+    toastImageType: 'માત્ર ફોટા ફાઇલ પસંદ કરો (JPG, PNG અથવા WEBP).',
+    toastMax5: 'તમારી પાસે પહેલેથી 5 ફોટા છે. બીજો ઉમેરતા પહેલાં એક કાઢો.',
+    toastPartial5: 'માત્ર {n} ફોટા ઉમેરાયા — મહત્તમ 5.',
+    toastReadError: '{name} નહીં વંચાયો: {msg}',
+    toastReadyNext: '{n} ફોટા તૈયાર. આગળ “ફોટામાંથી નંબર વાંચો” ટૅપ કરો.',
+    toastPhotosOnList: 'યાદીમાં {n} ફોટા.',
+    toastAllRemoved: 'બધા ફોટા કાઢી નાખ્યા.',
+    errFileRead: 'ફાઇલ વાંચવામાં નિષ્ફળ',
+    errImageDecode: 'ફોટો ઓળખાયો નહીં',
+    statusRowsTable: 'કોષ્ટકમાં {n} પંક્તિઓ',
+    statusReading: 'નંબર વંચાઈ રહ્યા છે…',
+    statusErrRetry: 'કંઈક ખોટું થયું — “વાંચો” ફરી ટૅપ કરો',
+    statusRowsShort: '{n} પંક્તિઓ',
+    statusNotReadYet: 'હજી નંબર વંચાયા નથી',
+    badgeReady: 'તૈયાર',
+    badgeReading: 'વંચાઈ રહ્યું…',
+    badgeTryAgain: 'ફરી પ્રયાસ',
+    badgePending: 'હજી વંચાયું નથી',
+    loaderReadingAll: 'તમારા ફોટામાંથી નંબર વંચાઈ રહ્યા છે…',
+    loaderStarting: 'ફોટો 1 થી શરૂ — કુલ {total}',
+    loaderPhotoProgress: 'ફોટો {current} / {total}: {name}',
+    loaderReadingRest: 'બાકીના ફોટા વંચાઈ રહ્યા છે…',
+    loaderReadingRestProg: '{current} / {total}: {name}',
+    loaderReread: 'આ ફોટો ફરીથી વંચાઈ રહ્યો છે…',
+    loaderReadingOne: 'આ ફોટો વંચાઈ રહ્યો છે…',
+    toastDoneAll: 'થઈ ગયું — {n} ફોટા વંચાયા. દરેક ખોલી નંબર ચકાસો.',
+    toastPartial: '{ok} / {total} ફોટા પૂરા. નિષ્ફળ ફોટા પર “વાંચો” ટૅપ કરી ફરી પ્રયાસ કરો.',
+    toastAllReadAlready: 'દરેક ફોટો પહેલેથી વંચાઈ ચૂક્યો છે.',
+    toastRereadOk: 'આ ફોટો ફરીથી વંચાયો. કોષ્ટકમાં બદલાવ જુઓ.',
+    listEmpty: 'હજી કોઈ ફોટો ઉમેર્યો નથી. પાછા જઈને ફોટા ઉમેરો.',
+    thumbRemoveTitle: 'કાઢી નાખો',
+    thumbRemoveAria: '{name} કાઢો',
+    docThumbAltPrefix: 'લઘુચિત્ર: ',
+    btnOpen: 'ખોલો',
+    btnReread: 'પુનર્વાંચન',
+    btnRead: 'વાંચો',
+    btnExcelFile: 'એક્સેલ ફાઇલ',
+    emptyTableMsg: 'હજી કોષ્ટકમાં નંબર નથી. ફોટા નીચે “આ ફોટો વાંચો” ટૅપ કરો.',
+    toastProcessedOk: '{name} સફળતાપૂર્વક પૂર્ણ.',
+    toastNoTableYet: 'આ ફોટાનું કોષ્ટક હજુ નથી. ડાઉનલોડ પહેલાં ફોટો વાંચો.',
+    toastDlFail: 'ડાઉનલોડ નિષ્ફળ (HTTP {code}).',
+    toastDlOk: 'એક્સેલ ડાઉનલોડ થયું: {name}',
+    toastDlFailMsg: 'ડાઉનલોડ નિષ્ફળ: {msg}',
+    toastDlNone: 'હજી ડાઉનલોડ નથી. પહેલાં ઓછામાં ઓછો એક ફોટો વંચાવો.',
+    toastZipOk: '{n} એક્સેલ ફાઇલો ZIPમાં ડાઉનલોડ થઈ.',
+    toastManualReady: 'ખાલી કોષ્ટક તૈયાર. નંબર ભરો, પછી એક્સેલ ડાઉનલોડ કરો.',
+    manualName: 'મેન્યુઅલ કોષ્ટક {n}',
+    netError: 'નેટવર્ક ભૂલ: {msg}',
+    extractionHttp: 'વાંચન નિષ્ફળ (HTTP {code}).'
+  }
+};
+
+function getLang() { return currentLang; }
+
+function t(key) {
+  const pack = I18N[currentLang] || I18N.en;
+  if (pack[key] !== undefined) return pack[key];
+  return I18N.en[key] !== undefined ? I18N.en[key] : key;
+}
+
+function tpl(key, vars) {
+  let s = t(key);
+  Object.keys(vars || {}).forEach(k => {
+    s = s.split('{' + k + '}').join(String(vars[k]));
+  });
+  return s;
+}
+
+function localizeServer(msg) {
+  if (!msg || getLang() !== 'gu') return String(msg);
+  const s = String(msg);
+  const rows = [
+    ['GROQ_API_KEY is not configured on the server.', 'સર્વર પર GROQ API કી નથી.'],
+    ['No image provided.', 'કોઈ ફોટો મોકલાયો નથી.'],
+    ['image_base64 must be a string.', 'ફોટાનો ડેટા ખોટો છે.'],
+    ['Image payload too large', 'ફોટો ખૂબ મોટો છે. નાનો કરીને ફરી કરો.'],
+    ['Request to Groq timed out', 'સર્વરનો સમય પૂરો થયો. ફરી કરો.'],
+    ['Could not reach Groq API', 'GROQ સર્વર સુધી પહોંચ્યા નહીં.'],
+    ['Groq API returned error', 'GROQ API ભૂલ. ફરી કરો.'],
+    ['Could not parse the AI response', 'જવાબ સમજાયો નથી. વધુ સ્પષ્ટ ફોટો વાપરો.'],
+    ['No data rows found in the photo', 'ફોટામાં ડેટા મળ્યો નથી. પ્રકાશ તપાસો.'],
+    ['Extraction failed after multiple attempts', 'ઘણા પ્રયાસો પછી નિષ્ફળ. સ્પષ્ટ ફોટો વાપરો.'],
+    ['No rows provided.', 'પંક્તિઓ નથી.'],
+    ['No completed documents provided.', 'પૂર્ણ દસ્તાવેજો નથી.'],
+    ['Network error:', 'નેટવર્ક ભૂલ:'],
+    ['Download failed (HTTP', 'ડાઉનલોડ નિષ્ફળ (HTTP'],
+    ['Extraction failed (HTTP', 'વાંચન નિષ્ફળ (HTTP']
+  ];
+  let out = s;
+  rows.forEach(([en, gu]) => { out = out.split(en).join(gu); });
+  return out;
+}
+
+function applyStaticI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (!k) return;
+    if (el.tagName === 'TITLE') document.title = t(k);
+    else el.textContent = t(k);
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+    const k = el.getAttribute('data-i18n-alt');
+    if (k) el.setAttribute('alt', t(k));
+  });
+  const nb = document.getElementById('stepbar-nav');
+  if (nb) nb.setAttribute('aria-label', t('ariaStepbar'));
+  const ht = document.getElementById('how-to');
+  if (ht) ht.setAttribute('aria-label', t('howtoAria'));
+}
+
+function refreshLiveI18n() {
+  renderThumbs();
+  if (document.getElementById('list-page') && !document.getElementById('list-page').classList.contains('hide')) {
+    renderDocList();
+  }
+  if (document.getElementById('review-page') && !document.getElementById('review-page').classList.contains('hide')) {
+    renderReview();
+  }
+}
+
+function setLang(next) {
+  if (next !== 'en' && next !== 'gu') next = 'en';
+  currentLang = next;
+  document.documentElement.lang = next === 'gu' ? 'gu' : 'en';
+  try { localStorage.setItem(LANG_STORE, next); } catch (e) {}
+  const ben = document.getElementById('lang-btn-en');
+  const bgj = document.getElementById('lang-btn-gu');
+  if (ben) ben.setAttribute('aria-pressed', next === 'en' ? 'true' : 'false');
+  if (bgj) bgj.setAttribute('aria-pressed', next === 'gu' ? 'true' : 'false');
+  applyStaticI18n();
+  refreshLiveI18n();
+}
+
+function initLangSwitcher() {
+  const ben = document.getElementById('lang-btn-en');
+  const bgj = document.getElementById('lang-btn-gu');
+  let saved = 'en';
+  try { saved = localStorage.getItem(LANG_STORE) || 'en'; } catch (e) {}
+  if (saved !== 'gu') saved = 'en';
+  if (ben) ben.addEventListener('click', () => setLang('en'));
+  if (bgj) bgj.addEventListener('click', () => setLang('gu'));
+  setLang(saved);
+}
+
 /* ── ICON HELPER ── */
 const ICONS = {
   check:    `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`,
@@ -868,6 +1302,8 @@ function setStep(n) {
     if (i + 1 < n) el.className = 'step done';
     else if (i + 1 === n) el.className = 'step active';
     else el.className = 'step';
+    if (i + 1 === n) el.setAttribute('aria-current', 'step');
+    else el.removeAttribute('aria-current');
   });
 }
 
@@ -892,11 +1328,11 @@ function escapeHtml(v) {
 /* ── FILE HANDLING ── */
 async function handleFiles(list) {
   const imgs = Array.from(list || []).filter(f => f.type.startsWith('image/'));
-  if (!imgs.length) { showStatus('Please select valid image files (JPG, PNG, WEBP).', 'error'); return; }
+  if (!imgs.length) { showStatus(t('toastImageType'), 'error'); return; }
   const slots = MAX_IMAGES - documents.length;
-  if (slots <= 0) { showStatus('Maximum 5 photos already added. Remove one before adding more.', 'error'); return; }
+  if (slots <= 0) { showStatus(t('toastMax5'), 'error'); return; }
   const accepted = imgs.slice(0, slots);
-  if (imgs.length > accepted.length) showStatus(`Only ${accepted.length} photo(s) added — limit is 5.`, 'warning');
+  if (imgs.length > accepted.length) showStatus(tpl('toastPartial5', { n: accepted.length }), 'warning');
   for (const file of accepted) {
     try {
       const c = await compressImage(file);
@@ -909,22 +1345,24 @@ async function handleFiles(list) {
         status: 'ready', error: '',
         tableData: [], origData: [], numCols: 0
       });
-    } catch (err) { showStatus(`Could not read ${file.name}: ${err.message}`, 'error'); }
+    } catch (err) {
+      showStatus(tpl('toastReadError', { name: file.name, msg: err.message }), 'error');
+    }
   }
   fileInput.value = '';
   renderThumbs();
   updateButtons();
-  if (documents.length) showStatus(`${documents.length} photo(s) ready. Press "Read Numbers in Photos" to extract data.`, 'success');
+  if (documents.length) showStatus(tpl('toastReadyNext', { n: documents.length }), 'success');
 }
 
 /* ── IMAGE COMPRESSION + CONTRAST ENHANCEMENT ── */
 function compressImage(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error('File read failed'));
+    reader.onerror = () => reject(new Error(t('errFileRead')));
     reader.onload = () => {
       const img = new Image();
-      img.onerror = () => reject(new Error('Image decode failed'));
+      img.onerror = () => reject(new Error(t('errImageDecode')));
       img.onload = () => {
         const maxSide = 2400;
         const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
@@ -965,8 +1403,8 @@ function renderThumbs() {
   empty.classList.toggle('hide', documents.length > 0);
   grid.innerHTML = documents.map((doc, i) => `
     <div class="thumb">
-      <img src="${doc.preview || BLANK_IMG}" alt="preview" loading="lazy" />
-      <button class="thumb-remove" onclick="removeDocument(${i})" title="Remove" aria-label="Remove ${escapeHtml(doc.originalName)}">
+      <img src="${doc.preview || BLANK_IMG}" alt="" loading="lazy" />
+      <button class="thumb-remove" onclick="removeDocument(${i})" title="${escapeHtml(t('thumbRemoveTitle'))}" aria-label="${escapeHtml(tpl('thumbRemoveAria', { name: doc.originalName }))}">
         ${icon('x', 11)}
       </button>
       <div class="thumb-body">
@@ -987,45 +1425,49 @@ function removeDocument(i) {
   if (currentIndex === i) currentIndex = -1;
   else if (currentIndex > i) currentIndex--;
   renderThumbs(); updateButtons();
-  showStatus(documents.length ? `${documents.length} photo(s) selected.` : 'All photos removed.', 'info');
+  showStatus(documents.length ? tpl('toastPhotosOnList', { n: documents.length }) : t('toastAllRemoved'), 'info');
 }
 
 function statusLabel(doc) {
-  if (doc.status === 'done') return `${doc.tableData.length} rows extracted`;
-  if (doc.status === 'extracting') return 'Reading…';
-  if (doc.status === 'error') return 'Error — retry';
-  if (doc.tableData.length) return `${doc.tableData.length} rows`;
-  return 'Not read yet';
+  if (doc.status === 'done') return tpl('statusRowsTable', { n: doc.tableData.length });
+  if (doc.status === 'extracting') return t('statusReading');
+  if (doc.status === 'error') return t('statusErrRetry');
+  if (doc.tableData.length) return tpl('statusRowsShort', { n: doc.tableData.length });
+  return t('statusNotReadYet');
 }
 
 function badgeHtml(doc) {
-  if (doc.status === 'done')       return `<span class="badge badge-done">${icon('check', 11)} Done</span>`;
-  if (doc.status === 'extracting') return `<span class="badge badge-busy">${icon('clock', 11)} Reading…</span>`;
-  if (doc.status === 'error')      return `<span class="badge badge-error">${icon('xcircle', 11)} Error</span>`;
-  return `<span class="badge badge-pending">${icon('pending', 11)} Not read</span>`;
+  if (doc.status === 'done')       return `<span class="badge badge-done">${icon('check', 11)} ${escapeHtml(t('badgeReady'))}</span>`;
+  if (doc.status === 'extracting') return `<span class="badge badge-busy">${icon('clock', 11)} ${escapeHtml(t('badgeReading'))}</span>`;
+  if (doc.status === 'error')      return `<span class="badge badge-error">${icon('xcircle', 11)} ${escapeHtml(t('badgeTryAgain'))}</span>`;
+  return `<span class="badge badge-pending">${icon('pending', 11)} ${escapeHtml(t('badgePending'))}</span>`;
 }
 
 /* ── EXTRACTION ── */
 async function extractAll() {
   if (!documents.length) return;
-  showLoader('Reading photos with AI…', `Starting photo 1 of ${documents.length}`);
+  showLoader(t('loaderReadingAll'), tpl('loaderStarting', { total: documents.length }));
   setStep(2);
   let ok = 0;
   for (let i = 0; i < documents.length; i++) {
-    document.getElementById('loader-detail').textContent = `Reading photo ${i + 1} of ${documents.length}: ${documents[i].originalName}`;
+    document.getElementById('loader-detail').textContent = tpl('loaderPhotoProgress', {
+      current: i + 1, total: documents.length, name: documents[i].originalName
+    });
     if (await extractDocument(i)) ok++;
   }
   showList();
-  if (ok === documents.length) showStatus(`All ${ok} photo(s) processed successfully. Open each to verify.`, 'success');
-  else showStatus(`${ok} of ${documents.length} photo(s) processed. Failed photos can be retried individually.`, ok ? 'warning' : 'error');
+  if (ok === documents.length) showStatus(tpl('toastDoneAll', { n: ok }), 'success');
+  else showStatus(tpl('toastPartial', { ok, total: documents.length }), ok ? 'warning' : 'error');
 }
 
 async function extractMissing() {
   const pending = documents.map((d, i) => ({ d, i })).filter(x => x.d.status !== 'done');
-  if (!pending.length) { showStatus('All photos have already been processed.', 'success'); return; }
-  showLoader('Reading remaining photos…', '');
+  if (!pending.length) { showStatus(t('toastAllReadAlready'), 'success'); return; }
+  showLoader(t('loaderReadingRest'), '');
   for (let j = 0; j < pending.length; j++) {
-    document.getElementById('loader-detail').textContent = `Reading ${j + 1} of ${pending.length}: ${pending[j].d.originalName}`;
+    document.getElementById('loader-detail').textContent = tpl('loaderReadingRestProg', {
+      current: j + 1, total: pending.length, name: pending[j].d.originalName
+    });
     await extractDocument(pending[j].i);
   }
   showList();
@@ -1034,10 +1476,10 @@ async function extractMissing() {
 async function extractCurrent() {
   if (!currentDoc()) return;
   const i = currentIndex;
-  showLoader('Re-reading this photo…', documents[i].originalName);
+  showLoader(t('loaderReread'), documents[i].originalName);
   const ok = await extractDocument(i);
   openDocument(i);
-  showStatus(ok ? 'Photo re-read successfully. Review the table below.' : documents[i].error, ok ? 'success' : 'error');
+  showStatus(ok ? t('toastRereadOk') : localizeServer(documents[i].error), ok ? 'success' : 'error');
 }
 
 async function extractDocument(i) {
@@ -1053,7 +1495,7 @@ async function extractDocument(i) {
     const data = await resp.json();
     if (!resp.ok || data.error) {
       doc.status = 'error';
-      doc.error = data.error || `Extraction failed (HTTP ${resp.status}).`;
+      doc.error = data.error || tpl('extractionHttp', { code: resp.status });
       return false;
     }
     loadRows(doc, data.rows);
@@ -1061,7 +1503,7 @@ async function extractDocument(i) {
     return true;
   } catch (err) {
     doc.status = 'error';
-    doc.error = `Network error: ${err.message}`;
+    doc.error = tpl('netError', { msg: err.message });
     return false;
   }
 }
@@ -1092,38 +1534,38 @@ function renderDocList() {
   document.getElementById('download-all-btn').disabled = !documents.some(d => d.tableData.length);
   document.getElementById('extract-missing-btn').disabled = !documents.some(d => d.status !== 'done');
   if (!documents.length) {
-    list.innerHTML = '<div class="empty-state">No photos added yet.</div>';
+    list.innerHTML = `<div class="empty-state">${escapeHtml(t('listEmpty'))}</div>`;
     return;
   }
   list.innerHTML = documents.map((doc, i) => `
     <div class="doc-row">
-      <img class="doc-thumb" src="${doc.preview || BLANK_IMG}" alt="preview" loading="lazy" />
+      <img class="doc-thumb" src="${doc.preview || BLANK_IMG}" alt="${escapeHtml(t('docThumbAltPrefix') + doc.originalName)}" loading="lazy" />
       <div>
         <div class="doc-name">${escapeHtml(doc.originalName)}</div>
         <div class="doc-meta">
           ${badgeHtml(doc)}
-          ${doc.error ? `<span style="font-size:12px;color:var(--danger);">${escapeHtml(doc.error)}</span>` : ''}
+          ${doc.error ? `<span style="font-size:12px;color:var(--danger);">${escapeHtml(localizeServer(doc.error))}</span>` : ''}
         </div>
       </div>
       <div class="doc-actions">
         <button class="btn btn-primary btn-sm" onclick="openDocument(${i})">
-          ${icon('eye', 13)} Open
+          ${icon('eye', 13)} ${escapeHtml(t('btnOpen'))}
         </button>
         <button class="btn btn-ghost btn-sm" onclick="extractOneFromList(${i})">
-          ${icon(doc.status === 'done' ? 'refresh' : 'scan', 13)} ${doc.status === 'done' ? 'Re-read' : 'Read'}
+          ${icon(doc.status === 'done' ? 'refresh' : 'scan', 13)} ${escapeHtml(doc.status === 'done' ? t('btnReread') : t('btnRead'))}
         </button>
         <button class="btn btn-success btn-sm" onclick="downloadExcel(${i})" ${doc.tableData.length ? '' : 'disabled'}>
-          ${icon('download', 13)} Excel
+          ${icon('download', 13)} ${escapeHtml(t('btnExcelFile'))}
         </button>
       </div>
     </div>`).join('');
 }
 
 async function extractOneFromList(i) {
-  showLoader('Reading photo…', documents[i].originalName);
+  showLoader(t('loaderReadingOne'), documents[i].originalName);
   const ok = await extractDocument(i);
   showList();
-  showStatus(ok ? `${documents[i].originalName} processed successfully.` : documents[i].error, ok ? 'success' : 'error');
+  showStatus(ok ? tpl('toastProcessedOk', { name: documents[i].originalName }) : localizeServer(documents[i].error), ok ? 'success' : 'error');
 }
 
 function openDocument(i) {
@@ -1137,11 +1579,12 @@ function renderReview() {
   document.getElementById('review-title').textContent = doc.originalName;
   document.getElementById('review-subtitle').textContent = statusLabel(doc);
   document.getElementById('review-image').src = doc.preview || BLANK_IMG;
-  const btn = document.getElementById('extract-current-btn');
-  btn.innerHTML = `${icon('refresh', 13)} ${doc.status === 'done' ? 'Re-read this photo' : 'Read this photo'}`;
-  btn.disabled = !doc.imageBase64;
+  const lbl = document.getElementById('extract-current-label');
+  if (lbl) lbl.textContent = doc.status === 'done' ? t('btnRereadPhoto') : t('btnReadPhoto');
+  document.getElementById('extract-current-btn').disabled = !doc.imageBase64;
   if (!doc.tableData.length) {
-    document.getElementById('main-table').innerHTML = '<tbody><tr><td colspan="99" style="padding:24px;text-align:center;color:var(--gray-500);font-size:13px;">No data extracted yet. Click "Read this photo" to begin.</td></tr></tbody>';
+    document.getElementById('main-table').innerHTML =
+      `<tbody><tr><td colspan="99" style="padding:24px;text-align:center;color:var(--gray-500);font-size:13px;line-height:1.5;">${escapeHtml(t('emptyTableMsg'))}</td></tr></tbody>`;
     refreshStats(); return;
   }
   renderTable();
@@ -1160,10 +1603,10 @@ function renderTable() {
   if (!doc) return;
   doc.numCols = Math.max(1, ...doc.tableData.map(r => r.values.length));
   doc.tableData.forEach(r => pad(doc, r));
-  const t = document.getElementById('main-table');
-  let h = '<thead><tr><th style="min-width:68px">Row</th>';
-  for (let c = 0; c < doc.numCols; c++) h += `<th>Col ${c + 1}</th>`;
-  h += '<th>Row Total</th></tr></thead><tbody>';
+  const tbl = document.getElementById('main-table');
+  let h = `<thead><tr><th style="min-width:68px">${escapeHtml(t('tblRow'))}</th>`;
+  for (let c = 0; c < doc.numCols; c++) h += `<th>${escapeHtml(tpl('tblCol', { n: c + 1 }))}</th>`;
+  h += `<th>${escapeHtml(t('tblRowTotal'))}</th></tr></thead><tbody>`;
   doc.tableData.forEach((row, ri) => {
     h += `<tr><td class="label-cell"><input class="label-input" value="${escapeHtml(row.label)}" oninput="onLabel(this,${ri})" /></td>`;
     for (let c = 0; c < doc.numCols; c++) {
@@ -1173,10 +1616,10 @@ function renderTable() {
     }
     h += `<td class="td-total" id="rt-${ri}">${fmt(rowSum(row.values))}</td></tr>`;
   });
-  h += `<tr><td class="td-footer-label">Total</td>`;
+  h += `<tr><td class="td-footer-label">${escapeHtml(t('tblFooterTotal'))}</td>`;
   for (let c = 0; c < doc.numCols; c++) h += `<td class="td-col-total" id="ct-${c}">${fmt(colSum(doc, c))}</td>`;
   h += `<td class="td-grand" id="grand-total">${fmt(grandTotal(doc))}</td></tr></tbody>`;
-  t.innerHTML = h;
+  tbl.innerHTML = h;
   refreshStats();
 }
 
@@ -1231,26 +1674,34 @@ async function downloadCurrentExcel() { if (currentIndex >= 0) await downloadExc
 
 async function downloadExcel(i) {
   const doc = documents[i];
-  if (!doc || !doc.tableData.length) { showStatus('No data available to download for this photo.', 'error'); return; }
+  if (!doc || !doc.tableData.length) { showStatus(t('toastNoTableYet'), 'error'); return; }
   try {
     const r = await fetch('/download-excel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows: doc.tableData, filename: doc.filename }) });
-    if (!r.ok) { const e = await r.json().catch(() => ({})); showStatus(e.error || `Download failed (HTTP ${r.status}).`, 'error'); return; }
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      showStatus(localizeServer(e.error || tpl('toastDlFail', { code: r.status })), 'error');
+      return;
+    }
     await saveBlob(r, `${safeFilename(doc.filename)}.xlsx`);
     setStep(4);
-    showStatus(`Excel file downloaded: ${doc.originalName}`, 'success');
-  } catch (err) { showStatus(`Download failed: ${err.message}`, 'error'); }
+    showStatus(tpl('toastDlOk', { name: doc.originalName }), 'success');
+  } catch (err) { showStatus(tpl('toastDlFailMsg', { msg: err.message }), 'error'); }
 }
 
 async function downloadAllExcels() {
   const ready = documents.filter(d => d.tableData.length);
-  if (!ready.length) { showStatus('No processed photos available. Read photos first.', 'error'); return; }
+  if (!ready.length) { showStatus(t('toastDlNone'), 'error'); return; }
   try {
     const r = await fetch('/download-all-excels', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ documents: ready.map(d => ({ filename: d.filename, rows: d.tableData })) }) });
-    if (!r.ok) { const e = await r.json().catch(() => ({})); showStatus(e.error || `Download failed (HTTP ${r.status}).`, 'error'); return; }
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      showStatus(localizeServer(e.error || tpl('toastDlFail', { code: r.status })), 'error');
+      return;
+    }
     await saveBlob(r, 'factory-excels.zip');
     setStep(4);
-    showStatus(`Downloaded ${ready.length} Excel file(s) as a ZIP archive.`, 'success');
-  } catch (err) { showStatus(`Download failed: ${err.message}`, 'error'); }
+    showStatus(tpl('toastZipOk', { n: ready.length }), 'success');
+  } catch (err) { showStatus(tpl('toastDlFailMsg', { msg: err.message }), 'error'); }
 }
 
 async function saveBlob(resp, filename) {
@@ -1276,7 +1727,7 @@ function buildManual() {
   const cols = Math.max(1, Math.min(80,  Number(document.getElementById('man-cols').value) || 12));
   const doc  = {
     id: nextId++, filename: `manual-table-${documents.length + 1}`,
-    originalName: `Manual Table ${documents.length + 1}`,
+    originalName: tpl('manualName', { n: documents.length + 1 }),
     preview: '', imageBase64: '', mediaType: 'image/jpeg', bytes: 0,
     status: 'done', error: '',
     tableData: Array.from({ length: rows }, (_, i) => ({ label: String(i + 1), values: Array(cols).fill(null) })),
@@ -1285,8 +1736,10 @@ function buildManual() {
   doc.origData = JSON.parse(JSON.stringify(doc.tableData));
   documents.push(doc); currentIndex = documents.length - 1;
   renderThumbs(); updateButtons(); openDocument(currentIndex);
-  showStatus('Blank table created. Enter your values and download when ready.', 'info');
+  showStatus(t('toastManualReady'), 'info');
 }
+
+initLangSwitcher();
 </script>
 </body>
 </html>
