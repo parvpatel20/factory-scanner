@@ -2,23 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "source": "/health",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/extract",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/download-excel",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/download-all-excels",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/api/(.*)",
+      "source": "/(.*)",
       "destination": "/api/index"
     }
   ]
