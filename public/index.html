@@ -6,706 +6,454 @@
 <title data-i18n="docTitle">Factory Scanner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --primary:       #2563EB;
-    --primary-hover: #1D4ED8;
-    --primary-muted: #EFF6FF;
-    --success:       #16A34A;
-    --success-hover: #15803D;
-    --success-muted: #F0FDF4;
-    --danger:        #DC2626;
-    --danger-hover:  #B91C1C;
-    --danger-muted:  #FEF2F2;
-    --warning:       #D97706;
-    --warning-muted: #FFFBEB;
-    --gray-50:  #F9FAFB;
-    --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
-    --gray-300: #D1D5DB;
-    --gray-400: #9CA3AF;
-    --gray-500: #6B7280;
-    --gray-600: #4B5563;
-    --gray-700: #374151;
-    --gray-800: #1F2937;
-    --gray-900: #111827;
-    --white: #FFFFFF;
-    --radius-sm: 6px;
-    --radius:    10px;
-    --radius-lg: 14px;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
-    --shadow:    0 1px 4px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
-  }
+:root {
+  --primary:       #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-muted: #EFF6FF;
+  --success:       #16A34A;
+  --success-hover: #15803D;
+  --success-muted: #F0FDF4;
+  --danger:        #DC2626;
+  --danger-hover:  #B91C1C;
+  --danger-muted:  #FEF2F2;
+  --warning:       #D97706;
+  --warning-muted: #FFFBEB;
+  --gray-50:  #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
+  --white:    #FFFFFF;
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+  --shadow:    0 1px 4px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
+}
 
-  html { font-size: 15px; -webkit-text-size-adjust: 100%; }
-  html[lang="gu"] body {
-    font-family: "Noto Sans Gujarati", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
-  html[lang="gu"] .stat-label { text-transform: none; letter-spacing: 0; font-size: 11px; }
-  html[lang="gu"] thead th { text-transform: none; letter-spacing: 0; }
-  html[lang="gu"] .how-step-num { text-transform: none; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: var(--gray-100);
-    color: var(--gray-900);
-    line-height: 1.55;
-    min-height: 100vh;
-    min-height: 100dvh;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-  button, input { font: inherit; }
-  a.skip-link {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-  }
-  a.skip-link:focus {
-    position: fixed; width: auto; height: auto; margin: 0; clip: auto; z-index: 300;
-    top: max(12px, env(safe-area-inset-top, 12px)); left: max(12px, env(safe-area-inset-left, 12px));
-    padding: 10px 16px; background: var(--white); color: var(--primary); font-weight: 700;
-    border-radius: var(--radius); box-shadow: var(--shadow);
-    text-decoration: none;
-  }
-  .btn:focus-visible, .drop-zone:focus-within {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-  }
+html { font-size: 15px; -webkit-text-size-adjust: 100%; }
+html[lang="gu"] body {
+  font-family: "Noto Sans Gujarati", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+html[lang="gu"] .stat-label { text-transform: none; letter-spacing: 0; font-size: 11px; }
+html[lang="gu"] thead th { text-transform: none; letter-spacing: 0; }
+html[lang="gu"] .how-step-num { text-transform: none; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--gray-100);
+  color: var(--gray-900);
+  line-height: 1.55;
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button, input { font: inherit; }
+a.skip-link {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+a.skip-link:focus {
+  position: fixed; width: auto; height: auto; margin: 0; clip: auto; z-index: 300;
+  top: max(12px, env(safe-area-inset-top, 12px)); left: max(12px, env(safe-area-inset-left, 12px));
+  padding: 10px 16px; background: var(--white); color: var(--primary); font-weight: 700;
+  border-radius: var(--radius); box-shadow: var(--shadow); text-decoration: none;
+}
+.btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
-  /* ── TOPBAR ── */
-  .topbar {
-    min-height: 56px;
-    background: var(--gray-900);
-    display: flex;
-    align-items: center;
-    padding: max(10px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 200;
-    box-shadow: 0 1px 3px rgba(0,0,0,.25);
-  }
-  .topbar-logo {
-    width: 32px; height: 32px;
-    background: var(--primary);
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--white);
-    flex-shrink: 0;
-  }
-  .topbar-title {
-    font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: -.2px;
-    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .topbar-sub   { font-size: 12px; color: var(--gray-400); margin-left: 10px; flex-shrink: 0; font-weight: 500; letter-spacing: .01em; }
-  @media (max-width: 540px) { .topbar-sub { display: none; } }
+/* ── TOPBAR ── */
+.topbar {
+  min-height: 56px;
+  background: var(--gray-900);
+  display: flex;
+  align-items: center;
+  padding: max(10px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  gap: 12px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.topbar-logo {
+  width: 32px; height: 32px;
+  background: var(--primary); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--white); flex-shrink: 0;
+}
+.topbar-title { font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: -.2px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-sub   { font-size: 12px; color: var(--gray-400); margin-left: 10px; flex-shrink: 0; font-weight: 500; }
+@media (max-width: 540px) { .topbar-sub { display: none; } }
 
-  .lang-switch {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .lang-switch-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
-  .lang-btn {
-    min-width: 36px;
-    height: 32px;
-    padding: 0 10px;
-    border-radius: var(--radius-sm);
-    font-size: 12px;
-    font-weight: 700;
-    border: 1px solid rgba(255,255,255,.25);
-    background: rgba(255,255,255,.08);
-    color: var(--gray-400);
-    cursor: pointer;
-    transition: background .15s, color .15s, border-color .15s;
-    -webkit-tap-highlight-color: transparent;
-    font-family: inherit;
-  }
-  .lang-btn:hover { color: var(--white); border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.14); }
-  .lang-btn[aria-pressed="true"] {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: var(--white);
-    box-shadow: 0 1px 3px rgba(0,0,0,.35);
-  }
-  .step .step-label { display: inline; }
-  @media (max-width: 380px) {
-    .topbar { gap: 8px; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
-    .topbar-title { font-size: 14px; }
-  }
+.lang-switch { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.lang-switch-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.lang-btn {
+  min-width: 36px; height: 32px; padding: 0 10px;
+  border-radius: var(--radius-sm); font-size: 12px; font-weight: 700;
+  border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08);
+  color: var(--gray-400); cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  -webkit-tap-highlight-color: transparent; font-family: inherit;
+}
+.lang-btn:hover { color: var(--white); border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.14); }
+.lang-btn[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,.35); }
 
-  /* ── STEP BAR ── */
-  .stepbar {
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-200);
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
-  }
-  .stepbar::-webkit-scrollbar { display: none; }
-  .steps {
-    display: flex;
-    min-width: max-content;
-    padding: 0 max(12px, env(safe-area-inset-left, 0px)) 0 max(12px, env(safe-area-inset-right, 0px));
-  }
-  .step {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 13px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--gray-400);
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: color .15s, border-color .15s;
-    user-select: none;
-  }
-  .step-badge {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800;
-    background: var(--gray-200);
-    color: var(--gray-500);
-    flex-shrink: 0;
-    transition: .15s;
-  }
-  .step.active { color: var(--primary); border-bottom-color: var(--primary); }
-  .step.active .step-badge { background: var(--primary); color: var(--white); }
-  .step.done { color: var(--success); border-bottom-color: var(--success); }
-  .step.done .step-badge { background: var(--success); color: var(--white); }
-  @media (max-width: 480px) {
-    .step { padding: 11px 12px; font-size: 12px; gap: 5px; }
-    .step svg { width: 12px !important; height: 12px !important; }
-    .step-badge { width: 20px; height: 20px; font-size: 10px; }
-  }
+/* ── STEP BAR ── */
+.stepbar {
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.stepbar::-webkit-scrollbar { display: none; }
+.steps {
+  display: flex; min-width: max-content;
+  padding: 0 max(12px, env(safe-area-inset-left, 0px)) 0 max(12px, env(safe-area-inset-right, 0px));
+}
+.step {
+  display: flex; align-items: center; gap: 7px;
+  padding: 13px 16px; font-size: 13px; font-weight: 600;
+  color: var(--gray-400); border-bottom: 2px solid transparent;
+  white-space: nowrap; transition: color .15s, border-color .15s; user-select: none;
+}
+.step-badge {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; background: var(--gray-200); color: var(--gray-500);
+  flex-shrink: 0; transition: .15s;
+}
+.step.active { color: var(--primary); border-bottom-color: var(--primary); }
+.step.active .step-badge { background: var(--primary); color: var(--white); }
+.step.done { color: var(--success); border-bottom-color: var(--success); }
+.step.done .step-badge { background: var(--success); color: var(--white); }
+@media (max-width: 480px) { .step { padding: 11px 12px; font-size: 12px; gap: 5px; } .step-badge { width: 20px; height: 20px; font-size: 10px; } }
 
-  /* ── LAYOUT ── */
-  .wrap {
-    max-width: 960px; margin: 0 auto;
-    padding: 20px max(16px, env(safe-area-inset-left, 0px)) max(60px, env(safe-area-inset-bottom, 24px)) max(16px, env(safe-area-inset-right, 0px));
-    width: 100%;
-    min-width: 0;
-  }
+/* ── LAYOUT ── */
+.wrap {
+  max-width: 960px; margin: 0 auto;
+  padding: 20px max(16px, env(safe-area-inset-left, 0px)) max(60px, env(safe-area-inset-bottom, 24px)) max(16px, env(safe-area-inset-right, 0px));
+  width: 100%; min-width: 0;
+}
 
-  /* ── ALERT BANNER ── */
-  .alert {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 14px;
-    min-width: 0;
-    border-radius: var(--radius);
-    border: 1px solid transparent;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 16px;
-  }
-  .alert svg { flex-shrink: 0; margin-top: 1px; }
-  .alert > span:last-child { min-width: 0; word-break: break-word; }
-  .alert.info    { background: var(--primary-muted); color: var(--primary);  border-color: #BFDBFE; }
-  .alert.success { background: var(--success-muted); color: var(--success);  border-color: #BBF7D0; }
-  .alert.error   { background: var(--danger-muted);  color: var(--danger);   border-color: #FECACA; }
-  .alert.warning { background: var(--warning-muted); color: var(--warning);  border-color: #FDE68A; }
+/* ── ALERT ── */
+.alert {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; min-width: 0; border-radius: var(--radius);
+  border: 1px solid transparent; font-size: 13px; font-weight: 500; margin-bottom: 16px;
+}
+.alert svg { flex-shrink: 0; margin-top: 1px; }
+.alert > span:last-child { min-width: 0; word-break: break-word; }
+.alert.info    { background: var(--primary-muted); color: var(--primary);  border-color: #BFDBFE; }
+.alert.success { background: var(--success-muted); color: var(--success);  border-color: #BBF7D0; }
+.alert.error   { background: var(--danger-muted);  color: var(--danger);   border-color: #FECACA; }
+.alert.warning { background: var(--warning-muted); color: var(--warning);  border-color: #FDE68A; }
 
-  /* ── CARD ── */
-  .card {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 16px;
-    min-width: 0;
-  }
-  @media (max-width: 480px) {
-    .card { padding: 16px 14px; border-radius: var(--radius); }
-  }
-  .card-header { margin-bottom: 4px; }
-  .card-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--gray-900);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card-title svg { color: var(--gray-500); }
-  .card-desc { font-size: 13px; color: var(--gray-500); margin-top: 3px; }
+/* ── CARD ── */
+.card {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); padding: 20px;
+  box-shadow: var(--shadow-sm); margin-bottom: 16px; min-width: 0;
+}
+@media (max-width: 480px) { .card { padding: 16px 14px; border-radius: var(--radius); } }
+.card-header { margin-bottom: 4px; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 8px; }
+.card-title svg { color: var(--gray-500); }
+.card-desc { font-size: 13px; color: var(--gray-500); margin-top: 3px; }
 
-  /* ── BUTTONS ── */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 38px;
-    padding: 0 16px;
-    border-radius: var(--radius);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1px solid transparent;
-    white-space: nowrap;
-    transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    user-select: none;
-    text-decoration: none;
-  }
-  .btn:disabled { opacity: .45; cursor: not-allowed; }
-  .btn:active:not(:disabled) { transform: scale(.98); }
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 38px; padding: 0 16px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: 1px solid transparent; white-space: nowrap;
+  transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  user-select: none; text-decoration: none;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:active:not(:disabled) { transform: scale(.98); }
+.btn-primary { background: var(--primary); color: var(--white); border-color: var(--primary); box-shadow: 0 1px 2px rgba(37,99,235,.25); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn-success { background: var(--success); color: var(--white); border-color: var(--success); box-shadow: 0 1px 2px rgba(22,163,74,.2); }
+.btn-success:hover:not(:disabled) { background: var(--success-hover); border-color: var(--success-hover); }
+.btn-ghost { background: transparent; color: var(--gray-700); border-color: var(--gray-300); }
+.btn-ghost:hover:not(:disabled) { background: var(--gray-50); }
+.btn-danger-ghost { background: transparent; color: var(--danger); border-color: #FECACA; }
+.btn-danger-ghost:hover:not(:disabled) { background: var(--danger-muted); }
+.btn-lg { height: 46px; padding: 0 22px; font-size: 14px; border-radius: var(--radius); }
+.btn-sm { height: 32px; padding: 0 12px; font-size: 12px; border-radius: var(--radius-sm); }
+.btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: stretch; }
+.btn-group.mt0 { margin-top: 0; }
+@media (max-width: 560px) {
+  .btn-group:not(.tbl-controls) { flex-direction: column; }
+  .btn-group:not(.tbl-controls) .btn { width: 100%; justify-content: center; }
+}
 
-  .btn-primary { background: var(--primary); color: var(--white); border-color: var(--primary); box-shadow: 0 1px 2px rgba(37,99,235,.25); }
-  .btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--gray-200); margin: 16px 0; }
 
-  .btn-success { background: var(--success); color: var(--white); border-color: var(--success); box-shadow: 0 1px 2px rgba(22,163,74,.2); }
-  .btn-success:hover:not(:disabled) { background: var(--success-hover); border-color: var(--success-hover); }
+/* ── HOW-TO STRIP ── */
+.how-to {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 16px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.how-step { text-align: center; }
+.how-step-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-muted); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+.how-step-num { font-size: 11px; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; }
+.how-step-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-top: 2px; line-height: 1.35; }
+@media (max-width: 560px) { .how-to { grid-template-columns: repeat(2, 1fr); padding: 14px; gap: 14px; } }
+@media (max-width: 380px) { .how-to { grid-template-columns: 1fr; text-align: left; } .how-step { text-align: left; } .how-step-icon { margin: 0 0 8px 0; } }
 
-  .btn-ghost { background: transparent; color: var(--gray-700); border-color: var(--gray-300); }
-  .btn-ghost:hover:not(:disabled) { background: var(--gray-50); }
+/* ── INPUT TABS ── */
+.input-tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 16px; gap: 0; }
+.input-tab {
+  padding: 10px 18px; font-size: 13px; font-weight: 600;
+  color: var(--gray-500); background: none; border: none; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  transition: color .15s, border-color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.input-tab:hover { color: var(--gray-700); }
+.input-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-  .btn-danger-ghost { background: transparent; color: var(--danger); border-color: #FECACA; }
-  .btn-danger-ghost:hover:not(:disabled) { background: var(--danger-muted); }
+/* ── DROP ZONE ── */
+.drop-zone {
+  display: block; width: 100%; max-width: 100%;
+  border: 2px dashed var(--gray-300); border-radius: var(--radius-lg);
+  background: var(--gray-50); padding: 40px 24px; text-align: center;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  -webkit-tap-highlight-color: transparent; margin-bottom: 16px;
+}
+.drop-zone:hover, .drop-zone.drag { border-color: var(--primary); background: var(--primary-muted); }
+.drop-zone:hover .dz-icon, .drop-zone.drag .dz-icon { color: var(--primary); }
+.drop-zone input { display: none; }
+.dz-icon { color: var(--gray-400); margin: 0 auto 12px; display: block; transition: color .15s; }
+.dz-head { font-size: 15px; font-weight: 700; color: var(--gray-700); margin-bottom: 4px; word-break: break-word; }
+.dz-sub  { font-size: 13px; color: var(--gray-400); line-height: 1.45; word-break: break-word; }
+@media (max-width: 480px) { .drop-zone { padding: 28px 16px; border-radius: var(--radius); } .dz-head { font-size: 14px; } .dz-sub { font-size: 12px; } }
 
-  .btn-lg { height: 46px; padding: 0 22px; font-size: 14px; border-radius: var(--radius); }
-  .btn-sm { height: 32px; padding: 0 12px; font-size: 12px; border-radius: var(--radius-sm); }
+/* ── URL INPUT PANEL ── */
+.url-panel { padding: 4px 0 8px; }
+.url-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.url-input {
+  flex: 1; min-width: 0;
+  border: 1px solid var(--gray-300); border-radius: var(--radius);
+  padding: 9px 12px; font-size: 14px; color: var(--gray-900);
+  background: var(--white); transition: border-color .15s, box-shadow .15s;
+}
+.url-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+.url-hint { font-size: 12px; color: var(--gray-400); line-height: 1.5; }
+@media (max-width: 520px) { .url-input-row { flex-direction: column; } }
 
-  /* ── BUTTON GROUP ── */
-  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: stretch; }
-  .btn-group.mt0 { margin-top: 0; }
-  @media (max-width: 560px) {
-    .btn-group:not(.tbl-controls) {
-      flex-direction: column;
-    }
-    .btn-group:not(.tbl-controls) .btn {
-      width: 100%;
-      justify-content: center;
-    }
-  }
+/* ── THUMB GRID ── */
+.thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(130px,100%), 1fr)); gap: 10px; }
+@media (max-width: 360px) { .thumb-grid { grid-template-columns: 1fr; } }
+.thumb { border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; background: var(--white); position: relative; box-shadow: var(--shadow-sm); }
+.thumb img { width: 100%; height: 96px; object-fit: cover; display: block; background: var(--gray-800); }
+.thumb-body { padding: 7px 9px 8px; }
+.thumb-name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--gray-800); }
+.thumb-meta { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+.thumb-remove {
+  position: absolute; top: 5px; right: 5px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(0,0,0,.5); color: var(--white); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background .12s;
+}
+.thumb-remove:hover { background: var(--danger); }
 
-  /* ── DIVIDER ── */
-  .divider { height: 1px; background: var(--gray-200); margin: 16px 0; }
+/* ── DOC LIST ── */
+.doc-list { display: flex; flex-direction: column; gap: 10px; }
+.doc-row {
+  display: grid; grid-template-columns: 72px 1fr auto; gap: 14px;
+  align-items: center; background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius); padding: 12px 14px;
+  box-shadow: var(--shadow-sm); transition: border-color .12s;
+}
+.doc-row:hover { border-color: var(--gray-300); }
+.doc-thumb { width: 72px; height: 56px; object-fit: cover; border-radius: var(--radius-sm); background: var(--gray-800); display: block; }
+.doc-name  { font-size: 14px; font-weight: 700; color: var(--gray-900); overflow-wrap: anywhere; }
+.doc-meta  { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; min-width: 0; }
+.doc-actions { display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; align-items: center; }
+@media (max-width: 620px) {
+  .doc-row { grid-template-columns: 56px 1fr; }
+  .doc-thumb { width: 56px; height: 44px; }
+  .doc-actions { grid-column: 1/-1; justify-content: flex-start; }
+  .doc-actions .btn { flex: 1 1 auto; min-width: min(100%, 108px); justify-content: center; }
+}
+@media (max-width: 400px) { .doc-actions { flex-direction: column; align-items: stretch; } .doc-actions .btn { width: 100%; flex: none; } }
 
-  /* ── HOW-TO STRIP ── */
-  .how-to {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: 16px 20px;
-    margin-bottom: 16px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-  .how-step { text-align: center; }
-  .how-step-icon {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--primary-muted);
-    color: var(--primary);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 8px;
-  }
-  .how-step-num { font-size: 11px; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; }
-  .how-step-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-top: 2px; line-height: 1.35; }
-  @media (max-width: 560px) { .how-to { grid-template-columns: repeat(2, 1fr); padding: 14px 14px; gap: 14px; } }
-  @media (max-width: 380px) {
-    .how-to { grid-template-columns: 1fr; text-align: left; }
-    .how-step { text-align: left; }
-    .how-step-icon { margin: 0 0 8px 0; }
-  }
+/* ── STATUS BADGE ── */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .2px; }
+.badge-done    { background: var(--success-muted); color: var(--success); }
+.badge-pending { background: var(--gray-100);      color: var(--gray-500); }
+.badge-busy    { background: var(--primary-muted); color: var(--primary); }
+.badge-error   { background: var(--danger-muted);  color: var(--danger); }
 
-  /* ── DROP ZONE ── */
-  .drop-zone {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    border: 2px dashed var(--gray-300);
-    border-radius: var(--radius-lg);
-    background: var(--gray-50);
-    padding: 44px 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color .15s, background .15s;
-    -webkit-tap-highlight-color: transparent;
-    margin-bottom: 16px;
-  }
-  .drop-zone:hover, .drop-zone.drag { border-color: var(--primary); background: var(--primary-muted); }
-  .drop-zone:hover .dz-icon, .drop-zone.drag .dz-icon { color: var(--primary); }
-  .drop-zone input { display: none; }
-  .dz-icon { color: var(--gray-400); margin: 0 auto 12px; display: block; transition: color .15s; }
-  .dz-head { font-size: 15px; font-weight: 700; color: var(--gray-700); margin-bottom: 4px; word-break: break-word; }
-  .dz-sub { font-size: 13px; color: var(--gray-400); line-height: 1.45; word-break: break-word; }
-  @media (max-width: 480px) {
-    .drop-zone { padding: 28px 16px; border-radius: var(--radius); }
-    .dz-head { font-size: 14px; }
-    .dz-sub { font-size: 12px; }
-  }
+/* ── LOADER ── */
+.loader { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 56px 24px; text-align: center; box-shadow: var(--shadow-sm); min-width: 0; }
+.spinner { width: 48px; height: 48px; border-radius: 50%; border: 4px solid var(--gray-200); border-top-color: var(--primary); animation: spin .7s linear infinite; margin: 0 auto 18px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-title  { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.loader-detail { font-size: 13px; color: var(--gray-500); }
+@media (max-width: 480px) { .loader { padding: 40px 16px; } .loader-title { font-size: 15px; } .loader-detail { font-size: 12px; padding: 0 4px; } }
 
-  /* ── THUMB GRID ── */
-  .thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr)); gap: 10px; }
-  @media (max-width: 360px) {
-    .thumb-grid { grid-template-columns: 1fr; }
-  }
-  .thumb {
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--white);
-    position: relative;
-    box-shadow: var(--shadow-sm);
-  }
-  .thumb img { width: 100%; height: 96px; object-fit: cover; display: block; background: var(--gray-800); }
-  .thumb-body { padding: 7px 9px 8px; }
-  .thumb-name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--gray-800); }
-  .thumb-meta { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
-  .thumb-remove {
-    position: absolute; top: 5px; right: 5px;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: rgba(0,0,0,.5);
-    color: var(--white);
-    border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .12s;
-  }
-  .thumb-remove:hover { background: var(--danger); }
+/* ── REVIEW LAYOUT ── */
+.review-grid { display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: 16px; align-items: start; min-width: 0; }
+.review-grid > div:last-child { min-width: 0; }
+.image-panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 12px; position: sticky; top: 72px; box-shadow: var(--shadow-sm); }
+.image-panel img { width: 100%; max-height: 360px; object-fit: contain; border-radius: var(--radius); background: var(--gray-800); display: block; }
+.image-hint { font-size: 12px; color: var(--gray-400); margin-top: 10px; line-height: 1.5; display: flex; gap: 5px; align-items: flex-start; min-width: 0; }
+.image-hint svg { flex-shrink: 0; margin-top: 1px; }
+.image-hint > span { min-width: 0; }
+.image-hint .hint-mobile { display: none; }
+@media (max-width: 680px) { .review-grid { grid-template-columns: 1fr; } .image-panel { position: static; } .image-hint .hint-desktop { display: none; } .image-hint .hint-mobile { display: inline; } .image-panel img { max-height: min(50vh, 320px); } }
 
-  /* ── DOC LIST ── */
-  .doc-list { display: flex; flex-direction: column; gap: 10px; }
-  .doc-row {
-    display: grid;
-    grid-template-columns: 72px 1fr auto;
-    gap: 14px;
-    align-items: center;
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    box-shadow: var(--shadow-sm);
-    transition: border-color .12s;
-  }
-  .doc-row:hover { border-color: var(--gray-300); }
-  .doc-thumb { width: 72px; height: 56px; object-fit: cover; border-radius: var(--radius-sm); background: var(--gray-800); display: block; }
-  .doc-name { font-size: 14px; font-weight: 700; color: var(--gray-900); overflow-wrap: anywhere; }
-  .doc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; min-width: 0; }
-  .doc-actions { display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; align-items: center; }
-  @media (max-width: 620px) {
-    .doc-row { grid-template-columns: 56px 1fr; }
-    .doc-thumb { width: 56px; height: 44px; }
-    .doc-actions { grid-column: 1/-1; justify-content: flex-start; }
-    .doc-actions .btn { flex: 1 1 auto; min-width: min(100%, 108px); justify-content: center; }
-  }
-  @media (max-width: 400px) {
-    .doc-actions { flex-direction: column; align-items: stretch; }
-    .doc-actions .btn { width: 100%; min-width: 0; flex: none; }
-  }
+/* ── STATS ── */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.stat { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 12px 14px; text-align: center; box-shadow: var(--shadow-sm); }
+.stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); }
+.stat-value { font-size: 22px; font-weight: 900; color: var(--gray-900); margin-top: 3px; }
+.stat.highlight { border-color: #BBF7D0; background: var(--success-muted); }
+.stat.highlight .stat-label { color: var(--success); }
+.stat.highlight .stat-value { color: var(--success); }
+@media (max-width: 420px) { .stats { grid-template-columns: 1fr; gap: 8px; } .stat { padding: 10px 12px; } .stat-value { font-size: 18px; } }
 
-  /* ── STATUS BADGE ── */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .2px;
-  }
-  .badge-done    { background: var(--success-muted); color: var(--success); }
-  .badge-pending { background: var(--gray-100);      color: var(--gray-500); }
-  .badge-busy    { background: var(--primary-muted); color: var(--primary); }
-  .badge-error   { background: var(--danger-muted);  color: var(--danger); }
+/* ── TABLE ── */
+.tbl-controls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.tbl-wrap {
+  overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+  border: 1px solid var(--gray-200); border-radius: var(--radius);
+  max-height: 54vh; max-height: min(54vh, 70dvh); box-shadow: var(--shadow-sm); min-width: 0;
+}
+@media (max-width: 680px) { .tbl-wrap { max-height: min(60vh, 65dvh); border-radius: var(--radius-sm); } }
+table { width: 100%; min-width: 400px; border-collapse: collapse; font-size: 13px; }
+thead th {
+  position: sticky; top: 0; z-index: 1;
+  background: var(--gray-50); color: var(--gray-500);
+  padding: 9px 8px; border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200);
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; text-align: center;
+}
+td { padding: 2px; border-right: 1px solid var(--gray-100); border-bottom: 1px solid var(--gray-100); background: var(--white); text-align: center; }
+tr:last-child td { border-bottom: 0; }
+th:last-child, td:last-child { border-right: 0; }
+/* sticky first column (row headers) */
+.th-hdr-col {
+  position: sticky; left: 0; z-index: 2;
+  background: var(--gray-50);
+  border-right: 1px solid var(--gray-200) !important;
+  min-width: 64px;
+}
+.td-hdr-col {
+  position: sticky; left: 0; z-index: 1;
+  background: var(--gray-50);
+  border-right: 1px solid var(--gray-200) !important;
+  padding: 2px;
+}
+.hdr-cell {
+  border: 0; border-radius: 4px; padding: 7px 6px; text-align: center;
+  background: transparent; font-size: 13px; font-weight: 700; color: var(--gray-800);
+  width: 100%; min-width: 52px;
+}
+.hdr-cell:focus { outline: 2px solid var(--primary); background: var(--white); }
+.hdr-cell.changed { background: #FEF9C3; color: #92400E; }
+.cell {
+  width: 72px; border: 0; border-radius: 4px;
+  padding: 7px 5px; text-align: center; background: transparent; font-size: 13px; color: var(--gray-800);
+}
+.cell:focus { outline: 2px solid var(--primary); background: var(--white); }
+.cell.changed { background: #FEF9C3; color: #92400E; font-weight: 700; }
+.td-total        { background: var(--success-muted); color: var(--success); font-weight: 800; min-width: 72px; }
+.td-col-total    { background: var(--gray-50); font-weight: 700; color: var(--gray-700); }
+.td-grand        { background: #DCFCE7; color: var(--success); font-weight: 900; font-size: 14px; }
+.td-footer-label {
+  position: sticky; left: 0; z-index: 1;
+  background: var(--gray-100); font-weight: 700; color: var(--gray-600);
+  padding: 8px; border-right: 1px solid var(--gray-200) !important;
+}
+.tbl-hint { font-size: 12px; color: var(--gray-400); margin-top: 10px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; min-width: 0; }
+.tbl-hint svg { flex-shrink: 0; margin-top: 2px; }
+@media (max-width: 480px) {
+  .tbl-controls .btn { flex: 1 1 calc(50% - 4px); min-width: 0; justify-content: center; white-space: normal; text-align: center; line-height: 1.25; padding: 8px; height: auto; min-height: 36px; }
+}
 
-  /* ── LOADER ── */
-  .loader {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: 56px 24px;
-    text-align: center;
-    box-shadow: var(--shadow-sm);
-    min-width: 0;
-  }
-  .spinner {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    border: 4px solid var(--gray-200);
-    border-top-color: var(--primary);
-    animation: spin .7s linear infinite;
-    margin: 0 auto 18px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-title  { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
-  .loader-detail { font-size: 13px; color: var(--gray-500); }
-  @media (max-width: 480px) {
-    .loader { padding: 40px 16px; border-radius: var(--radius); }
-    .loader-title { font-size: 15px; }
-    .loader-detail { font-size: 12px; padding: 0 4px; }
-  }
+/* ── MANUAL ── */
+.manual-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 12px; font-weight: 700; color: var(--gray-600); }
+.num-input { width: 100px; border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 8px 10px; font-size: 14px; background: var(--white); color: var(--gray-900); }
+.num-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+@media (max-width: 520px) { .manual-row { flex-direction: column; align-items: stretch; } .manual-row .field { width: 100%; } .manual-row .num-input { width: 100%; } .manual-row > .btn { width: 100%; justify-content: center; } }
 
-  /* ── REVIEW LAYOUT ── */
-  .review-grid {
-    display: grid;
-    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-    gap: 16px;
-    align-items: start;
-    min-width: 0;
-  }
-  .review-grid > div:last-child { min-width: 0; }
-  .image-panel {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: 12px;
-    position: sticky;
-    top: 72px;
-    box-shadow: var(--shadow-sm);
-  }
-  .image-panel img {
-    width: 100%;
-    max-height: 360px;
-    object-fit: contain;
-    border-radius: var(--radius);
-    background: var(--gray-800);
-    display: block;
-  }
-  .image-hint {
-    font-size: 12px;
-    color: var(--gray-400);
-    margin-top: 10px;
-    line-height: 1.5;
-    display: flex;
-    gap: 5px;
-    align-items: flex-start;
-    min-width: 0;
-  }
-  .image-hint svg { flex-shrink: 0; margin-top: 1px; }
-  .image-hint > span { min-width: 0; }
-  .image-hint .hint-mobile { display: none; }
-  @media (max-width: 680px) {
-    .review-grid { grid-template-columns: 1fr; }
-    .image-panel { position: static; }
-    .image-hint .hint-desktop { display: none; }
-    .image-hint .hint-mobile { display: inline; }
-    .image-panel img { max-height: min(50vh, 320px); }
-  }
+/* ── PAGE HEADER ── */
+.page-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; min-width: 0; }
+.page-header-text { flex: 1; min-width: 0; }
+.page-title { font-size: 16px; font-weight: 800; color: var(--gray-900); word-break: break-word; }
+.page-sub   { font-size: 13px; color: var(--gray-500); margin-top: 2px; line-height: 1.45; word-break: break-word; }
+@media (max-width: 560px) { .page-header .btn-group { width: 100%; } }
 
-  /* ── STATS ── */
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
-  .stat {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    text-align: center;
-    box-shadow: var(--shadow-sm);
-  }
-  .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); }
-  .stat-value { font-size: 22px; font-weight: 900; color: var(--gray-900); margin-top: 3px; }
-  .stat.highlight { border-color: #BBF7D0; background: var(--success-muted); }
-  .stat.highlight .stat-label { color: var(--success); }
-  .stat.highlight .stat-value { color: var(--success); }
-  @media (max-width: 420px) {
-    .stats { grid-template-columns: 1fr; gap: 8px; }
-    .stat { padding: 10px 12px; }
-    .stat-value { font-size: 18px; }
-  }
+/* ── PAGE INTRO & ACTIONS ── */
+.page-intro { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 16px; font-size: 14px; color: var(--gray-700); line-height: 1.55; box-shadow: var(--shadow-sm); }
+.page-intro strong { color: var(--gray-900); font-weight: 700; }
+.action-hint { font-size: 13px; color: var(--gray-600); line-height: 1.5; margin-bottom: 12px; padding: 10px 12px; background: var(--gray-50); border-radius: var(--radius); border: 1px solid var(--gray-200); }
+.btn-row-secondary { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; padding-top: 14px; margin-top: 4px; border-top: 1px solid var(--gray-200); }
+@media (max-width: 560px) { .btn-row-secondary { flex-direction: column; align-items: stretch; } .btn-row-secondary .btn { width: 100%; justify-content: center; } }
 
-  /* ── TABLE ── */
-  .tbl-controls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-  .tbl-wrap {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius);
-    max-height: 54vh;
-    max-height: min(54vh, 70dvh);
-    box-shadow: var(--shadow-sm);
-    min-width: 0;
-  }
-  @media (max-width: 680px) {
-    .tbl-wrap { max-height: min(60vh, 65dvh); border-radius: var(--radius-sm); }
-  }
-  table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 13px; }
-  thead th {
-    position: sticky; top: 0; z-index: 1;
-    background: var(--gray-50);
-    color: var(--gray-500);
-    padding: 9px 8px;
-    border-right: 1px solid var(--gray-200);
-    border-bottom: 1px solid var(--gray-200);
-    font-size: 11px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: .4px;
-    text-align: center;
-  }
-  td {
-    padding: 2px;
-    border-right: 1px solid var(--gray-100);
-    border-bottom: 1px solid var(--gray-100);
-    background: var(--white);
-    text-align: center;
-  }
-  tr:last-child td { border-bottom: 0; }
-  th:last-child, td:last-child { border-right: 0; }
-  .label-cell { background: var(--gray-50); }
-  .label-input {
-    width: 68px; border: 0; background: transparent;
-    text-align: center; font-weight: 700; font-size: 13px;
-    color: var(--gray-800); padding: 8px 4px; border-radius: 4px;
-  }
-  .label-input:focus { outline: 2px solid var(--primary); background: var(--white); }
-  .cell {
-    width: 70px; border: 0; border-radius: 4px;
-    padding: 8px 4px; text-align: center;
-    background: transparent; font-size: 13px; color: var(--gray-800);
-  }
-  .cell:focus { outline: 2px solid var(--primary); background: var(--white); }
-  .cell.changed { background: #FEF9C3; color: #92400E; font-weight: 700; }
-  .td-total { background: var(--success-muted); color: var(--success); font-weight: 800; min-width: 80px; }
-  .td-col-total { background: var(--gray-50); font-weight: 700; color: var(--gray-700); }
-  .td-grand { background: #DCFCE7; color: var(--success); font-weight: 900; font-size: 14px; }
-  .td-footer-label { background: var(--gray-50); font-weight: 700; color: var(--gray-600); padding: 8px; }
-  .tbl-hint { font-size: 12px; color: var(--gray-400); margin-top: 10px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; min-width: 0; }
-  .tbl-hint svg { flex-shrink: 0; margin-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } .btn:active:not(:disabled) { transform: none; } }
 
-  /* ── MANUAL ── */
-  .manual-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 12px; font-weight: 700; color: var(--gray-600); }
-  .num-input {
-    width: 100px; border: 1px solid var(--gray-300); border-radius: var(--radius);
-    padding: 8px 10px; font-size: 14px; background: var(--white); color: var(--gray-900);
-  }
-  .num-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
-  @media (max-width: 520px) {
-    .manual-row { flex-direction: column; align-items: stretch; }
-    .manual-row .field { width: 100%; }
-    .manual-row .num-input { width: 100%; max-width: none; }
-    .manual-row > .btn { width: 100%; justify-content: center; }
-  }
-
-  /* ── PAGE-HEADER ── */
-  .page-header {
-    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
-    margin-bottom: 16px;
-    min-width: 0;
-  }
-  .page-header-text { flex: 1; min-width: 0; }
-  .page-title { font-size: 16px; font-weight: 800; color: var(--gray-900); word-break: break-word; }
-  .page-sub   { font-size: 13px; color: var(--gray-500); margin-top: 2px; line-height: 1.45; word-break: break-word; }
-  @media (max-width: 560px) {
-    .page-header .btn-group { width: 100%; }
-  }
-
-  /* ── TABLE CONTROLS (review) ── */
-  @media (max-width: 480px) {
-    .tbl-controls { gap: 8px; }
-    .tbl-controls .btn { flex: 1 1 calc(50% - 4px); min-width: 0; justify-content: center; white-space: normal; text-align: center; line-height: 1.25; padding-left: 8px; padding-right: 8px; height: auto; min-height: 36px; padding-top: 8px; padding-bottom: 8px; }
-  }
-
-  /* ── PAGE INTRO & ACTIONS ── */
-  .page-intro {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: 16px 18px;
-    margin-bottom: 16px;
-    font-size: 14px;
-    color: var(--gray-700);
-    line-height: 1.55;
-    box-shadow: var(--shadow-sm);
-  }
-  .page-intro strong { color: var(--gray-900); font-weight: 700; }
-  .action-hint {
-    font-size: 13px;
-    color: var(--gray-600);
-    line-height: 1.5;
-    margin-bottom: 12px;
-    padding: 10px 12px;
-    background: var(--gray-50);
-    border-radius: var(--radius);
-    border: 1px solid var(--gray-200);
-  }
-  .btn-row-secondary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    padding-top: 14px;
-    margin-top: 4px;
-    border-top: 1px solid var(--gray-200);
-  }
-  @media (max-width: 560px) {
-    .btn-row-secondary { flex-direction: column; align-items: stretch; }
-    .btn-row-secondary .btn { width: 100%; justify-content: center; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .spinner { animation: none; border-color: var(--gray-200); border-top-color: var(--primary); }
-    .btn:active:not(:disabled) { transform: none; }
-    .step, .step-badge, .drop-zone { transition: none; }
-  }
-
-  /* ── UTILITY ── */
-  .hide { display: none !important; }
-  .mt8  { margin-top: 8px; }
-  .mt12 { margin-top: 12px; }
-  .text-muted { color: var(--gray-500); font-size: 13px; }
-  .empty-state { padding: 32px; text-align: center; color: var(--gray-500); font-size: 14px; line-height: 1.5; }
+/* ── UTILITY ── */
+.hide { display: none !important; }
+.mt8  { margin-top: 8px; }
+.mt12 { margin-top: 12px; }
+.text-muted { color: var(--gray-500); font-size: 13px; }
+.empty-state { padding: 32px; text-align: center; color: var(--gray-500); font-size: 14px; line-height: 1.5; }
 </style>
 </head>
 <body>
 
 <a class="skip-link" href="#main-content" data-i18n="skipLink">Skip to main content</a>
 
-<!-- TOPBAR -->
 <header class="topbar">
   <div class="topbar-logo">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+      <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>
     </svg>
   </div>
   <span class="topbar-title" data-i18n="topTitle">Factory Scanner</span>
-  <span class="topbar-sub" data-i18n="topSub">Sheet photos → Excel</span>
+  <span class="topbar-sub" data-i18n="topSub">Images → Excel</span>
   <div class="lang-switch" role="group" id="lang-switch">
     <span class="lang-switch-label" id="lang-switch-label" data-i18n="langAria">Language</span>
-    <button type="button" class="lang-btn" id="lang-btn-en" data-lang="en" aria-pressed="true" aria-controls="lang-switch-label">EN</button>
+    <button type="button" class="lang-btn" id="lang-btn-en" data-lang="en" aria-pressed="true">EN</button>
     <button type="button" class="lang-btn" id="lang-btn-gu" data-lang="gu" aria-pressed="false">ગુજ</button>
   </div>
 </header>
 
-<!-- STEP BAR -->
-<nav class="stepbar" id="stepbar-nav" aria-label="Steps in this workflow">
+<nav class="stepbar" id="stepbar-nav" aria-label="Steps">
   <div class="steps">
     <div class="step active" id="step1" aria-current="step">
       <div class="step-badge">1</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <span class="step-label" data-i18n="step1">Add photos</span>
+      <span data-i18n="step1">Add images</span>
     </div>
     <div class="step" id="step2">
       <div class="step-badge">2</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      <span class="step-label" data-i18n="step2">Your photos</span>
+      <span data-i18n="step2">Your images</span>
     </div>
     <div class="step" id="step3">
       <div class="step-badge">3</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      <span class="step-label" data-i18n="step3">Check numbers</span>
+      <span data-i18n="step3">Review data</span>
     </div>
     <div class="step" id="step4">
       <div class="step-badge">4</div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span class="step-label" data-i18n="step4">Get Excel file</span>
+      <span data-i18n="step4">Download Excel</span>
     </div>
   </div>
 </nav>
@@ -713,43 +461,42 @@
 <main class="wrap" id="main-content">
   <div id="status-area"></div>
 
-  <!-- ══════════════════════════════════════════ PAGE 1 — UPLOAD -->
+  <!-- ══ PAGE 1 — UPLOAD ══ -->
   <section id="upload-page" aria-labelledby="upload-heading">
 
     <div class="page-intro">
-      <strong data-i18n="introTitle">How this works.</strong>
-      <span data-i18n="introBody">Add clear photos of your factory sheet (the paper with your numbers). This app reads the numbers for you. You can correct any mistakes, then save everything as an Excel file you can open on any computer.</span>
+      <strong data-i18n="introTitle">How it works.</strong>
+      <span data-i18n="introBody">Upload any image containing a table, spreadsheet, form, or structured data. The AI reads all text and numbers, preserving rows, columns, and headings. Review and correct the result, then download a clean Excel file.</span>
     </div>
 
-    <!-- How-to guide -->
-    <div class="how-to" id="how-to" aria-label="Quick guide in four steps">
+    <div class="how-to" aria-label="Quick guide">
       <div class="how-step">
         <div class="how-step-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </div>
         <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 1</div>
-        <div class="how-step-label" data-i18n="howLabel1">Take a steady, well-lit photo of the full sheet</div>
+        <div class="how-step-label" data-i18n="howLabel1">Upload an image or paste a URL</div>
       </div>
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
         <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 2</div>
-        <div class="how-step-label" data-i18n="howLabel2">Upload here, then tap “Read numbers from photos”</div>
+        <div class="how-step-label" data-i18n="howLabel2">Click "Extract data" — AI reads all rows, columns, and headings</div>
       </div>
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </div>
         <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 3</div>
-        <div class="how-step-label" data-i18n="howLabel3">Open each photo and fix any wrong numbers in the table</div>
+        <div class="how-step-label" data-i18n="howLabel3">Review the table and fix any mistakes by clicking a cell</div>
       </div>
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </div>
         <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 4</div>
-        <div class="how-step-label" data-i18n="howLabel4">Download your Excel file (one file per photo)</div>
+        <div class="how-step-label" data-i18n="howLabel4">Download your Excel file — one file per image</div>
       </div>
     </div>
 
@@ -757,32 +504,52 @@
       <div class="card-header">
         <div class="card-title" id="upload-heading">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span data-i18n="uploadTitle">Add your photos</span>
+          <span data-i18n="uploadTitle">Add your images</span>
         </div>
-        <div class="card-desc" data-i18n="uploadDesc">You can add up to 5 photos at a time. Use JPG, PNG, or WEBP. Each photo will get its own Excel file when you download.</div>
+        <div class="card-desc" data-i18n="uploadDesc">Upload up to 10 images (JPG, PNG, WEBP) or paste an image URL. Each image gets its own Excel file.</div>
       </div>
       <div class="divider"></div>
 
-      <label class="drop-zone" id="drop-zone">
-        <input type="file" id="file-input" accept="image/*" multiple />
-        <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <div class="dz-head" data-i18n="dropHead">Tap here to choose photos</div>
-        <div class="dz-sub" data-i18n="dropSub">Or drag files into this box from your computer · Up to 5 photos</div>
-      </label>
+      <!-- Tab switcher -->
+      <div class="input-tabs" role="tablist">
+        <button class="input-tab active" id="tab-file" role="tab" aria-selected="true" onclick="switchInputTab('file')" data-i18n="tabFile">Upload Files</button>
+        <button class="input-tab" id="tab-url" role="tab" aria-selected="false" onclick="switchInputTab('url')" data-i18n="tabUrl">From URL</button>
+      </div>
 
-      <div id="empty-thumbs" class="text-muted mt8" data-i18n="emptyThumbs">No photos yet. Use the box above to add some.</div>
-      <div class="thumb-grid mt8" id="selected-thumbs"></div>
+      <!-- File panel -->
+      <div id="panel-file">
+        <label class="drop-zone" id="drop-zone">
+          <input type="file" id="file-input" accept="image/*" multiple />
+          <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="dz-head" data-i18n="dropHead">Tap here to choose images</div>
+          <div class="dz-sub" data-i18n="dropSub">Or drag files here · JPG, PNG, WEBP · Up to 10 images</div>
+        </label>
+        <div id="empty-thumbs" class="text-muted mt8" data-i18n="emptyThumbs">No images yet. Use the box above to add some.</div>
+        <div class="thumb-grid mt8" id="selected-thumbs"></div>
+      </div>
+
+      <!-- URL panel -->
+      <div id="panel-url" class="url-panel hide">
+        <div class="url-input-row">
+          <input type="url" id="url-input" class="url-input" data-i18n-placeholder="urlPlaceholder" placeholder="https://example.com/table.jpg" />
+          <button class="btn btn-primary" onclick="extractFromUrl()" id="url-extract-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span data-i18n="btnExtractUrl">Extract</span>
+          </button>
+        </div>
+        <p class="url-hint" data-i18n="urlHint">Paste a direct link to a JPG, PNG, or WEBP image. The image is fetched and processed on the server.</p>
+      </div>
     </div>
 
-    <p class="action-hint" data-i18n="actionHint">Start by reading the numbers from your photos (blue button). When that finishes, open each photo to check the table, then download.</p>
+    <p class="action-hint" data-i18n="actionHint">Click "Extract data" to process all images. Then open each result to review, edit, and download.</p>
     <div class="btn-group">
       <button class="btn btn-primary btn-lg" id="extract-btn" onclick="extractAll()" disabled>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span data-i18n="btnExtract">Read numbers from photos</span>
+        <span data-i18n="btnExtract">Extract data from images</span>
       </button>
       <button class="btn btn-ghost btn-lg" id="continue-btn" onclick="showList()" disabled>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span data-i18n="btnContinue">See your photo list</span>
+        <span data-i18n="btnContinue">See your image list</span>
       </button>
     </div>
     <div class="btn-row-secondary">
@@ -792,18 +559,18 @@
       </button>
       <button class="btn btn-danger-ghost btn-sm" onclick="resetAll()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        <span data-i18n="btnRemoveAll">Remove all photos</span>
+        <span data-i18n="btnRemoveAll">Remove all</span>
       </button>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════ MANUAL PAGE -->
+  <!-- ══ MANUAL PAGE ══ -->
   <section class="card hide" id="manual-page">
     <div class="card-title">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       <span data-i18n="manualTitle">Start from an empty table</span>
     </div>
-    <div class="card-desc" style="margin-bottom:16px;" data-i18n="manualDesc">Pick how many rows and columns you need. You will type the numbers yourself — no photo required.</div>
+    <div class="card-desc" style="margin-bottom:16px;" data-i18n="manualDesc">Choose how many rows and columns you need, then type in your data.</div>
     <div class="manual-row">
       <div class="field">
         <label for="man-rows" data-i18n="labelRows">Rows</label>
@@ -811,7 +578,7 @@
       </div>
       <div class="field">
         <label for="man-cols" data-i18n="labelCols">Columns</label>
-        <input class="num-input" type="number" id="man-cols" value="12" min="1" max="80" />
+        <input class="num-input" type="number" id="man-cols" value="6" min="1" max="80" />
       </div>
       <button class="btn btn-primary" onclick="buildManual()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -821,29 +588,29 @@
     <div class="btn-group">
       <button class="btn btn-ghost btn-sm" onclick="showUpload()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        <span data-i18n="btnBackUpload">Back to adding photos</span>
+        <span data-i18n="btnBackUpload">Back to adding images</span>
       </button>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════ LOADER -->
+  <!-- ══ LOADER ══ -->
   <div class="loader hide" id="loader-page">
     <div class="spinner"></div>
-    <div class="loader-title" id="loader-title" data-i18n="loaderTitleDefault">Working on your photo…</div>
-    <div class="loader-detail" id="loader-detail" data-i18n="loaderDetailDefault">This can take a little while. Please keep this page open.</div>
+    <div class="loader-title" id="loader-title" data-i18n="loaderTitleDefault">Processing image…</div>
+    <div class="loader-detail" id="loader-detail" data-i18n="loaderDetailDefault">This can take a moment. Please keep this page open.</div>
   </div>
 
-  <!-- ══════════════════════════════════════════ PAGE 2 — LIST -->
+  <!-- ══ PAGE 2 — LIST ══ -->
   <section class="hide" id="list-page">
     <div class="page-header">
       <div class="page-header-text">
-        <div class="page-title" data-i18n="listTitle">Your photos</div>
-        <div class="page-sub" data-i18n="listSub">Open a photo to see its table and fix any mistakes. Download one Excel file per photo, or grab every file at once in a ZIP.</div>
+        <div class="page-title" data-i18n="listTitle">Your images</div>
+        <div class="page-sub" data-i18n="listSub">Open an image to review and edit its extracted data. Download individual Excel files or all at once as a ZIP.</div>
       </div>
       <div class="btn-group mt0">
         <button class="btn btn-primary" id="extract-missing-btn" onclick="extractMissing()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span data-i18n="btnContinueRead">Continue reading photos</span>
+          <span data-i18n="btnContinueRead">Process remaining</span>
         </button>
         <button class="btn btn-success" id="download-all-btn" onclick="downloadAllExcels()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
@@ -851,14 +618,14 @@
         </button>
         <button class="btn btn-ghost btn-sm" onclick="showUpload()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          <span data-i18n="btnBackAddPhotos">Back to add photos</span>
+          <span data-i18n="btnBackAddImages">Back to add images</span>
         </button>
       </div>
     </div>
     <div class="doc-list" id="doc-list"></div>
   </section>
 
-  <!-- ══════════════════════════════════════════ PAGE 3 — REVIEW -->
+  <!-- ══ PAGE 3 — REVIEW ══ -->
   <section class="hide" id="review-page">
     <div class="page-header">
       <div class="page-header-text">
@@ -868,32 +635,33 @@
       <div class="btn-group mt0">
         <button class="btn btn-success btn-lg" onclick="downloadCurrentExcel()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span data-i18n="btnDownloadThis">Download this Excel file</span>
+          <span data-i18n="btnDownloadThis">Download Excel</span>
         </button>
         <button class="btn btn-ghost" onclick="showList()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          <span data-i18n="btnBackYourPhotos">Back to your photos</span>
+          <span data-i18n="btnBackYourImages">Back to your images</span>
         </button>
       </div>
     </div>
 
     <div class="review-grid">
-      <!-- Image -->
       <div class="image-panel">
-        <img id="review-image" alt="" data-i18n-alt="reviewImgAlt" />
+        <img id="review-image" alt="" />
         <div class="image-hint">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span><span class="hint-desktop" data-i18n="reviewHintDesktop">Use this picture alongside the table on the right — make sure the numbers match.</span><span class="hint-mobile" data-i18n="reviewHintMobile">Use this picture alongside the table below — make sure the numbers match.</span></span>
+          <span>
+            <span class="hint-desktop" data-i18n="reviewHintDesktop">Compare this image with the table on the right to verify accuracy.</span>
+            <span class="hint-mobile" data-i18n="reviewHintMobile">Compare this image with the table below to verify accuracy.</span>
+          </span>
         </div>
         <div class="btn-group">
           <button class="btn btn-ghost btn-sm" id="extract-current-btn" onclick="extractCurrent()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            <span id="extract-current-label" data-i18n="btnRereadPhoto">Re-read this photo</span>
+            <span id="extract-current-label" data-i18n="btnRereadPhoto">Re-extract</span>
           </button>
         </div>
       </div>
 
-      <!-- Table -->
       <div>
         <div class="stats">
           <div class="stat">
@@ -905,7 +673,7 @@
             <div class="stat-value" id="stat-cols">0</div>
           </div>
           <div class="stat highlight">
-            <div class="stat-label" data-i18n="statGrand">Everything added</div>
+            <div class="stat-label" data-i18n="statSum">Numeric sum</div>
             <div class="stat-value" id="stat-grand">0</div>
           </div>
         </div>
@@ -934,7 +702,7 @@
         </div>
         <div class="tbl-hint">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span data-i18n="tblHint">Tap or click any box to change a number. Yellow means you edited that box after it was read from the photo.</span>
+          <span data-i18n="tblHint">Click any cell to edit. Yellow cells have been changed from the original extraction.</span>
         </div>
       </div>
     </div>
@@ -943,271 +711,236 @@
 
 <script>
 /* ── I18N ── */
-const LANG_STORE = 'fs_lang';
+const LANG_STORE = 'i2x_lang';
 let currentLang = 'en';
+
 const I18N = {
   en: {
     skipLink: 'Skip to main content',
     docTitle: 'Factory Scanner',
     topTitle: 'Factory Scanner',
-    topSub: 'Sheet photos → Excel',
+    topSub:   'Sheet photos → Excel',
     langAria: 'Language',
-    ariaStepbar: 'Steps in this workflow',
-    howtoAria: 'Quick guide in four steps',
-    step1: 'Add photos',
-    step2: 'Your photos',
-    step3: 'Check numbers',
-    step4: 'Get Excel file',
-    introTitle: 'How this works.',
-    introBody: 'Add clear photos of your factory sheet (the paper with your numbers). This app reads the numbers for you. You can correct any mistakes, then save everything as an Excel file you can open on any computer.',
+    step1: 'Add images', step2: 'Your images', step3: 'Review data', step4: 'Download Excel',
+    introTitle: 'How it works.',
+    introBody: 'Upload any image containing a table, spreadsheet, form, or structured data. The AI reads all text and numbers, preserving rows, columns, and headings. Review and correct the result, then download a clean Excel file.',
     howStepWord: 'Step',
-    howLabel1: 'Take a steady, well-lit photo of the full sheet',
-    howLabel2: 'Upload here, then tap “Read numbers from photos”',
-    howLabel3: 'Open each photo and fix any wrong numbers in the table',
-    howLabel4: 'Download your Excel file (one file per photo)',
-    uploadTitle: 'Add your photos',
-    uploadDesc: 'You can add up to 5 photos at a time. Use JPG, PNG, or WEBP. Each photo will get its own Excel file when you download.',
-    dropHead: 'Tap here to choose photos',
-    dropSub: 'Or drag files into this box from your computer · Up to 5 photos',
-    emptyThumbs: 'No photos yet. Use the box above to add some.',
-    actionHint: 'Start by reading the numbers from your photos (blue button). When that finishes, open each photo to check the table, then download.',
-    btnExtract: 'Read numbers from photos',
-    btnContinue: 'See your photo list',
-    btnBlank: 'Start from a blank table',
-    btnRemoveAll: 'Remove all photos',
+    howLabel1: 'Upload an image or paste a URL',
+    howLabel2: 'Click "Extract data" — AI reads all rows, columns, and headings',
+    howLabel3: 'Review the table and fix any mistakes by clicking a cell',
+    howLabel4: 'Download your Excel file — one file per image',
+    uploadTitle: 'Add your images',
+    uploadDesc:  'Upload up to 10 images (JPG, PNG, WEBP) or paste an image URL. Each image gets its own Excel file.',
+    tabFile: 'Upload Files',
+    tabUrl:  'From URL',
+    dropHead: 'Tap here to choose images',
+    dropSub:  'Or drag files here · JPG, PNG, WEBP · Up to 10 images',
+    emptyThumbs: 'No images yet. Use the box above to add some.',
+    urlPlaceholder: 'https://example.com/table.jpg',
+    btnExtractUrl: 'Extract',
+    urlHint: 'Paste a direct link to a JPG, PNG, or WEBP image. The image is fetched and processed on the server.',
+    actionHint: 'Click "Extract data" to process all images. Then open each result to review, edit, and download.',
+    btnExtract:   'Extract data from images',
+    btnContinue:  'See your image list',
+    btnBlank:     'Start from a blank table',
+    btnRemoveAll: 'Remove all',
     manualTitle: 'Start from an empty table',
-    manualDesc: 'Pick how many rows and columns you need. You will type the numbers yourself — no photo required.',
-    labelRows: 'Rows',
-    labelCols: 'Columns',
-    btnBuild: 'Build table',
-    btnBackUpload: 'Back to adding photos',
-    loaderTitleDefault: 'Working on your photo…',
-    loaderDetailDefault: 'This can take a little while. Please keep this page open.',
-    listTitle: 'Your photos',
-    listSub: 'Open a photo to see its table and fix any mistakes. Download one Excel file per photo, or grab every file at once in a ZIP.',
-    btnContinueRead: 'Continue reading photos',
-    btnZipAll: 'Download all as ZIP',
-    btnBackAddPhotos: 'Back to add photos',
-    btnDownloadThis: 'Download this Excel file',
-    btnBackYourPhotos: 'Back to your photos',
-    reviewImgAlt: 'Photo of factory sheet — compare with table',
-    reviewHintDesktop: 'Use this picture alongside the table on the right — make sure the numbers match.',
-    reviewHintMobile: 'Use this picture alongside the table below — make sure the numbers match.',
-    btnReadPhoto: 'Read this photo',
-    btnRereadPhoto: 'Re-read this photo',
-    statRows: 'Rows',
-    statCols: 'Columns',
-    statGrand: 'Everything added',
-    tblAddRow: 'Add Row',
-    tblAddCol: 'Add Column',
-    tblRemRow: 'Remove Row',
-    tblRemCol: 'Remove Column',
-    tblHint: 'Tap or click any box to change a number. Yellow means you edited that box after it was read from the photo.',
-    tblRow: 'Row',
-    tblCol: 'Col {n}',
-    tblRowTotal: 'Row Total',
-    tblFooterTotal: 'Total',
+    manualDesc:  'Choose how many rows and columns you need, then type in your data.',
+    labelRows: 'Rows', labelCols: 'Columns',
+    btnBuild:      'Build table',
+    btnBackUpload: 'Back to adding images',
+    loaderTitleDefault:  'Processing image…',
+    loaderDetailDefault: 'This can take a moment. Please keep this page open.',
+    listTitle: 'Your images',
+    listSub:   'Open an image to review and edit its extracted data. Download individual Excel files or all at once as a ZIP.',
+    btnContinueRead:  'Process remaining',
+    btnZipAll:        'Download all as ZIP',
+    btnBackAddImages: 'Back to add images',
+    btnDownloadThis:  'Download Excel',
+    btnBackYourImages:'Back to your images',
+    reviewHintDesktop: 'Compare this image with the table on the right to verify accuracy.',
+    reviewHintMobile:  'Compare this image with the table below to verify accuracy.',
+    btnReadPhoto:   'Extract data',
+    btnRereadPhoto: 'Re-extract',
+    statRows: 'Rows', statCols: 'Columns', statSum: 'Numeric sum',
+    tblAddRow: 'Add Row',  tblAddCol: 'Add Column',
+    tblRemRow: 'Remove Row', tblRemCol: 'Remove Column',
+    tblHint: 'Click any cell to edit. Yellow cells have been changed from the original extraction.',
+    tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'Total',
     toastImageType: 'Please choose image files only (JPG, PNG, or WEBP).',
-    toastMax5: 'You already have 5 photos. Remove one before adding another.',
-    toastPartial5: 'Only {n} photo(s) added — limit is 5.',
+    toastMax10: 'You already have 10 images. Remove one before adding another.',
+    toastPartial10: 'Only {n} image(s) added — limit is 10.',
     toastReadError: 'Could not read {name}: {msg}',
-    toastReadyNext: '{n} photo(s) ready. Tap “Read numbers from photos” next.',
-    toastPhotosOnList: '{n} photo(s) on your list.',
-    toastAllRemoved: 'All photos were removed.',
-    errFileRead: 'File read failed',
-    errImageDecode: 'Image decode failed',
-    statusRowsTable: '{n} rows in the table',
-    statusReading: 'Reading numbers…',
-    statusErrRetry: 'Something went wrong — tap Read again',
+    toastReadyNext: '{n} image(s) ready. Click "Extract data" to process them.',
+    toastPhotosOnList: '{n} image(s) in the list.',
+    toastAllRemoved: 'All images removed.',
+    errFileRead: 'File read failed', errImageDecode: 'Image decode failed',
+    statusRowsTable: '{n} rows extracted',
+    statusReading: 'Extracting…',
+    statusErrRetry: 'Failed — click to retry',
     statusRowsShort: '{n} rows',
-    statusNotReadYet: 'Numbers not read yet',
-    badgeReady: 'Ready',
-    badgeReading: 'Reading…',
-    badgeTryAgain: 'Try again',
-    badgePending: 'Not read yet',
-    loaderReadingAll: 'Reading numbers from your photos…',
-    loaderStarting: 'Starting photo 1 of {total}',
-    loaderPhotoProgress: 'Reading photo {current} of {total}: {name}',
-    loaderReadingRest: 'Reading the rest of your photos…',
-    loaderReadingRestProg: 'Reading {current} of {total}: {name}',
-    loaderReread: 'Reading this photo again…',
-    loaderReadingOne: 'Reading this photo…',
-    toastDoneAll: 'Done — {n} photo(s) read. Open each one to check the numbers look right.',
-    toastPartial: '{ok} of {total} photo(s) finished. Use “Read” on any that failed and try again.',
-    toastAllReadAlready: 'Every photo has already been read.',
-    toastRereadOk: 'This photo was read again. Check the table for any changes.',
-    listEmpty: 'You have not added any photos yet. Go back and add photos to see them listed here.',
+    statusNotReadYet: 'Not extracted yet',
+    badgeReady: 'Ready', badgeReading: 'Extracting…', badgeTryAgain: 'Retry', badgePending: 'Pending',
+    loaderReadingAll: 'Extracting data from your images…',
+    loaderStarting: 'Starting image 1 of {total}',
+    loaderPhotoProgress: 'Processing image {current} of {total}: {name}',
+    loaderReadingRest: 'Processing remaining images…',
+    loaderReadingRestProg: 'Processing {current} of {total}: {name}',
+    loaderReread: 'Re-extracting this image…',
+    loaderReadingOne: 'Extracting this image…',
+    toastDoneAll: 'Done — {n} image(s) extracted. Open each one to review the data.',
+    toastPartial: '{ok} of {total} image(s) completed. Retry failed ones.',
+    toastAllReadAlready: 'All images have already been processed.',
+    toastRereadOk: 'Image re-extracted. Check the table for any changes.',
+    listEmpty: 'No images added yet. Go back and add some.',
     thumbRemoveTitle: 'Remove',
     thumbRemoveAria: 'Remove {name}',
     docThumbAltPrefix: 'Thumbnail: ',
-    btnOpen: 'Open',
-    btnReread: 'Re-read',
-    btnRead: 'Read',
+    btnOpen: 'Open', btnReread: 'Re-extract', btnRead: 'Extract',
     btnExcelFile: 'Excel file',
-    emptyTableMsg: 'No numbers in the table yet. Tap “Read this photo” below the picture.',
+    emptyTableMsg: 'No data extracted yet. Click "Extract data" below the image.',
     toastProcessedOk: '{name} processed successfully.',
-    toastNoTableYet: 'This photo does not have a table yet. Read this photo before downloading.',
+    toastNoTableYet: 'No data yet. Extract this image before downloading.',
     toastDlFail: 'Download failed (HTTP {code}).',
-    toastDlOk: 'Excel file downloaded: {name}',
+    toastDlOk: 'Downloaded: {name}',
     toastDlFailMsg: 'Download failed: {msg}',
-    toastDlNone: 'Nothing to download yet. Read the numbers from at least one photo first.',
-    toastZipOk: 'Downloaded {n} Excel file(s) as a ZIP archive.',
-    toastManualReady: 'Empty table ready. Type your numbers in, then download Excel when you are done.',
+    toastDlNone: 'Nothing to download yet. Process at least one image first.',
+    toastZipOk: 'Downloaded {n} Excel file(s) as ZIP.',
+    toastManualReady: 'Empty table ready. Fill in your data, then download.',
     manualName: 'Manual Table {n}',
     netError: 'Network error: {msg}',
-    extractionHttp: 'Extraction failed (HTTP {code}).'
+    extractionHttp: 'Extraction failed (HTTP {code}).',
+    toastUrlEmpty: 'Please enter an image URL.',
+    toastUrlInvalid: 'Please enter a valid http or https URL.',
+    toastUrlAdded: 'Extracting from URL…',
   },
   gu: {
     skipLink: 'મુખ્ય સામગ્રી પર જાઓ',
     docTitle: 'ફેક્ટરી સ્કેનર',
     topTitle: 'ફેક્ટરી સ્કેનર',
-    topSub: 'શીટ ફોટા → એક્સેલ',
+    topSub:   'શીટ ફોટા → એક્સેલ',
     langAria: 'ભાષા',
-    ariaStepbar: 'આ કામના પગલાં',
-    howtoAria: 'ચાર પગલાંમાં ઝડપી માર્ગદર્શિકા',
-    step1: 'ફોટા ઉમેરો',
-    step2: 'તમારા ફોટા',
-    step3: 'નંબર ચકાસો',
-    step4: 'એક્સેલ ફાઇલ મેળવો',
-    introTitle: 'આ કેવી રીતે કામ કરે છે.',
-    introBody: 'તમારી ફેક્ટરી શીટ (જ્યાં નંબરો હોય તે કાગળ)ના સ્પષ્ટ ફોટા ઉમેરો. આ એપ તમારા માટે નંબરો વાંચે છે. ભૂલ હોય તો સુધારો, પછી બધું એક્સેલ ફાઇલ તરીકે સાચવો — કોઈપણ કમ્પ્યુટર પર ખોલી શકાય.',
+    step1: 'ઇમેજ ઉમેરો', step2: 'તમારી ઇમેજ', step3: 'ડેટા ચકાસો', step4: 'એક્સેલ ડાઉનલોડ',
+    introTitle: 'કેવી રીતે કામ કરે.',
+    introBody: 'ટેબલ, સ્પ્રેડશીટ, ફોર્મ કે માળખાગત ડેટા ધરાવતી ઇમેજ અપલોડ કરો. AI બધા ટેક્સ્ટ અને નંબર વાંચે છે — પંક્તિઓ, સ્તંભ અને શીર્ષકો સહિત. ડેટા ચકાસો, ભૂલ સુધારો, પછી Excel ફાઇલ ડાઉનલોડ કરો.',
     howStepWord: 'પગલું',
-    howLabel1: 'સંપૂર્ણ શીટનો સ્થિર, સારી રીતે પ્રકાશિત ફોટો લો',
-    howLabel2: 'અહીં અપલોડ કરો, પછી “ફોટામાંથી નંબર વાંચો” પર ટૅપ કરો',
-    howLabel3: 'દરેક ફોટો ખોલો અને કોષ્ટકમાં ખોટા નંબર સુધારો',
-    howLabel4: 'તમારી એક્સેલ ફાઇલ ડાઉનલોડ કરો (દરેક ફોટા માટે એક ફાઇલ)',
-    uploadTitle: 'તમારા ફોટા ઉમેરો',
-    uploadDesc: 'એક સાથે 5 સુધીના ફોટા મૂકી શકો છો. JPG, PNG અથવા WEBP વાપરો. ડાઉનલોડ વખતે દરેક ફોટાની પોતાની એક્સેલ ફાઇલ મળશે.',
-    dropHead: 'ફોટા પસંદ કરવા અહીં ટૅપ કરો',
-    dropSub: 'તમારા કમ્પ્યુટરમાંથી ફાઇલો આ બોક્સમાં ખેંચો · 5 સુધીના ફોટા',
-    emptyThumbs: 'હજી કોઈ ફોટો નથી. ઉમેરવા ઉપરનો બોક્સ વાપરો.',
-    actionHint: 'પહેલા ફોટામાંથી નંબર વાંચો (વાદળી બટન). પૂરું થયા પછી દરેક ફોટો ખોલી કોષ્ટક ચકાસો, પછી ડાઉનલોડ કરો.',
-    btnExtract: 'ફોટામાંથી નંબર વાંચો',
-    btnContinue: 'ફોટાની યાદી જુઓ',
-    btnBlank: 'ખાલી કોષ્ટકથી શરૂ કરો',
-    btnRemoveAll: 'બધા ફોટા કાઢી નાખો',
-    manualTitle: 'ખાલી કોષ્ટકથી શરૂ કરો',
-    manualDesc: 'કેટલી પંક્તિઓ અને સ્તંભ જોઈએ તે પસંદ કરો. નંબર તમે જ લેશો — ફોટાની જરૂર નહીં.',
-    labelRows: 'પંક્તિઓ',
-    labelCols: 'સ્તંભ',
-    btnBuild: 'કોષ્ટક બનાવો',
-    btnBackUpload: 'ફોટા ઉમેરવા પાછા',
-    loaderTitleDefault: 'તમારા ફોટા પર કામ ચાલે છે…',
-    loaderDetailDefault: 'આમાં થોડો સમય લાગી શકે. આ પેજ બંધ ન કરશો.',
-    listTitle: 'તમારા ફોટા',
-    listSub: 'ફોટો ખોલી તેનું કોષ્ટક જુઓ અને ભૂલ સુધારો. દરેક માટે એક એક્સેલ ડાઉનલોડ કરો, અથવા બધી એક સાથે ZIPમાં.',
-    btnContinueRead: 'બાકીના ફોટા વાંચો',
-    btnZipAll: 'બધું ZIPમાં ડાઉનલોડ',
-    btnBackAddPhotos: 'ફોટા ઉમેરવા પાછા',
-    btnDownloadThis: 'આ એક્સેલ ફાઇલ ડાઉનલોડ',
-    btnBackYourPhotos: 'તમારા ફોટા પાછા',
-    reviewImgAlt: 'ફેક્ટરી શીટનો ફોટો — કોષ્ટક સાથે સરખાવો',
-    reviewHintDesktop: 'આ ફોટો જમણી બાજુના કોષ્ટક સાથે સરખાવો — નંબર મેળ ખાય છે કે નહીં.',
-    reviewHintMobile: 'આ ફોટો નીચેના કોષ્ટક સાથે સરખાવો — નંબર મેળ ખાય છે કે નહીં.',
-    btnReadPhoto: 'આ ફોટો વાંચો',
-    btnRereadPhoto: 'આ ફોટો ફરીથી વાંચો',
-    statRows: 'પંક્તિઓ',
-    statCols: 'સ્તંભ',
-    statGrand: 'બધાનો સરવાળો',
-    tblAddRow: 'પંક્તિ ઉમેરો',
-    tblAddCol: 'સ્તંભ ઉમેરો',
-    tblRemRow: 'પંક્તિ કાઢો',
-    tblRemCol: 'સ્તંભ કાઢો',
-    tblHint: 'કોઈપણ બોક્સ પર ટૅપ કરી નંબર બદલો. પીળો રંગ એટલે તમે ફોટો વાંચ્યા પછી તે બોક્સ બદલ્યું.',
-    tblRow: 'પંક્તિ',
-    tblCol: 'સ્તંભ {n}',
-    tblRowTotal: 'પંક્તિ સરવાળો',
-    tblFooterTotal: 'સરવાળો',
-    toastImageType: 'માત્ર ફોટા ફાઇલ પસંદ કરો (JPG, PNG અથવા WEBP).',
-    toastMax5: 'તમારી પાસે પહેલેથી 5 ફોટા છે. બીજો ઉમેરતા પહેલાં એક કાઢો.',
-    toastPartial5: 'માત્ર {n} ફોટા ઉમેરાયા — મહત્તમ 5.',
-    toastReadError: '{name} નહીં વંચાયો: {msg}',
-    toastReadyNext: '{n} ફોટા તૈયાર. આગળ “ફોટામાંથી નંબર વાંચો” ટૅપ કરો.',
-    toastPhotosOnList: 'યાદીમાં {n} ફોટા.',
-    toastAllRemoved: 'બધા ફોટા કાઢી નાખ્યા.',
-    errFileRead: 'ફાઇલ વાંચવામાં નિષ્ફળ',
-    errImageDecode: 'ફોટો ઓળખાયો નહીં',
-    statusRowsTable: 'કોષ્ટકમાં {n} પંક્તિઓ',
-    statusReading: 'નંબર વંચાઈ રહ્યા છે…',
-    statusErrRetry: 'કંઈક ખોટું થયું — “વાંચો” ફરી ટૅપ કરો',
-    statusRowsShort: '{n} પંક્તિઓ',
-    statusNotReadYet: 'હજી નંબર વંચાયા નથી',
-    badgeReady: 'તૈયાર',
-    badgeReading: 'વંચાઈ રહ્યું…',
-    badgeTryAgain: 'ફરી પ્રયાસ',
-    badgePending: 'હજી વંચાયું નથી',
-    loaderReadingAll: 'તમારા ફોટામાંથી નંબર વંચાઈ રહ્યા છે…',
-    loaderStarting: 'ફોટો 1 થી શરૂ — કુલ {total}',
-    loaderPhotoProgress: 'ફોટો {current} / {total}: {name}',
-    loaderReadingRest: 'બાકીના ફોટા વંચાઈ રહ્યા છે…',
+    howLabel1: 'ઇમેજ અપલોડ કરો અથવા URL ચોંટાડો',
+    howLabel2: '"ડેટા કાઢો" ક્લિક કરો — AI બધી પંક્તિઓ, સ્તંભ અને શીર્ષક વાંચે છે',
+    howLabel3: 'કોષ્ટક ચકાસો, ભૂલ હોય તો સેલ ક્લિક કરી સુધારો',
+    howLabel4: 'Excel ફાઇલ ડાઉનલોડ કરો — દરેક ઇમેજ માટે એક ફાઇલ',
+    uploadTitle: 'ઇમેજ ઉમેરો',
+    uploadDesc:  '10 સુધી ઇમેજ (JPG, PNG, WEBP) અથવા URL ચોંટાડો. દરેક ઇમેજ માટે Excel ફાઇલ મળશે.',
+    tabFile: 'ફાઇલ અપલોડ',
+    tabUrl:  'URL થી',
+    dropHead: 'ઇમેજ પસંદ કરવા અહીં ટૅપ કરો',
+    dropSub:  'અહીં ફાઇલ ખેંચો · JPG, PNG, WEBP · 10 સુધી',
+    emptyThumbs: 'હજી ઇમેજ નથી. ઉમેરવા ઉપરનો વિસ્તાર વાપરો.',
+    urlPlaceholder: 'https://example.com/table.jpg',
+    btnExtractUrl: 'કાઢો',
+    urlHint: 'JPG, PNG અથવા WEBP ઇમેજ ની સીધી URL ચોંટાડો. ઇમેજ સર્વર પર ડાઉનલોડ થઈ પ્રોસેસ થશે.',
+    actionHint: '"ડેટા કાઢો" ક્લિક કરી ઇમેજ પ્રોસેસ કરો. પછી દરેક ઇમેજ ખોલી ડેટા ચકાસો.',
+    btnExtract:   'ઇમેજમાંથી ડેટા કાઢો',
+    btnContinue:  'ઇમેજ યાદી જુઓ',
+    btnBlank:     'ખાલી ટેબલ',
+    btnRemoveAll: 'બધું કાઢો',
+    manualTitle: 'ખાલી ટેબલ',
+    manualDesc:  'પંક્તિ અને સ્તંભ પસંદ કરો, પછી ડેટા ભરો.',
+    labelRows: 'પંક્તિ', labelCols: 'સ્તંભ',
+    btnBuild:      'ટેબલ બનાવો',
+    btnBackUpload: 'ઇમેજ ઉમેરવા',
+    loaderTitleDefault:  'ઇમેજ પ્રોસેસ થઈ રહ્યો છે…',
+    loaderDetailDefault: 'થોડો સમય લાગી શકે. પેજ બંધ ન કરો.',
+    listTitle: 'તમારી ઇમેજ',
+    listSub:   'ઇમેજ ખોલો, ડેટા ચકાસો અને Excel ડાઉનલોડ કરો. ZIPમાં બધી ફાઇલ મેળવો.',
+    btnContinueRead:  'બાકી ઇમેજ પ્રોસેસ',
+    btnZipAll:        'ZIPમાં ડાઉનલોડ',
+    btnBackAddImages: 'ઇમેજ ઉમેરવા',
+    btnDownloadThis:  'Excel ડાઉનલોડ',
+    btnBackYourImages:'ઇમેજ પર',
+    reviewHintDesktop: 'ઇમેજ અને ટેબલ સરખાવી ચોકસાઈ ચકાસો.',
+    reviewHintMobile:  'ઇમેજ અને ટેબલ સરખાવી ચોકસાઈ ચકાસો.',
+    btnReadPhoto:   'ડેટા કાઢો',
+    btnRereadPhoto: 'ફરી કાઢો',
+    statRows: 'પંક્તિ', statCols: 'સ્તંભ', statSum: 'સંખ્યા સરવાળો',
+    tblAddRow: 'પંક્તિ ઉમેરો', tblAddCol: 'સ્તંભ ઉમેરો',
+    tblRemRow: 'પંક્તિ કાઢો',  tblRemCol: 'સ્તંભ કાઢો',
+    tblHint: 'સેલ ક્લિક કરી સુધારો. પીળો = મૂળ ડેટાથી બદલ્યો.',
+    tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'સરવાળો',
+    toastImageType: 'ફક્ત ઇમેજ ફાઇલ (JPG, PNG, WEBP) પસંદ કરો.',
+    toastMax10: 'પહેલેથી 10 ઇમેજ છે. ઉમેરતા પહેલાં એક કાઢો.',
+    toastPartial10: 'ફક્ત {n} ઇમેજ ઉમેરાઈ — મહત્તમ 10.',
+    toastReadError: '{name} ન વંચાઈ: {msg}',
+    toastReadyNext: '{n} ઇમેજ તૈયાર. "ડેટા કાઢો" ક્લિક કરો.',
+    toastPhotosOnList: 'યાદીમાં {n} ઇમેજ.',
+    toastAllRemoved: 'બધી ઇમેજ કાઢી.',
+    errFileRead: 'ફાઇલ ન વંચાઈ', errImageDecode: 'ઇમેજ ઓળખાઈ નહીં',
+    statusRowsTable: '{n} પંક્તિ',
+    statusReading: 'ડેટા કઢાઈ રહ્યો…',
+    statusErrRetry: 'ભૂલ — ફરી કરો',
+    statusRowsShort: '{n} પંક્તિ',
+    statusNotReadYet: 'હજી ન કઢ્યો',
+    badgeReady: 'તૈયાર', badgeReading: 'ચાલે…', badgeTryAgain: 'ફરી', badgePending: 'બાકી',
+    loaderReadingAll: 'ઇમેજ પ્રોસેસ ચાલે…',
+    loaderStarting: 'ઇમેજ 1 / {total}',
+    loaderPhotoProgress: 'ઇમેજ {current} / {total}: {name}',
+    loaderReadingRest: 'બાકી ઇમેજ…',
     loaderReadingRestProg: '{current} / {total}: {name}',
-    loaderReread: 'આ ફોટો ફરીથી વંચાઈ રહ્યો છે…',
-    loaderReadingOne: 'આ ફોટો વંચાઈ રહ્યો છે…',
-    toastDoneAll: 'થઈ ગયું — {n} ફોટા વંચાયા. દરેક ખોલી નંબર ચકાસો.',
-    toastPartial: '{ok} / {total} ફોટા પૂરા. નિષ્ફળ ફોટા પર “વાંચો” ટૅપ કરી ફરી પ્રયાસ કરો.',
-    toastAllReadAlready: 'દરેક ફોટો પહેલેથી વંચાઈ ચૂક્યો છે.',
-    toastRereadOk: 'આ ફોટો ફરીથી વંચાયો. કોષ્ટકમાં બદલાવ જુઓ.',
-    listEmpty: 'હજી કોઈ ફોટો ઉમેર્યો નથી. પાછા જઈને ફોટા ઉમેરો.',
-    thumbRemoveTitle: 'કાઢી નાખો',
+    loaderReread: 'ફરી ડેટા કઢાઈ રહ્યો…',
+    loaderReadingOne: 'ડેટા કઢાઈ રહ્યો…',
+    toastDoneAll: 'પૂર્ણ — {n} ઇમેજ. દરેક ખોલી ચકાસો.',
+    toastPartial: '{ok} / {total} પૂર્ણ. ભૂલ ઇમેજ ફરી કરો.',
+    toastAllReadAlready: 'બધી ઇમેજ પ્રોસેસ થઈ ગઈ.',
+    toastRereadOk: 'ફરી ડેટા કઢ્યો. ટેબલ ચકાસો.',
+    listEmpty: 'ઇમેજ નથી. પાછા જઈ ઉમેરો.',
+    thumbRemoveTitle: 'કાઢો',
     thumbRemoveAria: '{name} કાઢો',
-    docThumbAltPrefix: 'લઘુચિત્ર: ',
-    btnOpen: 'ખોલો',
-    btnReread: 'પુનર્વાંચન',
-    btnRead: 'વાંચો',
-    btnExcelFile: 'એક્સેલ ફાઇલ',
-    emptyTableMsg: 'હજી કોષ્ટકમાં નંબર નથી. ફોટા નીચે “આ ફોટો વાંચો” ટૅપ કરો.',
-    toastProcessedOk: '{name} સફળતાપૂર્વક પૂર્ણ.',
-    toastNoTableYet: 'આ ફોટાનું કોષ્ટક હજુ નથી. ડાઉનલોડ પહેલાં ફોટો વાંચો.',
-    toastDlFail: 'ડાઉનલોડ નિષ્ફળ (HTTP {code}).',
-    toastDlOk: 'એક્સેલ ડાઉનલોડ થયું: {name}',
-    toastDlFailMsg: 'ડાઉનલોડ નિષ્ફળ: {msg}',
-    toastDlNone: 'હજી ડાઉનલોડ નથી. પહેલાં ઓછામાં ઓછો એક ફોટો વંચાવો.',
-    toastZipOk: '{n} એક્સેલ ફાઇલો ZIPમાં ડાઉનલોડ થઈ.',
-    toastManualReady: 'ખાલી કોષ્ટક તૈયાર. નંબર ભરો, પછી એક્સેલ ડાઉનલોડ કરો.',
-    manualName: 'મેન્યુઅલ કોષ્ટક {n}',
+    docThumbAltPrefix: 'થંબ: ',
+    btnOpen: 'ખોલો', btnReread: 'ફરી', btnRead: 'કાઢો',
+    btnExcelFile: 'Excel',
+    emptyTableMsg: 'ડેટા નથી. "ડેટા કાઢો" ક્લિક કરો.',
+    toastProcessedOk: '{name} સફળ.',
+    toastNoTableYet: 'ડેટા નથી. ડાઉનલોડ પહેલાં ઇમેજ પ્રોસેસ કરો.',
+    toastDlFail: 'ડાઉનલોડ ભૂલ (HTTP {code}).',
+    toastDlOk: 'ડાઉનલોડ: {name}',
+    toastDlFailMsg: 'ડાઉનલોડ ભૂલ: {msg}',
+    toastDlNone: 'ડાઉનલોડ નહીં. ઓછામાં ઓછી એક ઇમેજ પ્રોસેસ કરો.',
+    toastZipOk: '{n} Excel ફાઇલ ZIP ડાઉનલોડ.',
+    toastManualReady: 'ખાલી ટેબલ તૈયાર. ડેટા ભરો.',
+    manualName: 'ટેબલ {n}',
     netError: 'નેટવર્ક ભૂલ: {msg}',
-    extractionHttp: 'વાંચન નિષ્ફળ (HTTP {code}).'
+    extractionHttp: 'ભૂલ (HTTP {code}).',
+    toastUrlEmpty: 'URL દાખલ કરો.',
+    toastUrlInvalid: 'http/https URL દાખલ કરો.',
+    toastUrlAdded: 'URL પ્રોસેસ ચાલે…',
   }
 };
 
 function getLang() { return currentLang; }
-
 function t(key) {
-  const pack = I18N[currentLang] || I18N.en;
-  if (pack[key] !== undefined) return pack[key];
-  return I18N.en[key] !== undefined ? I18N.en[key] : key;
+  const p = I18N[currentLang] || I18N.en;
+  return p[key] !== undefined ? p[key] : (I18N.en[key] !== undefined ? I18N.en[key] : key);
 }
-
 function tpl(key, vars) {
   let s = t(key);
-  Object.keys(vars || {}).forEach(k => {
-    s = s.split('{' + k + '}').join(String(vars[k]));
-  });
+  Object.keys(vars || {}).forEach(k => { s = s.split('{' + k + '}').join(String(vars[k])); });
   return s;
 }
-
 function localizeServer(msg) {
   if (!msg || getLang() !== 'gu') return String(msg);
-  const s = String(msg);
-  const rows = [
-    ['GROQ_API_KEY is not configured on the server.', 'સર્વર પર GROQ API કી નથી.'],
-    ['No image provided.', 'કોઈ ફોટો મોકલાયો નથી.'],
-    ['image_base64 must be a string.', 'ફોટાનો ડેટા ખોટો છે.'],
-    ['Image payload too large', 'ફોટો ખૂબ મોટો છે. નાનો કરીને ફરી કરો.'],
-    ['Request to Groq timed out', 'સર્વરનો સમય પૂરો થયો. ફરી કરો.'],
-    ['Could not reach Groq API', 'GROQ સર્વર સુધી પહોંચ્યા નહીં.'],
-    ['Groq API returned error', 'GROQ API ભૂલ. ફરી કરો.'],
-    ['Could not parse the AI response', 'જવાબ સમજાયો નથી. વધુ સ્પષ્ટ ફોટો વાપરો.'],
-    ['No data rows found in the photo', 'ફોટામાં ડેટા મળ્યો નથી. પ્રકાશ તપાસો.'],
-    ['Extraction failed after multiple attempts', 'ઘણા પ્રયાસો પછી નિષ્ફળ. સ્પષ્ટ ફોટો વાપરો.'],
-    ['No rows provided.', 'પંક્તિઓ નથી.'],
-    ['No completed documents provided.', 'પૂર્ણ દસ્તાવેજો નથી.'],
-    ['Network error:', 'નેટવર્ક ભૂલ:'],
-    ['Download failed (HTTP', 'ડાઉનલોડ નિષ્ફળ (HTTP'],
-    ['Extraction failed (HTTP', 'વાંચન નિષ્ફળ (HTTP']
+  const map = [
+    ['GROQ_API_KEY is not configured', 'GROQ API ચાવી ગોઠવાઈ નથી.'],
+    ['No image provided', 'ઇમેજ નથી.'],
+    ['Image payload too large', 'ઇમેજ ખૂબ મોટી છે.'],
+    ['Could not load image from URL', 'URL ઇમેજ ન ખૂલ્યો.'],
+    ['Request to Groq timed out', 'સમય પૂરો. ફરી કરો.'],
+    ['Could not reach Groq API', 'Groq API ન મળ્યો.'],
+    ['Could not parse the AI response', 'AI જવાબ સમજાયો નહીં.'],
+    ['No structured data found', 'ઇમેજમાં ટેબલ ન મળ્યો.'],
+    ['Extraction failed', 'ડેટા ન કઢ્યો.'],
+    ['No table data provided', 'ડેટા નથી.'],
   ];
-  let out = s;
-  rows.forEach(([en, gu]) => { out = out.split(en).join(gu); });
+  let out = String(msg);
+  map.forEach(([en, gu]) => { out = out.split(en).join(gu); });
   return out;
 }
 
@@ -1218,79 +951,73 @@ function applyStaticI18n() {
     if (el.tagName === 'TITLE') document.title = t(k);
     else el.textContent = t(k);
   });
-  document.querySelectorAll('[data-i18n-alt]').forEach(el => {
-    const k = el.getAttribute('data-i18n-alt');
-    if (k) el.setAttribute('alt', t(k));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const k = el.getAttribute('data-i18n-placeholder');
+    if (k) el.placeholder = t(k);
   });
-  const nb = document.getElementById('stepbar-nav');
-  if (nb) nb.setAttribute('aria-label', t('ariaStepbar'));
-  const ht = document.getElementById('how-to');
-  if (ht) ht.setAttribute('aria-label', t('howtoAria'));
 }
-
-function refreshLiveI18n() {
-  renderThumbs();
-  if (document.getElementById('list-page') && !document.getElementById('list-page').classList.contains('hide')) {
-    renderDocList();
-  }
-  if (document.getElementById('review-page') && !document.getElementById('review-page').classList.contains('hide')) {
-    renderReview();
-  }
-}
-
 function setLang(next) {
   if (next !== 'en' && next !== 'gu') next = 'en';
   currentLang = next;
   document.documentElement.lang = next === 'gu' ? 'gu' : 'en';
-  try { localStorage.setItem(LANG_STORE, next); } catch (e) {}
-  const ben = document.getElementById('lang-btn-en');
-  const bgj = document.getElementById('lang-btn-gu');
-  if (ben) ben.setAttribute('aria-pressed', next === 'en' ? 'true' : 'false');
-  if (bgj) bgj.setAttribute('aria-pressed', next === 'gu' ? 'true' : 'false');
+  try { localStorage.setItem(LANG_STORE, next); } catch(e) {}
+  document.getElementById('lang-btn-en').setAttribute('aria-pressed', next === 'en' ? 'true' : 'false');
+  document.getElementById('lang-btn-gu').setAttribute('aria-pressed', next === 'gu' ? 'true' : 'false');
   applyStaticI18n();
-  refreshLiveI18n();
+  renderThumbs();
+  const lp = document.getElementById('list-page');
+  if (lp && !lp.classList.contains('hide')) renderDocList();
+  const rp = document.getElementById('review-page');
+  if (rp && !rp.classList.contains('hide')) renderReview();
 }
-
 function initLangSwitcher() {
-  const ben = document.getElementById('lang-btn-en');
-  const bgj = document.getElementById('lang-btn-gu');
   let saved = 'en';
-  try { saved = localStorage.getItem(LANG_STORE) || 'en'; } catch (e) {}
-  if (saved !== 'gu') saved = 'en';
-  if (ben) ben.addEventListener('click', () => setLang('en'));
-  if (bgj) bgj.addEventListener('click', () => setLang('gu'));
-  setLang(saved);
+  try { saved = localStorage.getItem(LANG_STORE) || 'en'; } catch(e) {}
+  document.getElementById('lang-btn-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('lang-btn-gu').addEventListener('click', () => setLang('gu'));
+  setLang(saved === 'gu' ? 'gu' : 'en');
 }
 
-/* ── ICON HELPER ── */
+/* ── ICONS ── */
 const ICONS = {
-  check:    `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`,
-  xcircle:  `<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>`,
-  clock:    `<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
-  pending:  `<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>`,
-  alert:    `<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`,
-  info:     `<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>`,
-  download: `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>`,
-  eye:      `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`,
-  scan:     `<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>`,
-  refresh:  `<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>`,
-  x:        `<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`,
+  check:   `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`,
+  xcircle: `<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>`,
+  clock:   `<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
+  pending: `<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>`,
+  alert:   `<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`,
+  info:    `<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>`,
+  download:`<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>`,
+  eye:     `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`,
+  scan:    `<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>`,
+  refresh: `<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>`,
+  x:       `<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`,
 };
-function icon(name, size = 14) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+function icon(name, size=14) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`;
 }
 
 /* ── STATE ── */
-const MAX_IMAGES = 5;
-let documents = [];
+const MAX_IMAGES = 10;
+let documents    = [];
 let currentIndex = -1;
-let nextId = 1;
-const BLANK_IMG = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="200"%3E%3Crect width="320" height="200" fill="%231F2937"/%3E%3C/svg%3E';
+let nextId       = 1;
+const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="200"%3E%3Crect width="320" height="200" fill="%231F2937"/%3E%3C/svg%3E';
+
+/* ── INPUT TAB SWITCHER ── */
+function switchInputTab(tab) {
+  const isFile = tab === 'file';
+  document.getElementById('tab-file').classList.toggle('active', isFile);
+  document.getElementById('tab-url').classList.toggle('active', !isFile);
+  document.getElementById('tab-file').setAttribute('aria-selected', isFile ? 'true' : 'false');
+  document.getElementById('tab-url').setAttribute('aria-selected', isFile ? 'false' : 'true');
+  document.getElementById('panel-file').classList.toggle('hide', !isFile);
+  document.getElementById('panel-url').classList.toggle('hide', isFile);
+}
 
 /* ── DRAG-AND-DROP ── */
 const dropZone  = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
 fileInput.addEventListener('change', e => handleFiles(e.target.files));
@@ -1299,9 +1026,7 @@ fileInput.addEventListener('change', e => handleFiles(e.target.files));
 function setStep(n) {
   ['step1','step2','step3','step4'].forEach((id, i) => {
     const el = document.getElementById(id);
-    if (i + 1 < n) el.className = 'step done';
-    else if (i + 1 === n) el.className = 'step active';
-    else el.className = 'step';
+    el.className = i + 1 < n ? 'step done' : i + 1 === n ? 'step active' : 'step';
     if (i + 1 === n) el.setAttribute('aria-current', 'step');
     else el.removeAttribute('aria-current');
   });
@@ -1315,10 +1040,10 @@ function showPage(id) {
 }
 
 /* ── ALERTS ── */
-function showStatus(msg, type = 'info') {
-  const iconMap = { info: 'info', success: 'check', error: 'xcircle', warning: 'alert' };
+function showStatus(msg, type='info') {
+  const iconMap = { info:'info', success:'check', error:'xcircle', warning:'alert' };
   document.getElementById('status-area').innerHTML =
-    `<div class="alert ${type}" role="alert">${icon(iconMap[type] || 'info', 16)}<span>${escapeHtml(msg)}</span></div>`;
+    `<div class="alert ${type}" role="alert">${icon(iconMap[type]||'info',16)}<span>${escapeHtml(msg)}</span></div>`;
 }
 function clearStatus() { document.getElementById('status-area').innerHTML = ''; }
 function escapeHtml(v) {
@@ -1327,12 +1052,12 @@ function escapeHtml(v) {
 
 /* ── FILE HANDLING ── */
 async function handleFiles(list) {
-  const imgs = Array.from(list || []).filter(f => f.type.startsWith('image/'));
+  const imgs  = Array.from(list || []).filter(f => f.type.startsWith('image/'));
   if (!imgs.length) { showStatus(t('toastImageType'), 'error'); return; }
   const slots = MAX_IMAGES - documents.length;
-  if (slots <= 0) { showStatus(t('toastMax5'), 'error'); return; }
+  if (slots <= 0) { showStatus(t('toastMax10'), 'error'); return; }
   const accepted = imgs.slice(0, slots);
-  if (imgs.length > accepted.length) showStatus(tpl('toastPartial5', { n: accepted.length }), 'warning');
+  if (imgs.length > accepted.length) showStatus(tpl('toastPartial10', { n: accepted.length }), 'warning');
   for (const file of accepted) {
     try {
       const c = await compressImage(file);
@@ -1340,22 +1065,21 @@ async function handleFiles(list) {
         id: nextId++,
         filename: file.name.replace(/\.[^.]+$/, '') || `image-${documents.length + 1}`,
         originalName: file.name,
-        preview: c.dataUrl, imageBase64: c.base64,
+        preview: c.dataUrl, imageBase64: c.base64, imageUrl: null,
         mediaType: c.type, bytes: c.bytes,
         status: 'ready', error: '',
-        tableData: [], origData: [], numCols: 0
+        table: [], origTable: [], numCols: 0
       });
-    } catch (err) {
+    } catch(err) {
       showStatus(tpl('toastReadError', { name: file.name, msg: err.message }), 'error');
     }
   }
   fileInput.value = '';
-  renderThumbs();
-  updateButtons();
+  renderThumbs(); updateButtons();
   if (documents.length) showStatus(tpl('toastReadyNext', { n: documents.length }), 'success');
 }
 
-/* ── IMAGE COMPRESSION + CONTRAST ENHANCEMENT ── */
+/* ── IMAGE COMPRESSION ── */
 function compressImage(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1365,8 +1089,8 @@ function compressImage(file) {
       img.onerror = () => reject(new Error(t('errImageDecode')));
       img.onload = () => {
         const maxSide = 2400;
-        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-        const canvas = document.createElement('canvas');
+        const scale   = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const canvas  = document.createElement('canvas');
         canvas.width  = Math.max(1, Math.round(img.width  * scale));
         canvas.height = Math.max(1, Math.round(img.height * scale));
         const ctx = canvas.getContext('2d');
@@ -1375,8 +1099,8 @@ function compressImage(file) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         // Contrast boost for better OCR
         const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const d = id.data;
-        const f = (259 * (45 + 255)) / (255 * (259 - 45));
+        const d  = id.data;
+        const f  = (259 * (45 + 255)) / (255 * (259 - 45));
         for (let i = 0; i < d.length; i += 4) {
           d[i]   = Math.min(255, Math.max(0, f * (d[i]   - 128) + 128));
           d[i+1] = Math.min(255, Math.max(0, f * (d[i+1] - 128) + 128));
@@ -1396,15 +1120,45 @@ function compressImage(file) {
   });
 }
 
-/* ── THUMB RENDER ── */
+/* ── URL EXTRACTION ── */
+async function extractFromUrl() {
+  const url = (document.getElementById('url-input').value || '').trim();
+  if (!url) { showStatus(t('toastUrlEmpty'), 'error'); return; }
+  if (!/^https?:\/\//i.test(url)) { showStatus(t('toastUrlInvalid'), 'error'); return; }
+  if (documents.length >= MAX_IMAGES) { showStatus(t('toastMax10'), 'error'); return; }
+
+  const displayName = url.length > 60 ? url.substring(0, 57) + '…' : url;
+  const baseName    = url.split('/').pop().replace(/\?.*/, '').replace(/\.[^.]+$/, '') || 'url-image';
+
+  const doc = {
+    id: nextId++,
+    filename: safeFilename(baseName),
+    originalName: displayName,
+    preview: url, imageBase64: null, imageUrl: url,
+    mediaType: 'image/jpeg', bytes: 0,
+    status: 'extracting', error: '',
+    table: [], origTable: [], numCols: 0
+  };
+  documents.push(doc);
+  const i = documents.length - 1;
+  document.getElementById('url-input').value = '';
+
+  renderThumbs(); updateButtons();
+  showLoader(t('loaderReadingOne'), displayName);
+  const ok = await extractDocument(i);
+  showList();
+  showStatus(ok ? tpl('toastProcessedOk', { name: displayName }) : localizeServer(documents[i].error), ok ? 'success' : 'error');
+}
+
+/* ── THUMBS ── */
 function renderThumbs() {
-  const grid = document.getElementById('selected-thumbs');
+  const grid  = document.getElementById('selected-thumbs');
   const empty = document.getElementById('empty-thumbs');
   empty.classList.toggle('hide', documents.length > 0);
   grid.innerHTML = documents.map((doc, i) => `
     <div class="thumb">
-      <img src="${doc.preview || BLANK_IMG}" alt="" loading="lazy" />
-      <button class="thumb-remove" onclick="removeDocument(${i})" title="${escapeHtml(t('thumbRemoveTitle'))}" aria-label="${escapeHtml(tpl('thumbRemoveAria', { name: doc.originalName }))}">
+      <img src="${escapeHtml(doc.preview || BLANK_IMG)}" alt="" loading="lazy" onerror="this.src='${BLANK_IMG}'" />
+      <button class="thumb-remove" onclick="removeDocument(${i})" title="${escapeHtml(t('thumbRemoveTitle'))}" aria-label="${escapeHtml(tpl('thumbRemoveAria',{name:doc.originalName}))}">
         ${icon('x', 11)}
       </button>
       <div class="thumb-body">
@@ -1416,8 +1170,8 @@ function renderThumbs() {
 
 function updateButtons() {
   const has = documents.length > 0;
-  document.getElementById('extract-btn').disabled = !has;
-  document.getElementById('continue-btn').disabled = !has;
+  document.getElementById('extract-btn').disabled   = !has;
+  document.getElementById('continue-btn').disabled  = !has;
 }
 
 function removeDocument(i) {
@@ -1429,18 +1183,17 @@ function removeDocument(i) {
 }
 
 function statusLabel(doc) {
-  if (doc.status === 'done') return tpl('statusRowsTable', { n: doc.tableData.length });
+  if (doc.status === 'done')       return tpl('statusRowsTable', { n: doc.table.length });
   if (doc.status === 'extracting') return t('statusReading');
-  if (doc.status === 'error') return t('statusErrRetry');
-  if (doc.tableData.length) return tpl('statusRowsShort', { n: doc.tableData.length });
+  if (doc.status === 'error')      return t('statusErrRetry');
+  if (doc.table.length)            return tpl('statusRowsShort', { n: doc.table.length });
   return t('statusNotReadYet');
 }
-
 function badgeHtml(doc) {
-  if (doc.status === 'done')       return `<span class="badge badge-done">${icon('check', 11)} ${escapeHtml(t('badgeReady'))}</span>`;
-  if (doc.status === 'extracting') return `<span class="badge badge-busy">${icon('clock', 11)} ${escapeHtml(t('badgeReading'))}</span>`;
-  if (doc.status === 'error')      return `<span class="badge badge-error">${icon('xcircle', 11)} ${escapeHtml(t('badgeTryAgain'))}</span>`;
-  return `<span class="badge badge-pending">${icon('pending', 11)} ${escapeHtml(t('badgePending'))}</span>`;
+  if (doc.status === 'done')       return `<span class="badge badge-done">${icon('check',11)} ${escapeHtml(t('badgeReady'))}</span>`;
+  if (doc.status === 'extracting') return `<span class="badge badge-busy">${icon('clock',11)} ${escapeHtml(t('badgeReading'))}</span>`;
+  if (doc.status === 'error')      return `<span class="badge badge-error">${icon('xcircle',11)} ${escapeHtml(t('badgeTryAgain'))}</span>`;
+  return `<span class="badge badge-pending">${icon('pending',11)} ${escapeHtml(t('badgePending'))}</span>`;
 }
 
 /* ── EXTRACTION ── */
@@ -1450,9 +1203,7 @@ async function extractAll() {
   setStep(2);
   let ok = 0;
   for (let i = 0; i < documents.length; i++) {
-    document.getElementById('loader-detail').textContent = tpl('loaderPhotoProgress', {
-      current: i + 1, total: documents.length, name: documents[i].originalName
-    });
+    document.getElementById('loader-detail').textContent = tpl('loaderPhotoProgress', { current: i+1, total: documents.length, name: documents[i].originalName });
     if (await extractDocument(i)) ok++;
   }
   showList();
@@ -1461,13 +1212,11 @@ async function extractAll() {
 }
 
 async function extractMissing() {
-  const pending = documents.map((d, i) => ({ d, i })).filter(x => x.d.status !== 'done');
+  const pending = documents.map((d,i) => ({d,i})).filter(x => x.d.status !== 'done');
   if (!pending.length) { showStatus(t('toastAllReadAlready'), 'success'); return; }
   showLoader(t('loaderReadingRest'), '');
   for (let j = 0; j < pending.length; j++) {
-    document.getElementById('loader-detail').textContent = tpl('loaderReadingRestProg', {
-      current: j + 1, total: pending.length, name: pending[j].d.originalName
-    });
+    document.getElementById('loader-detail').textContent = tpl('loaderReadingRestProg', { current: j+1, total: pending.length, name: pending[j].d.originalName });
     await extractDocument(pending[j].i);
   }
   showList();
@@ -1486,52 +1235,53 @@ async function extractDocument(i) {
   const doc = documents[i];
   if (!doc) return false;
   doc.status = 'extracting'; doc.error = '';
+  const payload = doc.imageUrl
+    ? { image_url: doc.imageUrl }
+    : { image_base64: doc.imageBase64, media_type: doc.mediaType };
   try {
-    const resp = await fetch('/extract', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image_base64: doc.imageBase64, media_type: doc.mediaType })
-    });
+    const resp = await fetch('/extract', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const data = await resp.json();
     if (!resp.ok || data.error) {
       doc.status = 'error';
-      doc.error = data.error || tpl('extractionHttp', { code: resp.status });
+      doc.error  = data.error || tpl('extractionHttp', { code: resp.status });
       return false;
     }
-    loadRows(doc, data.rows);
+    loadTable(doc, data.table);
     doc.status = 'done';
     return true;
-  } catch (err) {
+  } catch(err) {
     doc.status = 'error';
-    doc.error = tpl('netError', { msg: err.message });
+    doc.error  = tpl('netError', { msg: err.message });
     return false;
   }
 }
 
-function loadRows(doc, rows) {
-  doc.tableData = (rows || []).map((r, i) => ({ label: String(r.label || i + 1), values: (r.values || []).map(toNum) }));
-  doc.numCols = Math.max(1, ...doc.tableData.map(r => r.values.length));
-  doc.tableData.forEach(r => pad(doc, r));
-  doc.origData = JSON.parse(JSON.stringify(doc.tableData));
+function loadTable(doc, rawTable) {
+  if (!rawTable || !rawTable.length) {
+    doc.table = []; doc.origTable = []; doc.numCols = 0; return;
+  }
+  doc.table   = rawTable.map(row => [...(row || [])]);
+  doc.numCols = Math.max(...doc.table.map(r => r.length), 0);
+  doc.table.forEach(r => { while (r.length < doc.numCols) r.push(null); });
+  doc.origTable = JSON.parse(JSON.stringify(doc.table));
 }
 
 /* ── NAVIGATION ── */
 function showLoader(title, detail) {
-  document.getElementById('loader-title').textContent = title;
+  document.getElementById('loader-title').textContent  = title;
   document.getElementById('loader-detail').textContent = detail;
   showPage('loader-page'); clearStatus();
 }
-function showUpload()  { showPage('upload-page'); setStep(1); renderThumbs(); updateButtons(); }
-function showManual()  { showPage('manual-page'); setStep(1); }
+function showUpload() { showPage('upload-page'); setStep(1); renderThumbs(); updateButtons(); }
+function showManual() { showPage('manual-page'); setStep(1); }
 
 function showList() {
-  showPage('list-page'); setStep(2);
-  renderDocList();
+  showPage('list-page'); setStep(2); renderDocList();
 }
 
 function renderDocList() {
   const list = document.getElementById('doc-list');
-  document.getElementById('download-all-btn').disabled = !documents.some(d => d.tableData.length);
+  document.getElementById('download-all-btn').disabled    = !documents.some(d => d.table.length);
   document.getElementById('extract-missing-btn').disabled = !documents.some(d => d.status !== 'done');
   if (!documents.length) {
     list.innerHTML = `<div class="empty-state">${escapeHtml(t('listEmpty'))}</div>`;
@@ -1539,7 +1289,7 @@ function renderDocList() {
   }
   list.innerHTML = documents.map((doc, i) => `
     <div class="doc-row">
-      <img class="doc-thumb" src="${doc.preview || BLANK_IMG}" alt="${escapeHtml(t('docThumbAltPrefix') + doc.originalName)}" loading="lazy" />
+      <img class="doc-thumb" src="${escapeHtml(doc.preview || BLANK_IMG)}" alt="${escapeHtml(t('docThumbAltPrefix') + doc.originalName)}" loading="lazy" onerror="this.src='${BLANK_IMG}'" />
       <div>
         <div class="doc-name">${escapeHtml(doc.originalName)}</div>
         <div class="doc-meta">
@@ -1548,15 +1298,9 @@ function renderDocList() {
         </div>
       </div>
       <div class="doc-actions">
-        <button class="btn btn-primary btn-sm" onclick="openDocument(${i})">
-          ${icon('eye', 13)} ${escapeHtml(t('btnOpen'))}
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="extractOneFromList(${i})">
-          ${icon(doc.status === 'done' ? 'refresh' : 'scan', 13)} ${escapeHtml(doc.status === 'done' ? t('btnReread') : t('btnRead'))}
-        </button>
-        <button class="btn btn-success btn-sm" onclick="downloadExcel(${i})" ${doc.tableData.length ? '' : 'disabled'}>
-          ${icon('download', 13)} ${escapeHtml(t('btnExcelFile'))}
-        </button>
+        <button class="btn btn-primary btn-sm" onclick="openDocument(${i})">${icon('eye',13)} ${escapeHtml(t('btnOpen'))}</button>
+        <button class="btn btn-ghost btn-sm" onclick="extractOneFromList(${i})">${icon(doc.status==='done'?'refresh':'scan',13)} ${escapeHtml(doc.status==='done'?t('btnReread'):t('btnRead'))}</button>
+        <button class="btn btn-success btn-sm" onclick="downloadExcel(${i})" ${doc.table.length?'':'disabled'}>${icon('download',13)} ${escapeHtml(t('btnExcelFile'))}</button>
       </div>
     </div>`).join('');
 }
@@ -1576,13 +1320,16 @@ function currentDoc() { return documents[currentIndex] || null; }
 function renderReview() {
   const doc = currentDoc();
   if (!doc) return;
-  document.getElementById('review-title').textContent = doc.originalName;
+  document.getElementById('review-title').textContent    = doc.originalName;
   document.getElementById('review-subtitle').textContent = statusLabel(doc);
-  document.getElementById('review-image').src = doc.preview || BLANK_IMG;
+  const imgEl = document.getElementById('review-image');
+  imgEl.src     = doc.preview || BLANK_IMG;
+  imgEl.onerror = () => { imgEl.src = BLANK_IMG; };
+  imgEl.alt     = t('reviewHintDesktop');
   const lbl = document.getElementById('extract-current-label');
   if (lbl) lbl.textContent = doc.status === 'done' ? t('btnRereadPhoto') : t('btnReadPhoto');
-  document.getElementById('extract-current-btn').disabled = !doc.imageBase64;
-  if (!doc.tableData.length) {
+  document.getElementById('extract-current-btn').disabled = !(doc.imageBase64 || doc.imageUrl);
+  if (!doc.table.length) {
     document.getElementById('main-table').innerHTML =
       `<tbody><tr><td colspan="99" style="padding:24px;text-align:center;color:var(--gray-500);font-size:13px;line-height:1.5;">${escapeHtml(t('emptyTableMsg'))}</td></tr></tbody>`;
     refreshStats(); return;
@@ -1591,117 +1338,190 @@ function renderReview() {
 }
 
 /* ── TABLE ── */
-function toNum(v) {
-  if (v === null || v === undefined || v === '') return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
+function parseCell(raw) {
+  if (raw === null || raw === undefined) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  const n = Number(s);
+  if (isFinite(n) && s !== '') return n;
+  return s;
 }
-function pad(doc, row) { while (row.values.length < doc.numCols) row.values.push(null); }
+
+function cellNum(v) {
+  if (typeof v === 'number' && isFinite(v)) return v;
+  return 0;
+}
+
+/* Skip row 0 (header) and col 0 (labels) in all sum calculations */
+function dataRowSum(row, ri) {
+  if (ri === 0) return 0;
+  return row.slice(1).reduce((s, v) => s + cellNum(v), 0);
+}
+function dataRowHasNums(row, ri) {
+  if (ri === 0) return false;
+  return row.slice(1).some(v => typeof v === 'number' && isFinite(v));
+}
+function dataColSum(doc, c) {
+  if (c === 0) return 0;
+  return doc.table.slice(1).reduce((s, r) => s + cellNum(r[c]), 0);
+}
+function dataGrandTotal(doc) {
+  if (doc.table.length <= 1) return 0;
+  return doc.table.slice(1).reduce((s, r) => s + r.slice(1).reduce((rs, v) => rs + cellNum(v), 0), 0);
+}
+function fmt(v) { return Number.isInteger(v) ? String(v) : String(Number(v.toFixed(6)).toString()); }
 
 function renderTable() {
   const doc = currentDoc();
   if (!doc) return;
-  doc.numCols = Math.max(1, ...doc.tableData.map(r => r.values.length));
-  doc.tableData.forEach(r => pad(doc, r));
-  const tbl = document.getElementById('main-table');
-  let h = `<thead><tr><th style="min-width:68px">${escapeHtml(t('tblRow'))}</th>`;
-  for (let c = 0; c < doc.numCols; c++) h += `<th>${escapeHtml(tpl('tblCol', { n: c + 1 }))}</th>`;
+  if (doc.table.length) {
+    doc.numCols = Math.max(...doc.table.map(r => r.length), 1);
+    doc.table.forEach(r => { while (r.length < doc.numCols) r.push(null); });
+  }
+
+  // ── First row → <thead>; col 0 is sticky row-header column
+  const hdr = doc.table[0] || [];
+  let h = `<thead><tr>`;
+  for (let ci = 0; ci < doc.numCols; ci++) {
+    const v   = hdr[ci];
+    const dis = v === null || v === undefined ? '' : String(v);
+    const ch  = origChanged(doc, 0, ci, v) ? ' changed' : '';
+    const thCls = ci === 0 ? ' class="th-hdr-col"' : '';
+    h += `<th${thCls}><input class="hdr-cell${ch}" type="text" value="${escapeHtml(dis)}" oninput="onCell(this,0,${ci})" /></th>`;
+  }
   h += `<th>${escapeHtml(t('tblRowTotal'))}</th></tr></thead><tbody>`;
-  doc.tableData.forEach((row, ri) => {
-    h += `<tr><td class="label-cell"><input class="label-input" value="${escapeHtml(row.label)}" oninput="onLabel(this,${ri})" /></td>`;
-    for (let c = 0; c < doc.numCols; c++) {
-      const v = row.values[c];
-      const ch = changed(doc, ri, c, v) ? ' changed' : '';
-      h += `<td><input class="cell${ch}" type="number" step="any" value="${v ?? ''}" oninput="onCell(this,${ri},${c})" /></td>`;
+
+  // ── Rows 1+ → <tbody>; col 0 sticky as row header
+  for (let ri = 1; ri < doc.table.length; ri++) {
+    const row = doc.table[ri];
+    h += `<tr>`;
+    for (let ci = 0; ci < doc.numCols; ci++) {
+      const v       = row[ci];
+      const changed = origChanged(doc, ri, ci, v);
+      const display = v === null || v === undefined ? '' : String(v);
+      if (ci === 0) {
+        h += `<td class="td-hdr-col"><input class="hdr-cell${changed?' changed':''}" type="text" value="${escapeHtml(display)}" oninput="onCell(this,${ri},${ci})" /></td>`;
+      } else {
+        h += `<td><input class="cell${changed?' changed':''}" type="text" value="${escapeHtml(display)}" oninput="onCell(this,${ri},${ci})" /></td>`;
+      }
     }
-    h += `<td class="td-total" id="rt-${ri}">${fmt(rowSum(row.values))}</td></tr>`;
-  });
+    const rs   = dataRowSum(row, ri);
+    const show = dataRowHasNums(row, ri);
+    h += `<td class="td-total" id="rt-${ri}">${show ? fmt(rs) : ''}</td></tr>`;
+  }
+
+  // ── Total footer row
   h += `<tr><td class="td-footer-label">${escapeHtml(t('tblFooterTotal'))}</td>`;
-  for (let c = 0; c < doc.numCols; c++) h += `<td class="td-col-total" id="ct-${c}">${fmt(colSum(doc, c))}</td>`;
-  h += `<td class="td-grand" id="grand-total">${fmt(grandTotal(doc))}</td></tr></tbody>`;
-  tbl.innerHTML = h;
+  for (let c = 1; c < doc.numCols; c++) {
+    const cs = dataColSum(doc, c);
+    h += `<td class="td-col-total" id="ct-${c}">${cs ? fmt(cs) : ''}</td>`;
+  }
+  h += `<td class="td-grand" id="grand-total">${fmt(dataGrandTotal(doc))}</td></tr></tbody>`;
+
+  document.getElementById('main-table').innerHTML = h;
   refreshStats();
 }
 
-function onLabel(input, ri) { const d = currentDoc(); if (d) d.tableData[ri].label = input.value; }
+function origChanged(doc, ri, ci, v) {
+  const orig = doc.origTable[ri]?.[ci];
+  if (orig === undefined) return false;
+  return orig !== v;
+}
+
 function onCell(input, ri, ci) {
   const d = currentDoc(); if (!d) return;
-  const v = toNum(input.value);
-  d.tableData[ri].values[ci] = v;
-  input.classList.toggle('changed', changed(d, ri, ci, v));
+  const v = parseCell(input.value);
+  d.table[ri][ci] = v;
+  input.classList.toggle('changed', origChanged(d, ri, ci, v));
   refreshTotals();
 }
-function changed(doc, ri, ci, v) { const o = doc.origData[ri]?.values[ci]; return o !== undefined && v !== o; }
-function rowSum(vs) { return vs.reduce((s, v) => s + (Number(v) || 0), 0); }
-function colSum(doc, ci) { return doc.tableData.reduce((s, r) => s + (Number(r.values[ci]) || 0), 0); }
-function grandTotal(doc) { return doc.tableData.reduce((s, r) => s + rowSum(r.values), 0); }
-function fmt(v) { return Number.isInteger(v) ? String(v) : String(Number(v.toFixed(4))); }
 
 function refreshTotals() {
   const d = currentDoc(); if (!d) return;
-  d.tableData.forEach((r, i) => { const el = document.getElementById(`rt-${i}`); if (el) el.textContent = fmt(rowSum(r.values)); });
-  for (let c = 0; c < d.numCols; c++) { const el = document.getElementById(`ct-${c}`); if (el) el.textContent = fmt(colSum(d, c)); }
-  const g = document.getElementById('grand-total'); if (g) g.textContent = fmt(grandTotal(d));
+  // ri=0 is in <thead>, no rt-0 element — start from 1
+  for (let ri = 1; ri < d.table.length; ri++) {
+    const el = document.getElementById(`rt-${ri}`);
+    if (el) el.textContent = dataRowHasNums(d.table[ri], ri) ? fmt(dataRowSum(d.table[ri], ri)) : '';
+  }
+  for (let c = 1; c < d.numCols; c++) {
+    const el = document.getElementById(`ct-${c}`);
+    const cs = dataColSum(d, c);
+    if (el) el.textContent = cs ? fmt(cs) : '';
+  }
+  const g = document.getElementById('grand-total');
+  if (g) g.textContent = fmt(dataGrandTotal(d));
   refreshStats();
 }
+
 function refreshStats() {
   const d = currentDoc();
-  document.getElementById('stat-rows').textContent  = d?.tableData.length || 0;
+  document.getElementById('stat-rows').textContent  = d?.table.length || 0;
   document.getElementById('stat-cols').textContent  = d?.numCols || 0;
-  document.getElementById('stat-grand').textContent = d ? fmt(grandTotal(d)) : '0';
+  document.getElementById('stat-grand').textContent = d ? fmt(dataGrandTotal(d)) : '0';
 }
 
 /* ── TABLE EDITING ── */
 function addRow() {
   const d = currentDoc(); if (!d) return;
   if (!d.numCols) d.numCols = 1;
-  const row = { label: String(d.tableData.length + 1), values: Array(d.numCols).fill(null) };
-  d.tableData.push(row); d.origData.push(JSON.parse(JSON.stringify(row)));
+  const row = Array(d.numCols).fill(null);
+  d.table.push([...row]); d.origTable.push([...row]);
   if (d.status !== 'done') d.status = 'done';
   renderTable();
 }
 function addCol() {
   const d = currentDoc(); if (!d) return;
   d.numCols = (d.numCols || 0) + 1;
-  d.tableData.forEach((r, i) => { r.values.push(null); if (!d.origData[i]) d.origData[i] = { label: r.label, values: [] }; d.origData[i].values.push(null); });
-  if (!d.tableData.length) addRow(); else renderTable();
+  d.table.forEach((r, i) => { r.push(null); if (!d.origTable[i]) d.origTable[i] = Array(r.length - 1).fill(null); while (d.origTable[i].length < r.length - 1) d.origTable[i].push(null); d.origTable[i].push(null); });
+  if (!d.table.length) addRow(); else renderTable();
 }
-function removeLastRow() { const d = currentDoc(); if (!d || d.tableData.length <= 1) return; d.tableData.pop(); d.origData.pop(); renderTable(); }
-function removeLastCol() { const d = currentDoc(); if (!d || d.numCols <= 1) return; d.numCols--; d.tableData.forEach(r => r.values.pop()); d.origData.forEach(r => r.values.pop()); renderTable(); }
+function removeLastRow() {
+  const d = currentDoc();
+  if (!d || d.table.length <= 1) return;
+  d.table.pop(); d.origTable.pop(); renderTable();
+}
+function removeLastCol() {
+  const d = currentDoc();
+  if (!d || d.numCols <= 1) return;
+  d.numCols--;
+  d.table.forEach(r => r.pop());
+  d.origTable.forEach(r => { if (r.length > 0) r.pop(); });
+  renderTable();
+}
 
 /* ── DOWNLOAD ── */
 async function downloadCurrentExcel() { if (currentIndex >= 0) await downloadExcel(currentIndex); }
 
 async function downloadExcel(i) {
   const doc = documents[i];
-  if (!doc || !doc.tableData.length) { showStatus(t('toastNoTableYet'), 'error'); return; }
+  if (!doc || !doc.table.length) { showStatus(t('toastNoTableYet'), 'error'); return; }
   try {
-    const r = await fetch('/download-excel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows: doc.tableData, filename: doc.filename }) });
+    const r = await fetch('/download-excel', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ table: doc.table, filename: doc.filename }) });
     if (!r.ok) {
-      const e = await r.json().catch(() => ({}));
+      const e = await r.json().catch(()=>({}));
       showStatus(localizeServer(e.error || tpl('toastDlFail', { code: r.status })), 'error');
       return;
     }
     await saveBlob(r, `${safeFilename(doc.filename)}.xlsx`);
     setStep(4);
     showStatus(tpl('toastDlOk', { name: doc.originalName }), 'success');
-  } catch (err) { showStatus(tpl('toastDlFailMsg', { msg: err.message }), 'error'); }
+  } catch(err) { showStatus(tpl('toastDlFailMsg', { msg: err.message }), 'error'); }
 }
 
 async function downloadAllExcels() {
-  const ready = documents.filter(d => d.tableData.length);
+  const ready = documents.filter(d => d.table.length);
   if (!ready.length) { showStatus(t('toastDlNone'), 'error'); return; }
   try {
-    const r = await fetch('/download-all-excels', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ documents: ready.map(d => ({ filename: d.filename, rows: d.tableData })) }) });
+    const r = await fetch('/download-all-excels', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ documents: ready.map(d => ({ filename: d.filename, table: d.table })) }) });
     if (!r.ok) {
-      const e = await r.json().catch(() => ({}));
+      const e = await r.json().catch(()=>({}));
       showStatus(localizeServer(e.error || tpl('toastDlFail', { code: r.status })), 'error');
       return;
     }
-    await saveBlob(r, 'factory-excels.zip');
+    await saveBlob(r, 'factory-scanner-excels.zip');
     setStep(4);
     showStatus(tpl('toastZipOk', { n: ready.length }), 'success');
-  } catch (err) { showStatus(tpl('toastDlFailMsg', { msg: err.message }), 'error'); }
+  } catch(err) { showStatus(tpl('toastDlFailMsg', { msg: err.message }), 'error'); }
 }
 
 async function saveBlob(resp, filename) {
@@ -1724,17 +1544,21 @@ function resetAll() {
 
 function buildManual() {
   const rows = Math.max(1, Math.min(300, Number(document.getElementById('man-rows').value) || 10));
-  const cols = Math.max(1, Math.min(80,  Number(document.getElementById('man-cols').value) || 12));
-  const doc  = {
-    id: nextId++, filename: `manual-table-${documents.length + 1}`,
+  const cols = Math.max(1, Math.min(80,  Number(document.getElementById('man-cols').value) || 6));
+  const table = Array.from({ length: rows }, () => Array(cols).fill(null));
+  const doc = {
+    id: nextId++,
+    filename: `manual-table-${documents.length + 1}`,
     originalName: tpl('manualName', { n: documents.length + 1 }),
-    preview: '', imageBase64: '', mediaType: 'image/jpeg', bytes: 0,
+    preview: '', imageBase64: null, imageUrl: null,
+    mediaType: 'image/jpeg', bytes: 0,
     status: 'done', error: '',
-    tableData: Array.from({ length: rows }, (_, i) => ({ label: String(i + 1), values: Array(cols).fill(null) })),
-    origData: [], numCols: cols
+    table: table,
+    origTable: JSON.parse(JSON.stringify(table)),
+    numCols: cols
   };
-  doc.origData = JSON.parse(JSON.stringify(doc.tableData));
-  documents.push(doc); currentIndex = documents.length - 1;
+  documents.push(doc);
+  currentIndex = documents.length - 1;
   renderThumbs(); updateButtons(); openDocument(currentIndex);
   showStatus(t('toastManualReady'), 'info');
 }
