@@ -530,12 +530,14 @@ th:last-child, td:last-child { border-right: 0; }
 
       <!-- Camera panel -->
       <div id="panel-camera" class="hide">
-        <label class="drop-zone" id="camera-zone">
-          <input type="file" id="camera-input" accept="image/*" capture="environment" />
+        <input type="file" id="camera-input" accept="image/*" capture="environment" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" />
+        <div class="drop-zone" id="camera-zone" role="button" tabindex="0"
+          onclick="document.getElementById('camera-input').click()"
+          onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('camera-input').click()">
           <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           <div class="dz-head" data-i18n="cameraHead">Open camera to take a photo</div>
           <div class="dz-sub" data-i18n="cameraSub">Captures an image directly from your device camera</div>
-        </label>
+        </div>
       </div>
 
     </div>
@@ -1000,14 +1002,24 @@ const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"
 
 /* ── SESSION PERSISTENCE (survives iOS camera page-reload) ── */
 function persistState() {
+  // Strip imageBase64+preview from already-extracted docs (table data is enough, saves ~5MB).
+  // Keep full image data only for unextracted docs so they can still be sent to the server.
+  const saveable = documents.map(d =>
+    d.status === 'done'
+      ? { ...d, imageBase64: null, preview: '' }
+      : d
+  );
   try {
-    sessionStorage.setItem('fsc_docs',   JSON.stringify(documents));
+    sessionStorage.setItem('fsc_docs',   JSON.stringify(saveable));
     sessionStorage.setItem('fsc_nextid', String(nextId));
   } catch(e) {
+    // Quota exceeded — save only extracted docs (no image data at all)
     try {
-      const light = documents.map(d => ({...d, imageBase64: null, preview: d.preview && d.preview.startsWith('data:') ? '' : d.preview}));
-      sessionStorage.setItem('fsc_docs',   JSON.stringify(light));
-      sessionStorage.setItem('fsc_nextid', String(nextId));
+      const extracted = saveable.filter(d => d.status === 'done');
+      if (extracted.length) {
+        sessionStorage.setItem('fsc_docs',   JSON.stringify(extracted));
+        sessionStorage.setItem('fsc_nextid', String(nextId));
+      }
     } catch(e2) {}
   }
 }
