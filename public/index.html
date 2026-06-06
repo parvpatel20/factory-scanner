@@ -1000,46 +1000,58 @@ let currentIndex = -1;
 let nextId       = 1;
 const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="200"%3E%3Crect width="320" height="200" fill="%231F2937"/%3E%3C/svg%3E';
 
-/* ── SESSION PERSISTENCE (survives iOS camera page-reload) ── */
-function persistState() {
-  // Strip imageBase64+preview from already-extracted docs (table data is enough, saves ~5MB).
-  // Keep full image data only for unextracted docs so they can still be sent to the server.
-  const saveable = documents.map(d =>
-    d.status === 'done'
-      ? { ...d, imageBase64: null, preview: '' }
-      : d
-  );
-  try {
-    sessionStorage.setItem('fsc_docs',   JSON.stringify(saveable));
-    sessionStorage.setItem('fsc_nextid', String(nextId));
-  } catch(e) {
-    // Quota exceeded — save only extracted docs (no image data at all)
-    try {
-      const extracted = saveable.filter(d => d.status === 'done');
-      if (extracted.length) {
-        sessionStorage.setItem('fsc_docs',   JSON.stringify(extracted));
-        sessionStorage.setItem('fsc_nextid', String(nextId));
-      }
-    } catch(e2) {}
-  }
+/* ── INDEXEDDB PERSISTENCE (survives iOS camera page-reload, no size limit) ── */
+const _IDB_NAME  = 'factory-scanner';
+const _IDB_VER   = 1;
+const _IDB_STORE = 'documents';
+
+function _openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(_IDB_NAME, _IDB_VER);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(_IDB_STORE, { keyPath: 'id' });
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
 }
-function restoreState() {
+
+async function persistState() {
   try {
-    const saved = sessionStorage.getItem('fsc_docs');
-    const sid   = sessionStorage.getItem('fsc_nextid');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length) {
-        documents = parsed;
-        if (sid) nextId = Math.max(Number(sid), 1);
-        return true;
-      }
+    const db = await _openDB();
+    const tx = db.transaction(_IDB_STORE, 'readwrite');
+    const st = tx.objectStore(_IDB_STORE);
+    st.clear();
+    documents.forEach(doc => st.put(doc));
+    await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+    localStorage.setItem('fsc_nextid', String(nextId));
+  } catch(e) {}
+}
+
+async function restoreState() {
+  try {
+    const db   = await _openDB();
+    const tx   = db.transaction(_IDB_STORE, 'readonly');
+    const docs = await new Promise((res, rej) => {
+      const req = tx.objectStore(_IDB_STORE).getAll();
+      req.onsuccess = e => res(e.target.result);
+      req.onerror   = e => rej(e.target.error);
+    });
+    if (docs && docs.length) {
+      documents = docs.sort((a, b) => a.id - b.id);
+      const sid = localStorage.getItem('fsc_nextid');
+      if (sid) nextId = Math.max(Number(sid), 1);
+      return true;
     }
   } catch(e) {}
   return false;
 }
-function clearPersistedState() {
-  try { sessionStorage.removeItem('fsc_docs'); sessionStorage.removeItem('fsc_nextid'); } catch(e) {}
+
+async function clearPersistedState() {
+  try {
+    const db = await _openDB();
+    const tx = db.transaction(_IDB_STORE, 'readwrite');
+    tx.objectStore(_IDB_STORE).clear();
+    localStorage.removeItem('fsc_nextid');
+  } catch(e) {}
 }
 
 /* ── INPUT TAB SWITCHER ── */
@@ -1565,12 +1577,14 @@ function buildManual() {
   showStatus(t('toastManualReady'), 'info');
 }
 
-const _restored = restoreState();
-initLangSwitcher();
-if (_restored && documents.length) {
-  renderThumbs(); updateButtons();
-  showStatus(`${documents.length} image(s) restored from your session.`, 'info');
-}
+(async () => {
+  const restored = await restoreState();
+  initLangSwitcher();
+  if (restored && documents.length) {
+    renderThumbs(); updateButtons();
+    showStatus(`${documents.length} image(s) restored.`, 'info');
+  }
+})();
 </script>
 </body>
 </html>
