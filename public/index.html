@@ -315,7 +315,7 @@ a.skip-link:focus {
 @media (max-width: 680px) { .review-grid { grid-template-columns: 1fr; } .image-panel { position: static; } .image-hint .hint-desktop { display: none; } .image-hint .hint-mobile { display: inline; } .image-panel img { max-height: min(50vh, 320px); } }
 
 /* ── STATS ── */
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
 .stat { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 12px 14px; text-align: center; box-shadow: var(--shadow-sm); }
 .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); }
 .stat-value { font-size: 22px; font-weight: 900; color: var(--gray-900); margin-top: 3px; }
@@ -513,6 +513,7 @@ th:last-child, td:last-child { border-right: 0; }
       <!-- Tab switcher -->
       <div class="input-tabs" role="tablist">
         <button class="input-tab active" id="tab-file" role="tab" aria-selected="true" onclick="switchInputTab('file')" data-i18n="tabFile">Upload Files</button>
+        <button class="input-tab" id="tab-camera" role="tab" aria-selected="false" onclick="switchInputTab('camera')" data-i18n="tabCamera">Take Photo</button>
         <button class="input-tab" id="tab-url" role="tab" aria-selected="false" onclick="switchInputTab('url')" data-i18n="tabUrl">From URL</button>
       </div>
 
@@ -526,6 +527,16 @@ th:last-child, td:last-child { border-right: 0; }
         </label>
         <div id="empty-thumbs" class="text-muted mt8" data-i18n="emptyThumbs">No images yet. Use the box above to add some.</div>
         <div class="thumb-grid mt8" id="selected-thumbs"></div>
+      </div>
+
+      <!-- Camera panel -->
+      <div id="panel-camera" class="hide">
+        <label class="drop-zone" id="camera-zone">
+          <input type="file" id="camera-input" accept="image/*" capture="environment" />
+          <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <div class="dz-head" data-i18n="cameraHead">Open camera to take a photo</div>
+          <div class="dz-sub" data-i18n="cameraSub">Captures an image directly from your device camera</div>
+        </label>
       </div>
 
       <!-- URL panel -->
@@ -673,8 +684,12 @@ th:last-child, td:last-child { border-right: 0; }
             <div class="stat-value" id="stat-cols">0</div>
           </div>
           <div class="stat highlight">
-            <div class="stat-label" data-i18n="statSum">Numeric sum</div>
-            <div class="stat-value" id="stat-grand">0</div>
+            <div class="stat-label" data-i18n="statGrandRows">Sum of row totals</div>
+            <div class="stat-value" id="stat-grand-rows">0</div>
+          </div>
+          <div class="stat highlight">
+            <div class="stat-label" data-i18n="statGrandCols">Sum of col totals</div>
+            <div class="stat-value" id="stat-grand-cols">0</div>
           </div>
         </div>
 
@@ -732,9 +747,12 @@ const I18N = {
     uploadTitle: 'Add your images',
     uploadDesc:  'Upload up to 10 images (JPG, PNG, WEBP) or paste an image URL. Each image gets its own Excel file.',
     tabFile: 'Upload Files',
+    tabCamera: 'Take Photo',
     tabUrl:  'From URL',
     dropHead: 'Tap here to choose images',
     dropSub:  'Or drag files here · JPG, PNG, WEBP · Up to 10 images',
+    cameraHead: 'Open camera to take a photo',
+    cameraSub:  'Captures an image directly from your device camera',
     emptyThumbs: 'No images yet. Use the box above to add some.',
     urlPlaceholder: 'https://example.com/table.jpg',
     btnExtractUrl: 'Extract',
@@ -762,7 +780,7 @@ const I18N = {
     reviewHintMobile:  'Compare this image with the table below to verify accuracy.',
     btnReadPhoto:   'Extract data',
     btnRereadPhoto: 'Re-extract',
-    statRows: 'Rows', statCols: 'Columns', statSum: 'Numeric sum',
+    statRows: 'Rows', statCols: 'Columns', statGrandRows: 'Sum of row totals', statGrandCols: 'Sum of col totals',
     tblAddRow: 'Add Row',  tblAddCol: 'Add Column',
     tblRemRow: 'Remove Row', tblRemCol: 'Remove Column',
     tblHint: 'Click any cell to edit. Yellow cells have been changed from the original extraction.',
@@ -831,9 +849,12 @@ const I18N = {
     uploadTitle: 'ઇમેજ ઉમેરો',
     uploadDesc:  '10 સુધી ઇમેજ (JPG, PNG, WEBP) અથવા URL ચોંટાડો. દરેક ઇમેજ માટે Excel ફાઇલ મળશે.',
     tabFile: 'ફાઇલ અપલોડ',
+    tabCamera: 'ફોટો લો',
     tabUrl:  'URL થી',
     dropHead: 'ઇમેજ પસંદ કરવા અહીં ટૅપ કરો',
     dropSub:  'અહીં ફાઇલ ખેંચો · JPG, PNG, WEBP · 10 સુધી',
+    cameraHead: 'ફોટો ખેંચો',
+    cameraSub:  'ઉપકરણ કેમેરા ખોલી ઇમેજ કેપ્ચર કરો',
     emptyThumbs: 'હજી ઇમેજ નથી. ઉમેરવા ઉપરનો વિસ્તાર વાપરો.',
     urlPlaceholder: 'https://example.com/table.jpg',
     btnExtractUrl: 'કાઢો',
@@ -861,7 +882,7 @@ const I18N = {
     reviewHintMobile:  'ઇમેજ અને ટેબલ સરખાવી ચોકસાઈ ચકાસો.',
     btnReadPhoto:   'ડેટા કાઢો',
     btnRereadPhoto: 'ફરી કાઢો',
-    statRows: 'પંક્તિ', statCols: 'સ્તંભ', statSum: 'સંખ્યા સરવાળો',
+    statRows: 'પંક્તિ', statCols: 'સ્તંભ', statGrandRows: 'Σ પંક્તિ સરવાળો', statGrandCols: 'Σ સ્તંભ સરવાળો',
     tblAddRow: 'પંક્તિ ઉમેરો', tblAddCol: 'સ્તંભ ઉમેરો',
     tblRemRow: 'પંક્તિ કાઢો',  tblRemCol: 'સ્તંભ કાઢો',
     tblHint: 'સેલ ક્લિક કરી સુધારો. પીળો = મૂળ ડેટાથી બદલ્યો.',
@@ -1005,13 +1026,14 @@ const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"
 
 /* ── INPUT TAB SWITCHER ── */
 function switchInputTab(tab) {
-  const isFile = tab === 'file';
-  document.getElementById('tab-file').classList.toggle('active', isFile);
-  document.getElementById('tab-url').classList.toggle('active', !isFile);
-  document.getElementById('tab-file').setAttribute('aria-selected', isFile ? 'true' : 'false');
-  document.getElementById('tab-url').setAttribute('aria-selected', isFile ? 'false' : 'true');
-  document.getElementById('panel-file').classList.toggle('hide', !isFile);
-  document.getElementById('panel-url').classList.toggle('hide', isFile);
+  ['file', 'camera', 'url'].forEach(t => {
+    const btn   = document.getElementById(`tab-${t}`);
+    const panel = document.getElementById(`panel-${t}`);
+    const on    = t === tab;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    panel.classList.toggle('hide', !on);
+  });
 }
 
 /* ── DRAG-AND-DROP ── */
@@ -1021,6 +1043,8 @@ dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.class
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
 fileInput.addEventListener('change', e => handleFiles(e.target.files));
+const cameraInput = document.getElementById('camera-input');
+cameraInput.addEventListener('change', e => { handleFiles(e.target.files); cameraInput.value = ''; });
 
 /* ── STEPS ── */
 function setStep(n) {
@@ -1352,22 +1376,17 @@ function cellNum(v) {
   return 0;
 }
 
-/* Skip row 0 (header) and col 0 (labels) in all sum calculations */
-function dataRowSum(row, ri) {
-  if (ri === 0) return 0;
-  return row.slice(1).reduce((s, v) => s + cellNum(v), 0);
+function dataRowSum(row) {
+  return row.reduce((s, v) => s + cellNum(v), 0);
 }
-function dataRowHasNums(row, ri) {
-  if (ri === 0) return false;
-  return row.slice(1).some(v => typeof v === 'number' && isFinite(v));
+function dataRowHasNums(row) {
+  return row.some(v => typeof v === 'number' && isFinite(v));
 }
 function dataColSum(doc, c) {
-  if (c === 0) return 0;
-  return doc.table.slice(1).reduce((s, r) => s + cellNum(r[c]), 0);
+  return doc.table.reduce((s, r) => s + cellNum(r[c]), 0);
 }
 function dataGrandTotal(doc) {
-  if (doc.table.length <= 1) return 0;
-  return doc.table.slice(1).reduce((s, r) => s + r.slice(1).reduce((rs, v) => rs + cellNum(v), 0), 0);
+  return doc.table.reduce((s, r) => s + r.reduce((rs, v) => rs + cellNum(v), 0), 0);
 }
 function fmt(v) { return Number.isInteger(v) ? String(v) : String(Number(v.toFixed(6)).toString()); }
 
@@ -1379,40 +1398,24 @@ function renderTable() {
     doc.table.forEach(r => { while (r.length < doc.numCols) r.push(null); });
   }
 
-  // ── First row → <thead>; col 0 is sticky row-header column
-  const hdr = doc.table[0] || [];
-  let h = `<thead><tr>`;
-  for (let ci = 0; ci < doc.numCols; ci++) {
-    const v   = hdr[ci];
-    const dis = v === null || v === undefined ? '' : String(v);
-    const ch  = origChanged(doc, 0, ci, v) ? ' changed' : '';
-    const thCls = ci === 0 ? ' class="th-hdr-col"' : '';
-    h += `<th${thCls}><input class="hdr-cell${ch}" type="text" value="${escapeHtml(dis)}" oninput="onCell(this,0,${ci})" /></th>`;
-  }
-  h += `<th>${escapeHtml(t('tblRowTotal'))}</th></tr></thead><tbody>`;
-
-  // ── Rows 1+ → <tbody>; col 0 sticky as row header
-  for (let ri = 1; ri < doc.table.length; ri++) {
+  let h = `<tbody>`;
+  for (let ri = 0; ri < doc.table.length; ri++) {
     const row = doc.table[ri];
     h += `<tr>`;
     for (let ci = 0; ci < doc.numCols; ci++) {
       const v       = row[ci];
       const changed = origChanged(doc, ri, ci, v);
       const display = v === null || v === undefined ? '' : String(v);
-      if (ci === 0) {
-        h += `<td class="td-hdr-col"><input class="hdr-cell${changed?' changed':''}" type="text" value="${escapeHtml(display)}" oninput="onCell(this,${ri},${ci})" /></td>`;
-      } else {
-        h += `<td><input class="cell${changed?' changed':''}" type="text" value="${escapeHtml(display)}" oninput="onCell(this,${ri},${ci})" /></td>`;
-      }
+      h += `<td><input class="cell${changed?' changed':''}" type="text" value="${escapeHtml(display)}" oninput="onCell(this,${ri},${ci})" /></td>`;
     }
-    const rs   = dataRowSum(row, ri);
-    const show = dataRowHasNums(row, ri);
+    const rs   = dataRowSum(row);
+    const show = dataRowHasNums(row);
     h += `<td class="td-total" id="rt-${ri}">${show ? fmt(rs) : ''}</td></tr>`;
   }
 
-  // ── Total footer row
-  h += `<tr><td class="td-footer-label">${escapeHtml(t('tblFooterTotal'))}</td>`;
-  for (let c = 1; c < doc.numCols; c++) {
+  // ── Column totals footer row
+  h += `<tr>`;
+  for (let c = 0; c < doc.numCols; c++) {
     const cs = dataColSum(doc, c);
     h += `<td class="td-col-total" id="ct-${c}">${cs ? fmt(cs) : ''}</td>`;
   }
@@ -1438,12 +1441,11 @@ function onCell(input, ri, ci) {
 
 function refreshTotals() {
   const d = currentDoc(); if (!d) return;
-  // ri=0 is in <thead>, no rt-0 element — start from 1
-  for (let ri = 1; ri < d.table.length; ri++) {
+  for (let ri = 0; ri < d.table.length; ri++) {
     const el = document.getElementById(`rt-${ri}`);
-    if (el) el.textContent = dataRowHasNums(d.table[ri], ri) ? fmt(dataRowSum(d.table[ri], ri)) : '';
+    if (el) el.textContent = dataRowHasNums(d.table[ri]) ? fmt(dataRowSum(d.table[ri])) : '';
   }
-  for (let c = 1; c < d.numCols; c++) {
+  for (let c = 0; c < d.numCols; c++) {
     const el = document.getElementById(`ct-${c}`);
     const cs = dataColSum(d, c);
     if (el) el.textContent = cs ? fmt(cs) : '';
@@ -1455,9 +1457,10 @@ function refreshTotals() {
 
 function refreshStats() {
   const d = currentDoc();
-  document.getElementById('stat-rows').textContent  = d?.table.length || 0;
-  document.getElementById('stat-cols').textContent  = d?.numCols || 0;
-  document.getElementById('stat-grand').textContent = d ? fmt(dataGrandTotal(d)) : '0';
+  document.getElementById('stat-rows').textContent       = d?.table.length || 0;
+  document.getElementById('stat-cols').textContent       = d?.numCols || 0;
+  document.getElementById('stat-grand-rows').textContent = d ? fmt(dataGrandTotal(d)) : '0';
+  document.getElementById('stat-grand-cols').textContent = d ? fmt(dataGrandTotal(d)) : '0';
 }
 
 /* ── TABLE EDITING ── */

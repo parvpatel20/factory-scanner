@@ -265,8 +265,6 @@ def build_excel(table) -> BytesIO | None:
     ws = wb.active
     ws.title = "Extracted Data"
 
-    header_fill  = PatternFill("solid", fgColor="D9E1F2")
-    header_font  = Font(bold=True)
     total_fill   = PatternFill("solid", fgColor="E2EFDA")
     grand_fill   = PatternFill("solid", fgColor="C6EFCE")
     total_font   = Font(bold=True)
@@ -275,58 +273,41 @@ def build_excel(table) -> BytesIO | None:
 
     total_col = num_cols + 1  # Excel column index for row-total column
 
-    # Write extracted table + row-total formula per data row
+    # Write extracted table + row-total formula for every row
     for ri, row in enumerate(table, start=1):
-        is_hdr = (ri == 1)
         for ci, val in enumerate(row, start=1):
             cell = ws.cell(row=ri, column=ci, value=val)
-            if is_hdr:
-                cell.font      = header_font
-                cell.fill      = header_fill
-                cell.alignment = center_align
-            else:
-                cell.alignment = wrap_align
+            cell.alignment = wrap_align
 
-        if is_hdr:
-            # "Total" header in the extra total column
-            hc = ws.cell(row=1, column=total_col, value="Total")
-            hc.font = header_font; hc.fill = header_fill; hc.alignment = center_align
-        elif num_cols > 1:
-            # Row total: sum cols B..last_data (skip col A = labels)
-            first = get_column_letter(2)
-            last  = get_column_letter(num_cols)
-            tc = ws.cell(row=ri, column=total_col,
-                         value=f"=SUM({first}{ri}:{last}{ri})")
-            tc.font = total_font; tc.fill = total_fill; tc.alignment = center_align
-
-    # Column-total row at the bottom (skip row 1 = header, skip col 1 = labels)
-    tr = num_rows + 1
-    lbl = ws.cell(row=tr, column=1, value="Total")
-    lbl.font = total_font; lbl.fill = total_fill; lbl.alignment = center_align
-
-    for ci in range(2, num_cols + 1):
-        cl = get_column_letter(ci)
-        tc = ws.cell(row=tr, column=ci, value=f"=SUM({cl}2:{cl}{num_rows})")
+        # Row total: sum all data columns
+        first = get_column_letter(1)
+        last  = get_column_letter(num_cols)
+        tc = ws.cell(row=ri, column=total_col,
+                     value=f"=SUM({first}{ri}:{last}{ri})")
         tc.font = total_font; tc.fill = total_fill; tc.alignment = center_align
 
-    # Grand total (sum of total column, rows 2..num_rows)
+    # Column-total row at the bottom (all rows, all cols)
+    tr = num_rows + 1
+    for ci in range(1, num_cols + 1):
+        cl = get_column_letter(ci)
+        tc = ws.cell(row=tr, column=ci, value=f"=SUM({cl}1:{cl}{num_rows})")
+        tc.font = total_font; tc.fill = total_fill; tc.alignment = center_align
+
+    # Grand total (sum of total column, all data rows)
     gtcl = get_column_letter(total_col)
     gc = ws.cell(row=tr, column=total_col,
-                 value=f"=SUM({gtcl}2:{gtcl}{num_rows})")
+                 value=f"=SUM({gtcl}1:{gtcl}{num_rows})")
     gc.font = Font(bold=True); gc.fill = grand_fill; gc.alignment = center_align
 
     # Auto column widths
-    all_rows = table + [["Total"] + [None] * num_cols]
     for ci in range(1, total_col + 1):
         max_len = 0
-        for row in all_rows:
+        for row in table:
             if ci <= len(row):
                 v = row[ci - 1]
                 if v is not None:
                     max_len = max(max_len, len(str(v)))
         ws.column_dimensions[get_column_letter(ci)].width = min(max(max_len + 2, 8), 50)
-
-    ws.freeze_panes = "B2"  # freeze header row + label column
 
     buf = BytesIO()
     wb.save(buf)
