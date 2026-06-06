@@ -998,6 +998,38 @@ let currentIndex = -1;
 let nextId       = 1;
 const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="200"%3E%3Crect width="320" height="200" fill="%231F2937"/%3E%3C/svg%3E';
 
+/* ── SESSION PERSISTENCE (survives iOS camera page-reload) ── */
+function persistState() {
+  try {
+    sessionStorage.setItem('fsc_docs',   JSON.stringify(documents));
+    sessionStorage.setItem('fsc_nextid', String(nextId));
+  } catch(e) {
+    try {
+      const light = documents.map(d => ({...d, imageBase64: null, preview: d.preview && d.preview.startsWith('data:') ? '' : d.preview}));
+      sessionStorage.setItem('fsc_docs',   JSON.stringify(light));
+      sessionStorage.setItem('fsc_nextid', String(nextId));
+    } catch(e2) {}
+  }
+}
+function restoreState() {
+  try {
+    const saved = sessionStorage.getItem('fsc_docs');
+    const sid   = sessionStorage.getItem('fsc_nextid');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length) {
+        documents = parsed;
+        if (sid) nextId = Math.max(Number(sid), 1);
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+function clearPersistedState() {
+  try { sessionStorage.removeItem('fsc_docs'); sessionStorage.removeItem('fsc_nextid'); } catch(e) {}
+}
+
 /* ── INPUT TAB SWITCHER ── */
 function switchInputTab(tab) {
   ['file', 'camera'].forEach(t => {
@@ -1080,6 +1112,7 @@ async function handleFiles(list) {
   }
   fileInput.value = '';
   renderThumbs(); updateButtons();
+  persistState();
   if (documents.length) showStatus(tpl('toastReadyNext', { n: documents.length }), 'success');
 }
 
@@ -1153,6 +1186,7 @@ function removeDocument(i) {
   if (currentIndex === i) currentIndex = -1;
   else if (currentIndex > i) currentIndex--;
   renderThumbs(); updateButtons();
+  persistState();
   showStatus(documents.length ? tpl('toastPhotosOnList', { n: documents.length }) : t('toastAllRemoved'), 'info');
 }
 
@@ -1222,6 +1256,7 @@ async function extractDocument(i) {
     }
     loadTable(doc, data.table);
     doc.status = 'done';
+    persistState();
     return true;
   } catch(err) {
     doc.status = 'error';
@@ -1492,6 +1527,7 @@ function safeFilename(v) {
 
 function resetAll() {
   documents = []; currentIndex = -1; fileInput.value = '';
+  clearPersistedState();
   renderThumbs(); updateButtons(); clearStatus(); showUpload();
 }
 
@@ -1512,11 +1548,17 @@ function buildManual() {
   };
   documents.push(doc);
   currentIndex = documents.length - 1;
+  persistState();
   renderThumbs(); updateButtons(); openDocument(currentIndex);
   showStatus(t('toastManualReady'), 'info');
 }
 
+const _restored = restoreState();
 initLangSwitcher();
+if (_restored && documents.length) {
+  renderThumbs(); updateButtons();
+  showStatus(`${documents.length} image(s) restored from your session.`, 'info');
+}
 </script>
 </body>
 </html>
