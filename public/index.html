@@ -514,7 +514,6 @@ th:last-child, td:last-child { border-right: 0; }
       <div class="input-tabs" role="tablist">
         <button class="input-tab active" id="tab-file" role="tab" aria-selected="true" onclick="switchInputTab('file')" data-i18n="tabFile">Upload Files</button>
         <button class="input-tab" id="tab-camera" role="tab" aria-selected="false" onclick="switchInputTab('camera')" data-i18n="tabCamera">Take Photo</button>
-        <button class="input-tab" id="tab-url" role="tab" aria-selected="false" onclick="switchInputTab('url')" data-i18n="tabUrl">From URL</button>
       </div>
 
       <!-- File panel -->
@@ -523,7 +522,7 @@ th:last-child, td:last-child { border-right: 0; }
           <input type="file" id="file-input" accept="image/*" multiple />
           <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <div class="dz-head" data-i18n="dropHead">Tap here to choose images</div>
-          <div class="dz-sub" data-i18n="dropSub">Or drag files here · JPG, PNG, WEBP · Up to 10 images</div>
+          <div class="dz-sub" data-i18n="dropSub">Or drag files here · JPG, PNG, WEBP · Up to 5 images</div>
         </label>
         <div id="empty-thumbs" class="text-muted mt8" data-i18n="emptyThumbs">No images yet. Use the box above to add some.</div>
         <div class="thumb-grid mt8" id="selected-thumbs"></div>
@@ -539,17 +538,6 @@ th:last-child, td:last-child { border-right: 0; }
         </label>
       </div>
 
-      <!-- URL panel -->
-      <div id="panel-url" class="url-panel hide">
-        <div class="url-input-row">
-          <input type="url" id="url-input" class="url-input" data-i18n-placeholder="urlPlaceholder" placeholder="https://example.com/table.jpg" />
-          <button class="btn btn-primary" onclick="extractFromUrl()" id="url-extract-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <span data-i18n="btnExtractUrl">Extract</span>
-          </button>
-        </div>
-        <p class="url-hint" data-i18n="urlHint">Paste a direct link to a JPG, PNG, or WEBP image. The image is fetched and processed on the server.</p>
-      </div>
     </div>
 
     <p class="action-hint" data-i18n="actionHint">Click "Extract data" to process all images. Then open each result to review, edit, and download.</p>
@@ -740,23 +728,19 @@ const I18N = {
     introTitle: 'How it works.',
     introBody: 'Upload any image containing a table, spreadsheet, form, or structured data. The AI reads all text and numbers, preserving rows, columns, and headings. Review and correct the result, then download a clean Excel file.',
     howStepWord: 'Step',
-    howLabel1: 'Upload an image or paste a URL',
+    howLabel1: 'Upload an image or take a photo',
     howLabel2: 'Click "Extract data" — AI reads all rows, columns, and headings',
     howLabel3: 'Review the table and fix any mistakes by clicking a cell',
     howLabel4: 'Download your Excel file — one file per image',
     uploadTitle: 'Add your images',
-    uploadDesc:  'Upload up to 10 images (JPG, PNG, WEBP) or paste an image URL. Each image gets its own Excel file.',
-    tabFile: 'Upload Files',
+    uploadDesc:  'Upload up to 5 images (JPG, PNG, WEBP) or take a photo. Each image gets its own Excel file.',
+    tabFile: 'Upload / Drag & Drop',
     tabCamera: 'Take Photo',
-    tabUrl:  'From URL',
     dropHead: 'Tap here to choose images',
-    dropSub:  'Or drag files here · JPG, PNG, WEBP · Up to 10 images',
+    dropSub:  'Or drag files here · JPG, PNG, WEBP · Up to 5 images',
     cameraHead: 'Open camera to take a photo',
     cameraSub:  'Captures an image directly from your device camera',
     emptyThumbs: 'No images yet. Use the box above to add some.',
-    urlPlaceholder: 'https://example.com/table.jpg',
-    btnExtractUrl: 'Extract',
-    urlHint: 'Paste a direct link to a JPG, PNG, or WEBP image. The image is fetched and processed on the server.',
     actionHint: 'Click "Extract data" to process all images. Then open each result to review, edit, and download.',
     btnExtract:   'Extract data from images',
     btnContinue:  'See your image list',
@@ -786,10 +770,10 @@ const I18N = {
     tblHint: 'Click any cell to edit. Yellow cells have been changed from the original extraction.',
     tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'Total',
     toastImageType: 'Please choose image files only (JPG, PNG, or WEBP).',
-    toastMax10: 'You already have 10 images. Remove one before adding another.',
-    toastPartial10: 'Only {n} image(s) added — limit is 10.',
+    toastMax10: 'You already have 5 images. Remove one before adding another.',
+    toastPartial10: 'Only {n} image(s) added — limit is 5.',
     toastReadError: 'Could not read {name}: {msg}',
-    toastReadyNext: '{n} image(s) ready. Click "Extract data" to process them.',
+    toastReadyNext: '{n} of 5 image(s) ready. Click "Extract data" to process them.',
     toastPhotosOnList: '{n} image(s) in the list.',
     toastAllRemoved: 'All images removed.',
     errFileRead: 'File read failed', errImageDecode: 'Image decode failed',
@@ -828,9 +812,6 @@ const I18N = {
     manualName: 'Manual Table {n}',
     netError: 'Network error: {msg}',
     extractionHttp: 'Extraction failed (HTTP {code}).',
-    toastUrlEmpty: 'Please enter an image URL.',
-    toastUrlInvalid: 'Please enter a valid http or https URL.',
-    toastUrlAdded: 'Extracting from URL…',
   },
   gu: {
     skipLink: 'મુખ્ય સામગ્રી પર જાઓ',
@@ -842,23 +823,19 @@ const I18N = {
     introTitle: 'કેવી રીતે કામ કરે.',
     introBody: 'ટેબલ, સ્પ્રેડશીટ, ફોર્મ કે માળખાગત ડેટા ધરાવતી ઇમેજ અપલોડ કરો. AI બધા ટેક્સ્ટ અને નંબર વાંચે છે — પંક્તિઓ, સ્તંભ અને શીર્ષકો સહિત. ડેટા ચકાસો, ભૂલ સુધારો, પછી Excel ફાઇલ ડાઉનલોડ કરો.',
     howStepWord: 'પગલું',
-    howLabel1: 'ઇમેજ અપલોડ કરો અથવા URL ચોંટાડો',
+    howLabel1: 'ઇમેજ અપલોડ કરો અથવા ફોટો લો',
     howLabel2: '"ડેટા કાઢો" ક્લિક કરો — AI બધી પંક્તિઓ, સ્તંભ અને શીર્ષક વાંચે છે',
     howLabel3: 'કોષ્ટક ચકાસો, ભૂલ હોય તો સેલ ક્લિક કરી સુધારો',
     howLabel4: 'Excel ફાઇલ ડાઉનલોડ કરો — દરેક ઇમેજ માટે એક ફાઇલ',
     uploadTitle: 'ઇમેજ ઉમેરો',
-    uploadDesc:  '10 સુધી ઇમેજ (JPG, PNG, WEBP) અથવા URL ચોંટાડો. દરેક ઇમેજ માટે Excel ફાઇલ મળશે.',
-    tabFile: 'ફાઇલ અપલોડ',
+    uploadDesc:  '5 સુધી ઇમેજ (JPG, PNG, WEBP) અથવા ફોટો લો. દરેક ઇમેજ માટે Excel ફાઇલ મળશે.',
+    tabFile: 'અપલોડ / ખેંચો',
     tabCamera: 'ફોટો લો',
-    tabUrl:  'URL થી',
     dropHead: 'ઇમેજ પસંદ કરવા અહીં ટૅપ કરો',
-    dropSub:  'અહીં ફાઇલ ખેંચો · JPG, PNG, WEBP · 10 સુધી',
+    dropSub:  'અહીં ફાઇલ ખેંચો · JPG, PNG, WEBP · 5 સુધી',
     cameraHead: 'ફોટો ખેંચો',
     cameraSub:  'ઉપકરણ કેમેરા ખોલી ઇમેજ કેપ્ચર કરો',
     emptyThumbs: 'હજી ઇમેજ નથી. ઉમેરવા ઉપરનો વિસ્તાર વાપરો.',
-    urlPlaceholder: 'https://example.com/table.jpg',
-    btnExtractUrl: 'કાઢો',
-    urlHint: 'JPG, PNG અથવા WEBP ઇમેજ ની સીધી URL ચોંટાડો. ઇમેજ સર્વર પર ડાઉનલોડ થઈ પ્રોસેસ થશે.',
     actionHint: '"ડેટા કાઢો" ક્લિક કરી ઇમેજ પ્રોસેસ કરો. પછી દરેક ઇમેજ ખોલી ડેટા ચકાસો.',
     btnExtract:   'ઇમેજમાંથી ડેટા કાઢો',
     btnContinue:  'ઇમેજ યાદી જુઓ',
@@ -888,10 +865,10 @@ const I18N = {
     tblHint: 'સેલ ક્લિક કરી સુધારો. પીળો = મૂળ ડેટાથી બદલ્યો.',
     tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'સરવાળો',
     toastImageType: 'ફક્ત ઇમેજ ફાઇલ (JPG, PNG, WEBP) પસંદ કરો.',
-    toastMax10: 'પહેલેથી 10 ઇમેજ છે. ઉમેરતા પહેલાં એક કાઢો.',
-    toastPartial10: 'ફક્ત {n} ઇમેજ ઉમેરાઈ — મહત્તમ 10.',
+    toastMax10: 'પહેલેથી 5 ઇમેજ છે. ઉમેરતા પહેલાં એક કાઢો.',
+    toastPartial10: 'ફક્ત {n} ઇમેજ ઉમેરાઈ — મહત્તમ 5.',
     toastReadError: '{name} ન વંચાઈ: {msg}',
-    toastReadyNext: '{n} ઇમેજ તૈયાર. "ડેટા કાઢો" ક્લિક કરો.',
+    toastReadyNext: '{n}/5 ઇમેજ તૈયાર. "ડેટા કાઢો" ક્લિક કરો.',
     toastPhotosOnList: 'યાદીમાં {n} ઇમેજ.',
     toastAllRemoved: 'બધી ઇમેજ કાઢી.',
     errFileRead: 'ફાઇલ ન વંચાઈ', errImageDecode: 'ઇમેજ ઓળખાઈ નહીં',
@@ -930,9 +907,6 @@ const I18N = {
     manualName: 'ટેબલ {n}',
     netError: 'નેટવર્ક ભૂલ: {msg}',
     extractionHttp: 'ભૂલ (HTTP {code}).',
-    toastUrlEmpty: 'URL દાખલ કરો.',
-    toastUrlInvalid: 'http/https URL દાખલ કરો.',
-    toastUrlAdded: 'URL પ્રોસેસ ચાલે…',
   }
 };
 
@@ -1018,7 +992,7 @@ function icon(name, size=14) {
 }
 
 /* ── STATE ── */
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 5;
 let documents    = [];
 let currentIndex = -1;
 let nextId       = 1;
@@ -1026,7 +1000,7 @@ const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"
 
 /* ── INPUT TAB SWITCHER ── */
 function switchInputTab(tab) {
-  ['file', 'camera', 'url'].forEach(t => {
+  ['file', 'camera'].forEach(t => {
     const btn   = document.getElementById(`tab-${t}`);
     const panel = document.getElementById(`panel-${t}`);
     const on    = t === tab;
@@ -1148,36 +1122,6 @@ function compressImage(file) {
     };
     reader.readAsDataURL(file);
   });
-}
-
-/* ── URL EXTRACTION ── */
-async function extractFromUrl() {
-  const url = (document.getElementById('url-input').value || '').trim();
-  if (!url) { showStatus(t('toastUrlEmpty'), 'error'); return; }
-  if (!/^https?:\/\//i.test(url)) { showStatus(t('toastUrlInvalid'), 'error'); return; }
-  if (documents.length >= MAX_IMAGES) { showStatus(t('toastMax10'), 'error'); return; }
-
-  const displayName = url.length > 60 ? url.substring(0, 57) + '…' : url;
-  const baseName    = url.split('/').pop().replace(/\?.*/, '').replace(/\.[^.]+$/, '') || 'url-image';
-
-  const doc = {
-    id: nextId++,
-    filename: safeFilename(baseName),
-    originalName: displayName,
-    preview: url, imageBase64: null, imageUrl: url,
-    mediaType: 'image/jpeg', bytes: 0,
-    status: 'extracting', error: '',
-    table: [], origTable: [], numCols: 0
-  };
-  documents.push(doc);
-  const i = documents.length - 1;
-  document.getElementById('url-input').value = '';
-
-  renderThumbs(); updateButtons();
-  showLoader(t('loaderReadingOne'), displayName);
-  const ok = await extractDocument(i);
-  showList();
-  showStatus(ok ? tpl('toastProcessedOk', { name: displayName }) : localizeServer(documents[i].error), ok ? 'success' : 'error');
 }
 
 /* ── THUMBS ── */
