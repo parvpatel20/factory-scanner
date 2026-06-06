@@ -1044,7 +1044,13 @@ dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
 fileInput.addEventListener('change', e => handleFiles(e.target.files));
 const cameraInput = document.getElementById('camera-input');
-cameraInput.addEventListener('change', e => { handleFiles(e.target.files); cameraInput.value = ''; switchInputTab('file'); });
+cameraInput.addEventListener('change', async e => {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  await handleFiles(files);
+  cameraInput.value = '';
+  switchInputTab('file');
+});
 
 /* ── STEPS ── */
 function setStep(n) {
