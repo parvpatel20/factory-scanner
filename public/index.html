@@ -531,7 +531,7 @@ th:last-child, td:last-child { border-right: 0; }
       <!-- Camera panel -->
       <div id="panel-camera" class="hide">
         <input type="file" id="camera-input" accept="image/*" capture="environment" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" />
-        <div class="drop-zone" id="camera-zone" role="button" tabindex="0"
+        <div class="drop-zone" id="camera-zone" role="button" tabindex="0" style="touch-action:manipulation;"
           onclick="document.getElementById('camera-input').click()"
           onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('camera-input').click()">
           <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -1000,7 +1000,7 @@ let currentIndex = -1;
 let nextId       = 1;
 const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="200"%3E%3Crect width="320" height="200" fill="%231F2937"/%3E%3C/svg%3E';
 
-/* ── INDEXEDDB PERSISTENCE (survives iOS camera page-reload, no size limit) ── */
+/* ── INDEXEDDB PERSISTENCE (survives page reloads on iOS/Android/desktop, no size limit) ── */
 const _IDB_NAME  = 'factory-scanner';
 const _IDB_VER   = 1;
 const _IDB_STORE = 'documents';
