@@ -315,7 +315,7 @@ a.skip-link:focus {
 @media (max-width: 680px) { .review-grid { grid-template-columns: 1fr; } .image-panel { position: static; } .image-hint .hint-desktop { display: none; } .image-hint .hint-mobile { display: inline; } .image-panel img { max-height: min(50vh, 320px); } }
 
 /* ── STATS ── */
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
 .stat { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 12px 14px; text-align: center; box-shadow: var(--shadow-sm); }
 .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); }
 .stat-value { font-size: 22px; font-weight: 900; color: var(--gray-900); margin-top: 3px; }
@@ -522,7 +522,7 @@ th:last-child, td:last-child { border-right: 0; }
           <input type="file" id="file-input" accept="image/*" multiple />
           <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <div class="dz-head" data-i18n="dropHead">Tap here to choose images</div>
-          <div class="dz-sub" data-i18n="dropSub">Or drag files here · JPG, PNG, WEBP · Up to 5 images</div>
+          <div class="dz-sub" data-i18n="dropSub">Or drag files here · JPG, PNG, WEBP · Up to 3 images</div>
         </label>
         <div id="empty-thumbs" class="text-muted mt8" data-i18n="emptyThumbs">No images yet. Use the box above to add some.</div>
         <div class="thumb-grid mt8" id="selected-thumbs"></div>
@@ -673,14 +673,6 @@ th:last-child, td:last-child { border-right: 0; }
             <div class="stat-label" data-i18n="statCols">Columns</div>
             <div class="stat-value" id="stat-cols">0</div>
           </div>
-          <div class="stat highlight">
-            <div class="stat-label" data-i18n="statGrandRows">Sum of row totals</div>
-            <div class="stat-value" id="stat-grand-rows">0</div>
-          </div>
-          <div class="stat highlight">
-            <div class="stat-label" data-i18n="statGrandCols">Sum of col totals</div>
-            <div class="stat-value" id="stat-grand-cols">0</div>
-          </div>
         </div>
 
         <div class="tbl-controls">
@@ -709,6 +701,10 @@ th:last-child, td:last-child { border-right: 0; }
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           <span data-i18n="tblHint">Click any cell to edit. Yellow cells have been changed from the original extraction.</span>
         </div>
+        <div class="tbl-hint" style="margin-top:6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span data-i18n="tblSumNote">The green corner value is the grand total — it equals both the sum of all row totals and the sum of all column totals.</span>
+        </div>
       </div>
     </div>
   </section>
@@ -735,11 +731,11 @@ const I18N = {
     howLabel3: 'Review the table and fix any mistakes by clicking a cell',
     howLabel4: 'Download your Excel file — one file per image',
     uploadTitle: 'Add your images',
-    uploadDesc:  'Upload up to 5 images (JPG, PNG, WEBP) or take a photo. Each image gets its own Excel file.',
+    uploadDesc:  'Upload up to 3 images (JPG, PNG, WEBP) or take a photo. Each image gets its own Excel file.',
     tabFile: 'Upload / Drag & Drop',
     tabCamera: 'Take Photo',
     dropHead: 'Tap here to choose images',
-    dropSub:  'Or drag files here · JPG, PNG, WEBP · Up to 5 images',
+    dropSub:  'Or drag files here · JPG, PNG, WEBP · Up to 3 images',
     cameraHead: 'Open camera to take a photo',
     cameraSub:  'Captures an image directly from your device camera',
     emptyThumbs: 'No images yet. Use the box above to add some.',
@@ -766,16 +762,17 @@ const I18N = {
     reviewHintMobile:  'Compare this image with the table below to verify accuracy.',
     btnReadPhoto:   'Extract data',
     btnRereadPhoto: 'Re-extract',
-    statRows: 'Rows', statCols: 'Columns', statGrandRows: 'Sum of row totals', statGrandCols: 'Sum of col totals',
+    statRows: 'Rows', statCols: 'Columns',
+    tblSumNote: 'The green corner value is the grand total — it equals both the sum of all row totals and the sum of all column totals.',
     tblAddRow: 'Add Row',  tblAddCol: 'Add Column',
     tblRemRow: 'Remove Row', tblRemCol: 'Remove Column',
     tblHint: 'Click any cell to edit. Yellow cells have been changed from the original extraction.',
     tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'Total',
     toastImageType: 'Please choose image files only (JPG, PNG, or WEBP).',
-    toastMax10: 'You already have 5 images. Remove one before adding another.',
-    toastPartial10: 'Only {n} image(s) added — limit is 5.',
+    toastMax10: 'You already have 3 images. Remove one before adding another.',
+    toastPartial10: 'Only {n} image(s) added — limit is 3.',
     toastReadError: 'Could not read {name}: {msg}',
-    toastReadyNext: '{n} of 5 image(s) ready. Click "Extract data" to process them.',
+    toastReadyNext: '{n} of 3 image(s) ready. Click "Extract data" to process them.',
     toastPhotosOnList: '{n} image(s) in the list.',
     toastAllRemoved: 'All images removed.',
     errFileRead: 'File read failed', errImageDecode: 'Image decode failed',
@@ -830,11 +827,11 @@ const I18N = {
     howLabel3: 'કોષ્ટક ચકાસો, ભૂલ હોય તો સેલ ક્લિક કરી સુધારો',
     howLabel4: 'Excel ફાઇલ ડાઉનલોડ કરો — દરેક ઇમેજ માટે એક ફાઇલ',
     uploadTitle: 'ઇમેજ ઉમેરો',
-    uploadDesc:  '5 સુધી ઇમેજ (JPG, PNG, WEBP) અથવા ફોટો લો. દરેક ઇમેજ માટે Excel ફાઇલ મળશે.',
+    uploadDesc:  '3 સુધી ઇમેજ (JPG, PNG, WEBP) અથવા ફોટો લો. દરેક ઇમેજ માટે Excel ફાઇલ મળશે.',
     tabFile: 'અપલોડ / ખેંચો',
     tabCamera: 'ફોટો લો',
     dropHead: 'ઇમેજ પસંદ કરવા અહીં ટૅપ કરો',
-    dropSub:  'અહીં ફાઇલ ખેંચો · JPG, PNG, WEBP · 5 સુધી',
+    dropSub:  'અહીં ફાઇલ ખેંચો · JPG, PNG, WEBP · 3 સુધી',
     cameraHead: 'ફોટો ખેંચો',
     cameraSub:  'ઉપકરણ કેમેરા ખોલી ઇમેજ કેપ્ચર કરો',
     emptyThumbs: 'હજી ઇમેજ નથી. ઉમેરવા ઉપરનો વિસ્તાર વાપરો.',
@@ -861,16 +858,17 @@ const I18N = {
     reviewHintMobile:  'ઇમેજ અને ટેબલ સરખાવી ચોકસાઈ ચકાસો.',
     btnReadPhoto:   'ડેટા કાઢો',
     btnRereadPhoto: 'ફરી કાઢો',
-    statRows: 'પંક્તિ', statCols: 'સ્તંભ', statGrandRows: 'Σ પંક્તિ સરવાળો', statGrandCols: 'Σ સ્તંભ સરવાળો',
+    statRows: 'પંક્તિ', statCols: 'સ્તંભ',
+    tblSumNote: 'લીલો ખૂણા-મૂલ્ય = ગ્રાન્ડ ટોટલ — તે બધી પંક્તિ-સરવાળા અને સ્તંભ-સરવાળાનો સરવાળો છે.',
     tblAddRow: 'પંક્તિ ઉમેરો', tblAddCol: 'સ્તંભ ઉમેરો',
     tblRemRow: 'પંક્તિ કાઢો',  tblRemCol: 'સ્તંભ કાઢો',
     tblHint: 'સેલ ક્લિક કરી સુધારો. પીળો = મૂળ ડેટાથી બદલ્યો.',
     tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'સરવાળો',
     toastImageType: 'ફક્ત ઇમેજ ફાઇલ (JPG, PNG, WEBP) પસંદ કરો.',
-    toastMax10: 'પહેલેથી 5 ઇમેજ છે. ઉમેરતા પહેલાં એક કાઢો.',
-    toastPartial10: 'ફક્ત {n} ઇમેજ ઉમેરાઈ — મહત્તમ 5.',
+    toastMax10: 'પહેલેથી 3 ઇમેજ છે. ઉમેરતા પહેલાં એક કાઢો.',
+    toastPartial10: 'ફક્ત {n} ઇમેજ ઉમેરાઈ — મહત્તમ 3.',
     toastReadError: '{name} ન વંચાઈ: {msg}',
-    toastReadyNext: '{n}/5 ઇમેજ તૈયાર. "ડેટા કાઢો" ક્લિક કરો.',
+    toastReadyNext: '{n}/3 ઇમેજ તૈયાર. "ડેટા કાઢો" ક્લિક કરો.',
     toastPhotosOnList: 'યાદીમાં {n} ઇમેજ.',
     toastAllRemoved: 'બધી ઇમેજ કાઢી.',
     errFileRead: 'ફાઇલ ન વંચાઈ', errImageDecode: 'ઇમેજ ઓળખાઈ નહીં',
@@ -994,7 +992,7 @@ function icon(name, size=14) {
 }
 
 /* ── STATE ── */
-const MAX_IMAGES = 5;
+const MAX_IMAGES = 3;
 let documents    = [];
 let currentIndex = -1;
 let nextId       = 1;
@@ -1466,10 +1464,8 @@ function refreshTotals() {
 
 function refreshStats() {
   const d = currentDoc();
-  document.getElementById('stat-rows').textContent       = d?.table.length || 0;
-  document.getElementById('stat-cols').textContent       = d?.numCols || 0;
-  document.getElementById('stat-grand-rows').textContent = d ? fmt(dataGrandTotal(d)) : '0';
-  document.getElementById('stat-grand-cols').textContent = d ? fmt(dataGrandTotal(d)) : '0';
+  document.getElementById('stat-rows').textContent = d?.table.length || 0;
+  document.getElementById('stat-cols').textContent = d?.numCols || 0;
 }
 
 /* ── TABLE EDITING ── */
