@@ -325,7 +325,16 @@ a.skip-link:focus {
 @media (max-width: 420px) { .stats { grid-template-columns: 1fr; gap: 8px; } .stat { padding: 10px 12px; } .stat-value { font-size: 18px; } }
 
 /* ── TABLE ── */
-.tbl-controls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.tbl-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+.del-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--gray-50); }
+.del-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-right: 2px; }
+.del-input { width: 60px; height: 32px; padding: 0 8px; font-size: 13px; text-align: center; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); background: #fff; color: var(--gray-800); }
+.del-input:focus { outline: none; border-color: var(--primary, #2563EB); }
+@media (max-width: 640px) {
+  .del-group { flex: 1 1 100%; }
+  .del-input { flex: 0 0 56px; }
+  .del-group .btn { flex: 1 1 auto; }
+}
 .tbl-wrap {
   overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
   border: 1px solid var(--gray-200); border-radius: var(--radius);
@@ -676,22 +685,22 @@ th:last-child, td:last-child { border-right: 0; }
         </div>
 
         <div class="tbl-controls">
-          <button class="btn btn-ghost btn-sm" onclick="addRow()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span data-i18n="tblAddRow">Add Row</span>
-          </button>
-          <button class="btn btn-ghost btn-sm" onclick="addCol()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span data-i18n="tblAddCol">Add Column</span>
-          </button>
-          <button class="btn btn-danger-ghost btn-sm" onclick="removeLastRow()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span data-i18n="tblRemRow">Remove Row</span>
-          </button>
-          <button class="btn btn-danger-ghost btn-sm" onclick="removeLastCol()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span data-i18n="tblRemCol">Remove Column</span>
-          </button>
+          <div class="del-group">
+            <span class="del-label" data-i18n="tblDelRow">Delete row</span>
+            <input type="number" min="1" step="1" inputmode="numeric" id="del-row-input" class="del-input" placeholder="#"
+                   oninput="sanitizeIndex(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();deleteRowAt();}" />
+            <button class="btn btn-danger-ghost btn-sm" onclick="deleteRowAt()"><span data-i18n="tblDelBtn">Delete</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteFirstRow()"><span data-i18n="tblFirst">First</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteLastRow()"><span data-i18n="tblLast">Last</span></button>
+          </div>
+          <div class="del-group">
+            <span class="del-label" data-i18n="tblDelCol">Delete column</span>
+            <input type="number" min="1" step="1" inputmode="numeric" id="del-col-input" class="del-input" placeholder="#"
+                   oninput="sanitizeIndex(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();deleteColAt();}" />
+            <button class="btn btn-danger-ghost btn-sm" onclick="deleteColAt()"><span data-i18n="tblDelBtn">Delete</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteFirstCol()"><span data-i18n="tblFirst">First</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteLastCol()"><span data-i18n="tblLast">Last</span></button>
+          </div>
         </div>
 
         <div class="tbl-wrap">
@@ -764,9 +773,16 @@ const I18N = {
     btnRereadPhoto: 'Re-extract',
     statRows: 'Rows', statCols: 'Columns',
     tblSumNote: 'The green corner value is the grand total — it equals both the sum of all row totals and the sum of all column totals.',
-    tblAddRow: 'Add Row',  tblAddCol: 'Add Column',
-    tblRemRow: 'Remove Row', tblRemCol: 'Remove Column',
-    tblHint: 'Click any cell to edit. Yellow cells have been changed from the original extraction.',
+    tblDelRow: 'Delete row', tblDelCol: 'Delete column',
+    tblDelBtn: 'Delete', tblFirst: 'First', tblLast: 'Last',
+    tblErrPositive: 'Enter a positive whole number (1 or higher).',
+    tblErrRangeRow: 'No row {n} — table has {max} row(s).',
+    tblErrRangeCol: 'No column {n} — table has {max} column(s).',
+    tblErrMinRow: 'Cannot delete the last remaining row.',
+    tblErrMinCol: 'Cannot delete the last remaining column.',
+    tblRowDeleted: 'Deleted row {n}.',
+    tblColDeleted: 'Deleted column {n}.',
+    tblHint: 'Click any cell to edit. Yellow cells have been changed from the original extraction. Row/column numbers start at 1 (totals row/column excluded).',
     tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'Total',
     toastImageType: 'Please choose image files only (JPG, PNG, or WEBP).',
     toastMax10: 'You already have 3 images. Remove one before adding another.',
@@ -860,9 +876,16 @@ const I18N = {
     btnRereadPhoto: 'ફરી કાઢો',
     statRows: 'પંક્તિ', statCols: 'સ્તંભ',
     tblSumNote: 'લીલો ખૂણા-મૂલ્ય = ગ્રાન્ડ ટોટલ — તે બધી પંક્તિ-સરવાળા અને સ્તંભ-સરવાળાનો સરવાળો છે.',
-    tblAddRow: 'પંક્તિ ઉમેરો', tblAddCol: 'સ્તંભ ઉમેરો',
-    tblRemRow: 'પંક્તિ કાઢો',  tblRemCol: 'સ્તંભ કાઢો',
-    tblHint: 'સેલ ક્લિક કરી સુધારો. પીળો = મૂળ ડેટાથી બદલ્યો.',
+    tblDelRow: 'પંક્તિ કાઢો', tblDelCol: 'સ્તંભ કાઢો',
+    tblDelBtn: 'કાઢો', tblFirst: 'પહેલી', tblLast: 'છેલ્લી',
+    tblErrPositive: 'ધન પૂર્ણાંક દાખલ કરો (૧ કે વધુ).',
+    tblErrRangeRow: 'પંક્તિ {n} નથી — ટેબલમાં {max} પંક્તિ છે.',
+    tblErrRangeCol: 'સ્તંભ {n} નથી — ટેબલમાં {max} સ્તંભ છે.',
+    tblErrMinRow: 'છેલ્લી બાકી પંક્તિ કાઢી શકાતી નથી.',
+    tblErrMinCol: 'છેલ્લો બાકી સ્તંભ કાઢી શકાતો નથી.',
+    tblRowDeleted: 'પંક્તિ {n} કાઢી.',
+    tblColDeleted: 'સ્તંભ {n} કાઢ્યો.',
+    tblHint: 'સેલ ક્લિક કરી સુધારો. પીળો = મૂળ ડેટાથી બદલ્યો. પંક્તિ/સ્તંભ ક્રમાંક ૧થી શરૂ (ટોટલ પંક્તિ/સ્તંભ બાદ).',
     tblCol: '{n}', tblRowTotal: 'Σ', tblFooterTotal: 'સરવાળો',
     toastImageType: 'ફક્ત ઇમેજ ફાઇલ (JPG, PNG, WEBP) પસંદ કરો.',
     toastMax10: 'પહેલેથી 3 ઇમેજ છે. ઉમેરતા પહેલાં એક કાઢો.',
@@ -1123,7 +1146,7 @@ async function handleFiles(list) {
         id: nextId++,
         filename: file.name.replace(/\.[^.]+$/, '') || `image-${documents.length + 1}`,
         originalName: file.name,
-        preview: c.dataUrl, imageBase64: c.base64, imageUrl: null,
+        preview: c.dataUrl, imageBase64: c.base64,
         mediaType: c.type, bytes: c.bytes,
         status: 'ready', error: '',
         table: [], origTable: [], numCols: 0
@@ -1265,9 +1288,7 @@ async function extractDocument(i) {
   const doc = documents[i];
   if (!doc) return false;
   doc.status = 'extracting'; doc.error = '';
-  const payload = doc.imageUrl
-    ? { image_url: doc.imageUrl }
-    : { image_base64: doc.imageBase64, media_type: doc.mediaType };
+  const payload = { image_base64: doc.imageBase64, media_type: doc.mediaType };
   try {
     const resp = await fetch('/extract', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const data = await resp.json();
@@ -1359,7 +1380,7 @@ function renderReview() {
   imgEl.alt     = t('reviewHintDesktop');
   const lbl = document.getElementById('extract-current-label');
   if (lbl) lbl.textContent = doc.status === 'done' ? t('btnRereadPhoto') : t('btnReadPhoto');
-  document.getElementById('extract-current-btn').disabled = !(doc.imageBase64 || doc.imageUrl);
+  document.getElementById('extract-current-btn').disabled = !doc.imageBase64;
   if (!doc.table.length) {
     document.getElementById('main-table').innerHTML =
       `<tbody><tr><td colspan="99" style="padding:24px;text-align:center;color:var(--gray-500);font-size:13px;line-height:1.5;">${escapeHtml(t('emptyTableMsg'))}</td></tr></tbody>`;
@@ -1468,34 +1489,62 @@ function refreshStats() {
   document.getElementById('stat-cols').textContent = d?.numCols || 0;
 }
 
-/* ── TABLE EDITING ── */
-function addRow() {
+/* ── TABLE EDITING (delete-only, 1-based, validated) ── */
+// Keep only digits in the index inputs — positive whole numbers, no leading zeros.
+function sanitizeIndex(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').replace(/^0+/, '');
+}
+
+// Validate a 1-based index string against [1, max]. Returns the integer or null (and shows why).
+function parseIndex(raw, max, rangeKey) {
+  const s = String(raw == null ? '' : raw).trim();
+  if (!/^[1-9][0-9]*$/.test(s)) { showStatus(t('tblErrPositive'), 'error'); return null; }
+  const n = parseInt(s, 10);
+  if (n > max) { showStatus(tpl(rangeKey, { n, max }), 'error'); return null; }
+  return n;
+}
+
+function removeRowIndex(n) {           // n = 1-based
   const d = currentDoc(); if (!d) return;
-  if (!d.numCols) d.numCols = 1;
-  const row = Array(d.numCols).fill(null);
-  d.table.push([...row]); d.origTable.push([...row]);
-  if (d.status !== 'done') d.status = 'done';
+  if (d.table.length <= 1) { showStatus(t('tblErrMinRow'), 'error'); return; }
+  const i = n - 1;
+  d.table.splice(i, 1);
+  if (i < d.origTable.length) d.origTable.splice(i, 1);
   renderTable();
+  showStatus(tpl('tblRowDeleted', { n }), 'success');
 }
-function addCol() {
+
+function removeColIndex(n) {           // n = 1-based
   const d = currentDoc(); if (!d) return;
-  d.numCols = (d.numCols || 0) + 1;
-  d.table.forEach((r, i) => { r.push(null); if (!d.origTable[i]) d.origTable[i] = Array(r.length - 1).fill(null); while (d.origTable[i].length < r.length - 1) d.origTable[i].push(null); d.origTable[i].push(null); });
-  if (!d.table.length) addRow(); else renderTable();
-}
-function removeLastRow() {
-  const d = currentDoc();
-  if (!d || d.table.length <= 1) return;
-  d.table.pop(); d.origTable.pop(); renderTable();
-}
-function removeLastCol() {
-  const d = currentDoc();
-  if (!d || d.numCols <= 1) return;
+  if (d.numCols <= 1) { showStatus(t('tblErrMinCol'), 'error'); return; }
+  const i = n - 1;
   d.numCols--;
-  d.table.forEach(r => r.pop());
-  d.origTable.forEach(r => { if (r.length > 0) r.pop(); });
+  d.table.forEach(r => r.splice(i, 1));
+  d.origTable.forEach(r => { if (i < r.length) r.splice(i, 1); });
   renderTable();
+  showStatus(tpl('tblColDeleted', { n }), 'success');
 }
+
+function deleteRowAt() {
+  const d = currentDoc(); if (!d || !d.table.length) return;
+  const el = document.getElementById('del-row-input');
+  const n = parseIndex(el.value, d.table.length, 'tblErrRangeRow');
+  if (n === null) return;
+  removeRowIndex(n); el.value = '';
+}
+function deleteColAt() {
+  const d = currentDoc(); if (!d || !d.numCols) return;
+  const el = document.getElementById('del-col-input');
+  const n = parseIndex(el.value, d.numCols, 'tblErrRangeCol');
+  if (n === null) return;
+  removeColIndex(n); el.value = '';
+}
+
+// Quick actions — no input needed.
+function deleteFirstRow() { const d = currentDoc(); if (d && d.table.length) removeRowIndex(1); }
+function deleteLastRow()  { const d = currentDoc(); if (d && d.table.length) removeRowIndex(d.table.length); }
+function deleteFirstCol() { const d = currentDoc(); if (d && d.numCols)      removeColIndex(1); }
+function deleteLastCol()  { const d = currentDoc(); if (d && d.numCols)      removeColIndex(d.numCols); }
 
 /* ── DOWNLOAD ── */
 async function downloadCurrentExcel() { if (currentIndex >= 0) await downloadExcel(currentIndex); }
@@ -1559,7 +1608,7 @@ function buildManual() {
     id: nextId++,
     filename: `manual-table-${documents.length + 1}`,
     originalName: tpl('manualName', { n: documents.length + 1 }),
-    preview: '', imageBase64: null, imageUrl: null,
+    preview: '', imageBase64: null,
     mediaType: 'image/jpeg', bytes: 0,
     status: 'done', error: '',
     table: table,

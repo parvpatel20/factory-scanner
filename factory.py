@@ -30,12 +30,60 @@ CORS(app, resources={r"/api/*": {"origins": "*"}, r"/*": {"origins": "*"}})
 
 app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
 
-GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL   = os.environ.get("GROQ_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct")
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
+# ── LLM PROVIDERS (OpenAI-compatible; multi-provider fallback) ──────────────────
+# Attempts run in the order providers are listed, then by each provider's model
+# chain. On a 429 (shared free pools throttle upstream) or failure, we advance to
+# the next (provider, model) pair. Configure each provider purely via env; a
+# provider is skipped entirely if its API key is absent.
+LLM_MAX_TOKENS = int(os.environ.get("LLM_MAX_TOKENS", "3000"))
 
-if not GROQ_API_KEY:
-    log.warning("GROQ_API_KEY not set — /extract will return 500.")
+
+def _models(env_val: str, default: str) -> list[str]:
+    return [m.strip() for m in os.environ.get(env_val, default).split(",") if m.strip()]
+
+
+def _build_providers() -> list[dict]:
+    providers = []
+    # Cerebras — dedicated silicon, no shared-pool throttling; primary by default.
+    if os.environ.get("CEREBRAS_API_KEY"):
+        providers.append({
+            "name": "cerebras",
+            "url": os.environ.get("CEREBRAS_API_URL", "https://api.cerebras.ai/v1/chat/completions"),
+            "key": os.environ["CEREBRAS_API_KEY"].strip(),
+            "models": _models("CEREBRAS_MODELS", "gemma-4-31b"),
+        })
+    # OpenRouter — free multilingual vision pool; good fallback.
+    if os.environ.get("OPENROUTER_API_KEY"):
+        providers.append({
+            "name": "openrouter",
+            "url": os.environ.get("OPENROUTER_API_URL", "https://openrouter.ai/api/v1/chat/completions"),
+            "key": os.environ["OPENROUTER_API_KEY"].strip(),
+            "models": _models(
+                "OPENROUTER_MODELS",
+                "google/gemma-4-31b-it:free,"
+                "google/gemma-4-26b-a4b-it:free,"
+                "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+            ),
+        })
+    # Groq — legacy fallback (kept for compatibility).
+    if os.environ.get("GROQ_API_KEY"):
+        providers.append({
+            "name": "groq",
+            "url": os.environ.get("GROQ_API_URL", "https://api.groq.com/openai/v1/chat/completions"),
+            "key": os.environ["GROQ_API_KEY"].strip(),
+            "models": _models("GROQ_MODELS", "qwen/qwen3.6-27b"),
+        })
+    return providers
+
+
+PROVIDERS = _build_providers()
+# Flat ordered list of (provider, model) attempts.
+ATTEMPTS  = [(p, m) for p in PROVIDERS for m in p["models"]]
+
+if not PROVIDERS:
+    log.warning("No provider API keys set (CEREBRAS_API_KEY / OPENROUTER_API_KEY / GROQ_API_KEY) — /extract will return 500.")
+else:
+    log.info("Providers active: %s", ", ".join(f"{p['name']}({len(p['models'])})" for p in PROVIDERS))
 
 
 # ── OCR PROMPT ────────────────────────────────────────────────────────────────
@@ -85,11 +133,11 @@ def preprocess_image(image_b64: str) -> tuple[str, str]:
         return image_b64, "image/jpeg"
 
 
-# ── GROQ API ──────────────────────────────────────────────────────────────────
+# ── LLM API (OpenAI-compatible) ─────────────────────────────────────────────────
 
-def call_groq(image_b64: str, media_type: str) -> requests.Response:
+def call_llm(image_b64: str, media_type: str, provider: dict, model: str) -> requests.Response:
     payload = {
-        "model": GROQ_MODEL,
+        "model": model,
         "messages": [{
             "role": "user",
             "content": [
@@ -98,46 +146,21 @@ def call_groq(image_b64: str, media_type: str) -> requests.Response:
             ],
         }],
         "temperature": 0,
-        "max_completion_tokens": 8192,
         "response_format": {"type": "json_object"},
     }
-    headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-    return requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=120)
-
-
-# ── URL IMAGE FETCHING ────────────────────────────────────────────────────────
-
-def fetch_image_from_url(url: str) -> tuple[str, str]:
-    import ipaddress
-    from urllib.parse import urlparse
-
-    parsed = urlparse(url)
-    if parsed.scheme not in ("http", "https"):
-        raise ValueError("Only http/https URLs are supported.")
-    if not parsed.hostname:
-        raise ValueError("Invalid URL.")
-
-    # Basic SSRF protection: block private/loopback/reserved IPs
-    try:
-        addr = ipaddress.ip_address(parsed.hostname)
-        if addr.is_private or addr.is_loopback or addr.is_reserved:
-            raise ValueError("Private or reserved IP addresses are not allowed.")
-    except ValueError as exc:
-        if "Private" in str(exc) or "reserved" in str(exc) or "loopback" in str(exc):
-            raise
-
-    resp = requests.get(url, timeout=15, stream=True)
-    resp.raise_for_status()
-
-    content_type = resp.headers.get("content-type", "image/jpeg").split(";")[0].strip()
-    if not content_type.startswith("image/"):
-        raise ValueError(f"URL does not point to an image (got: {content_type}).")
-
-    data = resp.content
-    if len(data) > 10 * 1024 * 1024:
-        raise ValueError("Image from URL exceeds the 10 MB limit.")
-
-    return base64.b64encode(data).decode(), content_type
+    # Explicit cap when configured (>0). Omitting makes some providers default to
+    # ~256 tokens and truncate large tables — keep this set.
+    if LLM_MAX_TOKENS > 0:
+        payload["max_tokens"] = LLM_MAX_TOKENS  # OpenAI-standard; Groq/OpenRouter/Cerebras
+    headers = {
+        "Authorization": f"Bearer {provider['key']}",
+        "Content-Type": "application/json",
+    }
+    # OpenRouter ranking headers (ignored by other providers).
+    if "openrouter.ai" in provider["url"]:
+        headers["HTTP-Referer"] = os.environ.get("APP_URL", "https://factory-scanner.local")
+        headers["X-Title"] = "Factory Scanner"
+    return requests.post(provider["url"], headers=headers, json=payload, timeout=60)
 
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
@@ -149,8 +172,58 @@ def extract_json(text: str) -> dict:
     except json.JSONDecodeError:
         match = re.search(r"\{.*\}", cleaned, re.DOTALL)
         if match:
-            return json.loads(match.group(0))
+            try:
+                return json.loads(match.group(0))
+            except json.JSONDecodeError:
+                pass
+        # Last resort: response was truncated mid-output (hit token limit).
+        # Salvage the "table" array up to the last fully-closed row.
+        salvaged = _salvage_truncated_table(cleaned)
+        if salvaged is not None:
+            log.warning("Recovered truncated JSON: %d complete row(s).", len(salvaged))
+            return {"table": salvaged}
         raise
+
+
+def _salvage_truncated_table(text: str) -> list | None:
+    """
+    Recover rows from a truncated `{"table":[[...],[...],[...` response.
+    Returns the list of fully-closed inner rows, or None if unrecoverable.
+    """
+    start = text.find('"table"')
+    if start == -1:
+        return None
+    bracket = text.find("[", start)
+    if bracket == -1:
+        return None
+    body = text[bracket + 1:]  # inside the outer table array
+    rows, depth, buf, in_str, esc = [], 0, [], False, False
+    for ch in body:
+        buf.append(ch)
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth -= 1
+            if depth == 0:  # one inner row just closed
+                frag = "".join(buf).strip().lstrip(",").strip()
+                try:
+                    rows.append(json.loads(frag))
+                except json.JSONDecodeError:
+                    pass
+                buf = []
+            elif depth < 0:  # reached the outer closing bracket
+                break
+    return rows or None
 
 
 def _coerce_to_table(parsed: dict) -> list | None:
@@ -334,24 +407,21 @@ def index():
 
 @app.route("/health")
 def health():
-    return jsonify({"ok": True, "model": GROQ_MODEL, "provider": "groq"})
+    return jsonify({
+        "ok": True,
+        "providers": [{"name": p["name"], "models": p["models"]} for p in PROVIDERS],
+        "primary": {"provider": PROVIDERS[0]["name"], "model": PROVIDERS[0]["models"][0]} if ATTEMPTS else None,
+    })
 
 
 @app.route("/extract", methods=["POST"])
 def extract():
-    if not GROQ_API_KEY:
-        return err("GROQ_API_KEY is not configured on the server.", 500)
+    if not ATTEMPTS:
+        return err("No LLM provider is configured on the server.", 500)
 
     data       = request.get_json(silent=True) or {}
     image_b64  = data.get("image_base64")
     media_type = data.get("media_type", "image/jpeg")
-    image_url  = data.get("image_url")
-
-    if image_url and not image_b64:
-        try:
-            image_b64, media_type = fetch_image_from_url(image_url)
-        except Exception as exc:
-            return err(f"Could not load image from URL: {exc}", 400)
 
     if not image_b64:
         return err("No image provided.", 400)
@@ -360,70 +430,65 @@ def extract():
     if len(image_b64.encode()) > 6 * 1024 * 1024:
         return err("Image payload too large. Reduce photo size or resolution.", 413)
 
-    log.info("Extracting: media=%s url=%s", media_type, bool(image_url))
+    log.info("Extracting: media=%s", media_type)
 
     processed_b64, processed_type = preprocess_image(image_b64)
 
-    for attempt in range(2):
+    rate_limited_any = False
+    fail_msg, fail_code = "Extraction failed. Please use a clearer image.", 500
+
+    # Try each (provider, model) in order; advance on 429 or failure. This spans
+    # providers (e.g. Cerebras → OpenRouter) so one throttled pool never fails us.
+    for provider, model in ATTEMPTS:
+        tag = f"{provider['name']}/{model}"
         try:
-            resp = call_groq(processed_b64, processed_type)
+            resp = call_llm(processed_b64, processed_type, provider, model)
         except requests.Timeout:
-            if attempt == 0:
-                log.warning("Groq timeout on attempt 1; retrying.")
-                continue
-            return err("Request to Groq timed out. Please try again.", 504)
+            log.warning("Timeout on %s; trying next.", tag)
+            fail_msg, fail_code = "Request to the model provider timed out. Please try again.", 504
+            continue
         except requests.RequestException as exc:
-            return err(f"Could not reach Groq API: {exc}", 502)
+            log.warning("Network error on %s: %s; trying next.", tag, exc)
+            fail_msg, fail_code = f"Could not reach the model provider: {exc}", 502
+            continue
 
+        if resp.status_code == 429:
+            log.warning("Rate limit (429) on %s; trying next. %s", tag, resp.text[:200])
+            rate_limited_any = True
+            continue
         if resp.status_code != 200:
-            log.error("Groq error %d: %s", resp.status_code, resp.text[:400])
-            if attempt == 0:
-                continue
-            return err(f"Groq API returned error {resp.status_code}. Please try again.", 502)
+            log.error("Provider error %d on %s: %s", resp.status_code, tag, resp.text[:300])
+            fail_msg, fail_code = f"Model provider returned error {resp.status_code}. Please try again.", 502
+            continue
 
+        text = None
         try:
-            choice  = resp.json()["choices"][0]
-            text    = choice["message"]["content"]
-            finish  = choice.get("finish_reason", "")
-            if finish == "length":
-                log.warning("Model hit token limit (attempt %d) — response truncated.", attempt + 1)
+            choice = resp.json()["choices"][0]
+            text   = choice["message"]["content"]
+            if choice.get("finish_reason") == "length":
+                log.warning("%s hit token limit — response may be truncated.", tag)
             parsed = extract_json(text)
         except Exception as exc:
-            log.error("JSON parse error (attempt %d): %s | raw: %.300s", attempt + 1, exc, text if 'text' in dir() else '')
-            if attempt == 0:
-                continue
-            return err("Could not parse the AI response. Try a clearer image.", 500)
+            log.error("JSON parse error on %s: %s | raw: %.200s", tag, exc, text or "")
+            fail_msg, fail_code = "Could not parse the AI response. Try a clearer image.", 500
+            continue
 
         raw_table = _coerce_to_table(parsed)
-        if raw_table is None:
-            log.warning("No recognized table key in response (attempt %d). Keys: %s", attempt + 1, list(parsed.keys()))
-            if attempt == 0:
-                continue
-            return err(
-                "No structured data found in the image. "
-                "Make sure the image contains a table, spreadsheet, or form.",
-                422,
-            )
-
-        table = normalize_table(raw_table)
+        table = normalize_table(raw_table) if raw_table is not None else []
         if not table:
-            if attempt == 0:
-                log.warning("Table normalized to empty; retrying.")
-                continue
-            return err(
+            log.warning("No structured table from %s. Keys: %s", tag,
+                        list(parsed.keys()) if isinstance(parsed, dict) else type(parsed).__name__)
+            fail_msg, fail_code = (
                 "No structured data found in the image. "
-                "Make sure the image contains a table, spreadsheet, or form.",
-                422,
-            )
+                "Make sure the image contains a table, spreadsheet, or form.", 422)
+            continue
 
-        log.info(
-            "Extracted table: %d rows × %d cols.",
-            len(table),
-            len(table[0]) if table else 0,
-        )
-        return jsonify({"table": table})
+        log.info("Extracted via %s: %d rows × %d cols.", tag, len(table), len(table[0]))
+        return jsonify({"table": table, "model": model, "provider": provider["name"]})
 
-    return err("Extraction failed after multiple attempts. Please use a clearer image.", 500)
+    if rate_limited_any:
+        return err("All models are rate-limited right now. Wait about a minute and try again.", 429)
+    return err(fail_msg, fail_code)
 
 
 @app.route("/download-excel", methods=["POST"])
