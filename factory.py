@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+import time
 import zipfile
 from io import BytesIO
 
@@ -30,11 +31,9 @@ CORS(app, resources={r"/api/*": {"origins": "*"}, r"/*": {"origins": "*"}})
 
 app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
 
-# ── LLM PROVIDERS (OpenAI-compatible; multi-provider fallback) ──────────────────
-# Attempts run in the order providers are listed, then by each provider's model
-# chain. On a 429 (shared free pools throttle upstream) or failure, we advance to
-# the next (provider, model) pair. Configure each provider purely via env; a
-# provider is skipped entirely if its API key is absent.
+# ── LLM PROVIDER (Groq, OpenAI-compatible) ───────────────────────────────────
+# GROQ_MODELS may list multiple comma-separated models; on a 429 or failure we
+# advance to the next one before giving up.
 LLM_MAX_TOKENS = int(os.environ.get("LLM_MAX_TOKENS", "3000"))
 
 
@@ -43,37 +42,14 @@ def _models(env_val: str, default: str) -> list[str]:
 
 
 def _build_providers() -> list[dict]:
-    providers = []
-    # Cerebras — dedicated silicon, no shared-pool throttling; primary by default.
-    if os.environ.get("CEREBRAS_API_KEY"):
-        providers.append({
-            "name": "cerebras",
-            "url": os.environ.get("CEREBRAS_API_URL", "https://api.cerebras.ai/v1/chat/completions"),
-            "key": os.environ["CEREBRAS_API_KEY"].strip(),
-            "models": _models("CEREBRAS_MODELS", "gemma-4-31b"),
-        })
-    # OpenRouter — free multilingual vision pool; good fallback.
-    if os.environ.get("OPENROUTER_API_KEY"):
-        providers.append({
-            "name": "openrouter",
-            "url": os.environ.get("OPENROUTER_API_URL", "https://openrouter.ai/api/v1/chat/completions"),
-            "key": os.environ["OPENROUTER_API_KEY"].strip(),
-            "models": _models(
-                "OPENROUTER_MODELS",
-                "google/gemma-4-31b-it:free,"
-                "google/gemma-4-26b-a4b-it:free,"
-                "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-            ),
-        })
-    # Groq — legacy fallback (kept for compatibility).
-    if os.environ.get("GROQ_API_KEY"):
-        providers.append({
-            "name": "groq",
-            "url": os.environ.get("GROQ_API_URL", "https://api.groq.com/openai/v1/chat/completions"),
-            "key": os.environ["GROQ_API_KEY"].strip(),
-            "models": _models("GROQ_MODELS", "qwen/qwen3.6-27b"),
-        })
-    return providers
+    if not os.environ.get("GROQ_API_KEY"):
+        return []
+    return [{
+        "name": "groq",
+        "url": os.environ.get("GROQ_API_URL", "https://api.groq.com/openai/v1/chat/completions"),
+        "key": os.environ["GROQ_API_KEY"].strip(),
+        "models": _models("GROQ_MODELS", "qwen/qwen3.8-27b"),
+    }]
 
 
 PROVIDERS = _build_providers()
@@ -81,7 +57,7 @@ PROVIDERS = _build_providers()
 ATTEMPTS  = [(p, m) for p in PROVIDERS for m in p["models"]]
 
 if not PROVIDERS:
-    log.warning("No provider API keys set (CEREBRAS_API_KEY / OPENROUTER_API_KEY / GROQ_API_KEY) — /extract will return 500.")
+    log.warning("GROQ_API_KEY not set — /extract will return 500.")
 else:
     log.info("Providers active: %s", ", ".join(f"{p['name']}({len(p['models'])})" for p in PROVIDERS))
 
@@ -101,6 +77,19 @@ RULES:
 5. Handwriting: 1↔7, 0↔6, 3↔8, 4↔9 are common confusions — read carefully.
 6. Zero (0) is valid, never replace with null.
 7. Output ONLY the raw JSON object, no markdown, no explanation.\
+"""
+
+REPAIR_PROMPT = """\
+The text below is a broken/malformed attempt at extracting a table into JSON. \
+Fix it into valid JSON matching exactly this schema, output ONLY the JSON, nothing else:
+{{"table":[["તારીખ","35","36",...],["1",34,null,...],["2",null,35,...],...]}}
+
+Preserve every value exactly as given (numbers as JSON numbers, text as-is including \
+Gujarati script) — only fix the JSON syntax/structure. Keep whatever rows/values you \
+can determine; do not invent data.
+
+BROKEN TEXT:
+{broken}\
 """
 
 
@@ -148,19 +137,57 @@ def call_llm(image_b64: str, media_type: str, provider: dict, model: str) -> req
         "temperature": 0,
         "response_format": {"type": "json_object"},
     }
-    # Explicit cap when configured (>0). Omitting makes some providers default to
+    # Explicit cap when configured (>0). Omitting it makes Groq default to
     # ~256 tokens and truncate large tables — keep this set.
     if LLM_MAX_TOKENS > 0:
-        payload["max_tokens"] = LLM_MAX_TOKENS  # OpenAI-standard; Groq/OpenRouter/Cerebras
+        payload["max_tokens"] = LLM_MAX_TOKENS
     headers = {
         "Authorization": f"Bearer {provider['key']}",
         "Content-Type": "application/json",
     }
-    # OpenRouter ranking headers (ignored by other providers).
-    if "openrouter.ai" in provider["url"]:
-        headers["HTTP-Referer"] = os.environ.get("APP_URL", "https://factory-scanner.local")
-        headers["X-Title"] = "Factory Scanner"
     return requests.post(provider["url"], headers=headers, json=payload, timeout=60)
+
+
+def _repair_target() -> tuple[dict, str] | tuple[None, None]:
+    """Text-only model used to reformat malformed JSON output. Groq's oss-120b is
+    fast/cheap and good at pure reformatting (no image needed at this stage)."""
+    if os.environ.get("GROQ_API_KEY"):
+        return (
+            {
+                "url": os.environ.get("GROQ_API_URL", "https://api.groq.com/openai/v1/chat/completions"),
+                "key": os.environ["GROQ_API_KEY"].strip(),
+            },
+            os.environ.get("REPAIR_MODEL", "openai/gpt-oss-120b"),
+        )
+    return None, None
+
+
+def call_repair(broken_text: str) -> dict | None:
+    """Ask a text-only model to reformat a malformed/rejected extraction into valid
+    JSON, instead of burning a whole (provider, model) attempt on it. Returns the
+    parsed dict, or None if no repair model is configured or the repair itself fails."""
+    provider, model = _repair_target()
+    if not provider or not broken_text:
+        return None
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": REPAIR_PROMPT.format(broken=broken_text[:8000])}],
+        "temperature": 0,
+        "response_format": {"type": "json_object"},
+    }
+    if LLM_MAX_TOKENS > 0:
+        payload["max_tokens"] = LLM_MAX_TOKENS
+    headers = {"Authorization": f"Bearer {provider['key']}", "Content-Type": "application/json"}
+    try:
+        resp = requests.post(provider["url"], headers=headers, json=payload, timeout=60)
+        if resp.status_code != 200:
+            log.warning("Repair pass failed (%d) on groq/%s: %s", resp.status_code, model, resp.text[:200])
+            return None
+        text = resp.json()["choices"][0]["message"]["content"]
+        return extract_json(text)
+    except Exception as exc:
+        log.warning("Repair pass error on groq/%s: %s", model, exc)
+        return None
 
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
@@ -437,8 +464,7 @@ def extract():
     rate_limited_any = False
     fail_msg, fail_code = "Extraction failed. Please use a clearer image.", 500
 
-    # Try each (provider, model) in order; advance on 429 or failure. This spans
-    # providers (e.g. Cerebras → OpenRouter) so one throttled pool never fails us.
+    # Try each Groq model in order; advance on 429 or failure.
     for provider, model in ATTEMPTS:
         tag = f"{provider['name']}/{model}"
         try:
@@ -452,26 +478,59 @@ def extract():
             fail_msg, fail_code = f"Could not reach the model provider: {exc}", 502
             continue
 
+        if resp.status_code == 503:
+            # Transient overload (common on free tiers) — one quick same-model
+            # retry before burning the fallback chain on it.
+            log.warning("503 (overloaded) on %s; retrying once.", tag)
+            time.sleep(1.5)
+            try:
+                resp = call_llm(processed_b64, processed_type, provider, model)
+            except requests.RequestException as exc:
+                log.warning("Retry network error on %s: %s; trying next.", tag, exc)
+                fail_msg, fail_code = f"Could not reach the model provider: {exc}", 502
+                continue
+
         if resp.status_code == 429:
             log.warning("Rate limit (429) on %s; trying next. %s", tag, resp.text[:200])
             rate_limited_any = True
             continue
-        if resp.status_code != 200:
+
+        parsed = None
+
+        # Some providers (e.g. Groq) validate response_format=json_object server-side
+        # and reject the request instead of returning the bad text — the broken
+        # output comes back in error.failed_generation. Try to repair it rather than
+        # discarding the model's (possibly correct-but-malformed) OCR work.
+        if resp.status_code == 400 and "json_validate_failed" in resp.text:
+            log.warning("json_validate_failed on %s; attempting repair pass.", tag)
+            try:
+                failed_gen = resp.json().get("error", {}).get("failed_generation")
+            except Exception:
+                failed_gen = None
+            parsed = call_repair(failed_gen) if failed_gen else None
+            if parsed is None:
+                log.warning("Repair pass could not recover %s; trying next.", tag)
+                fail_msg, fail_code = "Model provider returned error 400. Please try again.", 502
+                continue
+        elif resp.status_code != 200:
             log.error("Provider error %d on %s: %s", resp.status_code, tag, resp.text[:300])
             fail_msg, fail_code = f"Model provider returned error {resp.status_code}. Please try again.", 502
             continue
-
-        text = None
-        try:
-            choice = resp.json()["choices"][0]
-            text   = choice["message"]["content"]
-            if choice.get("finish_reason") == "length":
-                log.warning("%s hit token limit — response may be truncated.", tag)
-            parsed = extract_json(text)
-        except Exception as exc:
-            log.error("JSON parse error on %s: %s | raw: %.200s", tag, exc, text or "")
-            fail_msg, fail_code = "Could not parse the AI response. Try a clearer image.", 500
-            continue
+        else:
+            text = None
+            try:
+                choice = resp.json()["choices"][0]
+                text   = choice["message"]["content"]
+                if choice.get("finish_reason") == "length":
+                    log.warning("%s hit token limit — response may be truncated.", tag)
+                parsed = extract_json(text)
+            except Exception as exc:
+                log.error("JSON parse error on %s: %s | raw: %.200s", tag, exc, text or "")
+                parsed = call_repair(text) if text else None
+                if parsed is None:
+                    fail_msg, fail_code = "Could not parse the AI response. Try a clearer image.", 500
+                    continue
+                log.info("Repair pass recovered malformed JSON from %s.", tag)
 
         raw_table = _coerce_to_table(parsed)
         table = normalize_table(raw_table) if raw_table is not None else []

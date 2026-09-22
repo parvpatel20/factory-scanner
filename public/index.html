@@ -168,7 +168,7 @@ a.skip-link:focus {
 /* ── BUTTONS ── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  height: 38px; padding: 0 16px; border-radius: var(--radius);
+  height: 40px; padding: 0 16px; border-radius: var(--radius);
   font-size: 13px; font-weight: 600; cursor: pointer;
   border: 1px solid transparent; white-space: nowrap;
   transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
@@ -185,8 +185,8 @@ a.skip-link:focus {
 .btn-ghost:hover:not(:disabled) { background: var(--gray-50); }
 .btn-danger-ghost { background: transparent; color: var(--danger); border-color: #FECACA; }
 .btn-danger-ghost:hover:not(:disabled) { background: var(--danger-muted); }
-.btn-lg { height: 46px; padding: 0 22px; font-size: 14px; border-radius: var(--radius); }
-.btn-sm { height: 32px; padding: 0 12px; font-size: 12px; border-radius: var(--radius-sm); }
+.btn-lg { padding: 0 22px; font-size: 14px; }
+.btn-sm { padding: 0 12px; font-size: 12px; border-radius: var(--radius-sm); }
 .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: stretch; }
 .btn-group.mt0 { margin-top: 0; }
 @media (max-width: 560px) {
@@ -203,6 +203,7 @@ a.skip-link:focus {
   border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 16px;
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
 }
+.how-to-title { grid-column: 1 / -1; font-size: 13px; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
 .how-step { text-align: center; }
 .how-step-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-muted); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
 .how-step-num { font-size: 11px; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; }
@@ -238,19 +239,6 @@ a.skip-link:focus {
 .dz-sub  { font-size: 13px; color: var(--gray-400); line-height: 1.45; word-break: break-word; }
 @media (max-width: 480px) { .drop-zone { padding: 28px 16px; border-radius: var(--radius); } .dz-head { font-size: 14px; } .dz-sub { font-size: 12px; } }
 
-/* ── URL INPUT PANEL ── */
-.url-panel { padding: 4px 0 8px; }
-.url-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
-.url-input {
-  flex: 1; min-width: 0;
-  border: 1px solid var(--gray-300); border-radius: var(--radius);
-  padding: 9px 12px; font-size: 14px; color: var(--gray-900);
-  background: var(--white); transition: border-color .15s, box-shadow .15s;
-}
-.url-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
-.url-hint { font-size: 12px; color: var(--gray-400); line-height: 1.5; }
-@media (max-width: 520px) { .url-input-row { flex-direction: column; } }
-
 /* ── THUMB GRID ── */
 .thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(130px,100%), 1fr)); gap: 10px; }
 @media (max-width: 360px) { .thumb-grid { grid-template-columns: 1fr; } }
@@ -280,6 +268,8 @@ a.skip-link:focus {
 .doc-name  { font-size: 14px; font-weight: 700; color: var(--gray-900); overflow-wrap: anywhere; }
 .doc-meta  { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; min-width: 0; }
 .doc-actions { display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; align-items: center; }
+.doc-actions .btn { justify-content: center; }
+.doc-actions .btn-reextract { min-width: 108px; }
 @media (max-width: 620px) {
   .doc-row { grid-template-columns: 56px 1fr; }
   .doc-thumb { width: 56px; height: 44px; }
@@ -308,39 +298,71 @@ a.skip-link:focus {
 .review-grid > div:last-child { min-width: 0; }
 .image-panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 12px; position: sticky; top: 72px; box-shadow: var(--shadow-sm); }
 .image-panel img { width: 100%; max-height: 360px; object-fit: contain; border-radius: var(--radius); background: var(--gray-800); display: block; }
+.image-panel-summary { display: none; list-style: none; cursor: pointer; }
+.image-panel-summary::-webkit-details-marker { display: none; }
+.image-panel-summary::marker { display: none; content: ""; }
+.image-panel-chevron { transition: transform .15s; flex-shrink: 0; }
+.image-panel[open] .image-panel-chevron { transform: rotate(180deg); }
 .image-hint { font-size: 12px; color: var(--gray-400); margin-top: 10px; line-height: 1.5; display: flex; gap: 5px; align-items: flex-start; min-width: 0; }
 .image-hint svg { flex-shrink: 0; margin-top: 1px; }
 .image-hint > span { min-width: 0; }
 .image-hint .hint-mobile { display: none; }
-@media (max-width: 680px) { .review-grid { grid-template-columns: 1fr; } .image-panel { position: static; } .image-hint .hint-desktop { display: none; } .image-hint .hint-mobile { display: inline; } .image-panel img { max-height: min(50vh, 320px); } }
+@media (max-width: 680px) {
+  .review-grid { grid-template-columns: 1fr; }
+  .image-panel { position: static; }
+  .image-panel-summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 700; color: var(--gray-900); padding: 2px 0; -webkit-tap-highlight-color: transparent; }
+  .image-panel[open] .image-panel-summary { margin-bottom: 10px; }
+  .image-panel img { max-height: min(50vh, 320px); margin-top: 10px; }
+  .image-hint .hint-desktop { display: none; }
+  .image-hint .hint-mobile { display: inline; }
+}
 
-/* ── STATS ── */
-.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
-.stat { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 12px 14px; text-align: center; box-shadow: var(--shadow-sm); }
-.stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); }
-.stat-value { font-size: 22px; font-weight: 900; color: var(--gray-900); margin-top: 3px; }
-.stat.highlight { border-color: #BBF7D0; background: var(--success-muted); }
-.stat.highlight .stat-label { color: var(--success); }
-.stat.highlight .stat-value { color: var(--success); }
-@media (max-width: 420px) { .stats { grid-template-columns: 1fr; gap: 8px; } .stat { padding: 10px 12px; } .stat-value { font-size: 18px; } }
+/* ── TABLE TOOLBAR (row/col counts + tools toggle) ── */
+.tbl-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.tbl-summary { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--gray-600); font-weight: 600; }
+.tbl-summary strong { color: var(--gray-900); font-weight: 800; font-size: 15px; }
+.tbl-summary-sep { color: var(--gray-300); }
 
 /* ── TABLE ── */
-.tbl-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
-.del-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--gray-50); }
-.del-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-right: 2px; }
-.del-input { width: 60px; height: 32px; padding: 0 8px; font-size: 13px; text-align: center; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); background: #fff; color: var(--gray-800); }
-.del-input:focus { outline: none; border-color: var(--primary, #2563EB); }
-@media (max-width: 640px) {
-  .del-group { flex: 1 1 100%; }
-  .del-input { flex: 0 0 56px; }
-  .del-group .btn { flex: 1 1 auto; }
+.tbl-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.del-group { display: flex; flex-direction: column; gap: 7px; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--gray-50); min-width: 0; }
+.del-label { font-size: 12px; font-weight: 700; color: var(--gray-700); }
+.del-row { display: flex; gap: 8px; min-width: 0; }
+@media (max-width: 640px) { .tbl-controls { grid-template-columns: 1fr; } }
+
+/* ── CUSTOM SELECT (themed replacement for native <select>) ── */
+.custom-select { position: relative; flex: 1; min-width: 0; }
+.custom-select-btn {
+  width: 100%; height: 40px; padding: 0 34px 0 10px; font-size: 13px; font-family: inherit;
+  text-align: left; border: 1px solid var(--gray-300); border-radius: var(--radius-sm);
+  background: var(--white); color: var(--gray-800); cursor: pointer;
+  display: flex; align-items: center; position: relative;
+  -webkit-tap-highlight-color: transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.custom-select-btn:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+.custom-select.open .custom-select-btn { border-color: var(--primary); }
+.custom-select-chevron {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--gray-400); pointer-events: none; transition: transform .15s; flex-shrink: 0;
+}
+.custom-select.open .custom-select-chevron { transform: translateY(-50%) rotate(180deg); color: var(--primary); }
+.custom-select-panel {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50;
+  background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow); max-height: 220px; overflow-y: auto; padding: 4px;
+}
+.custom-select-option {
+  padding: 8px 10px; font-size: 13px; color: var(--gray-800); border-radius: var(--radius-sm);
+  cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.custom-select-option:hover { background: var(--gray-100); }
+.custom-select-option.active { background: var(--primary-muted); color: var(--primary); font-weight: 700; }
 .tbl-wrap {
   overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
-  border: 1px solid var(--gray-200); border-radius: var(--radius);
+  border: 1px solid var(--gray-200); border-radius: 0;
   max-height: 54vh; max-height: min(54vh, 70dvh); box-shadow: var(--shadow-sm); min-width: 0;
 }
-@media (max-width: 680px) { .tbl-wrap { max-height: min(60vh, 65dvh); border-radius: var(--radius-sm); } }
+@media (max-width: 680px) { .tbl-wrap { max-height: min(60vh, 65dvh); } }
 table { width: 100%; min-width: 400px; border-collapse: collapse; font-size: 13px; }
 thead th {
   position: sticky; top: 0; z-index: 1;
@@ -377,19 +399,11 @@ th:last-child, td:last-child { border-right: 0; }
 }
 .cell:focus { outline: 2px solid var(--primary); background: var(--white); }
 .cell.changed { background: #FEF9C3; color: #92400E; font-weight: 700; }
-.td-total        { background: var(--success-muted); color: var(--success); font-weight: 800; min-width: 72px; }
-.td-col-total    { background: var(--gray-50); font-weight: 700; color: var(--gray-700); }
-.td-grand        { background: #DCFCE7; color: var(--success); font-weight: 900; font-size: 14px; }
-.td-footer-label {
-  position: sticky; left: 0; z-index: 1;
-  background: var(--gray-100); font-weight: 700; color: var(--gray-600);
-  padding: 8px; border-right: 1px solid var(--gray-200) !important;
-}
+.td-total        { padding: 9px 6px; background: var(--success-muted); color: var(--success); font-weight: 800; min-width: 72px; }
+.td-col-total    { padding: 9px 6px; background: var(--gray-50); font-weight: 700; color: var(--gray-700); }
+.td-grand        { padding: 9px 6px; background: #DCFCE7; color: var(--success); font-weight: 900; font-size: 14px; }
 .tbl-hint { font-size: 12px; color: var(--gray-400); margin-top: 10px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; min-width: 0; }
 .tbl-hint svg { flex-shrink: 0; margin-top: 2px; }
-@media (max-width: 480px) {
-  .tbl-controls .btn { flex: 1 1 calc(50% - 4px); min-width: 0; justify-content: center; white-space: normal; text-align: center; line-height: 1.25; padding: 8px; height: auto; min-height: 36px; }
-}
 
 /* ── MANUAL ── */
 .manual-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
@@ -473,18 +487,14 @@ th:last-child, td:last-child { border-right: 0; }
   <!-- ══ PAGE 1 — UPLOAD ══ -->
   <section id="upload-page" aria-labelledby="upload-heading">
 
-    <div class="page-intro">
-      <strong data-i18n="introTitle">How it works.</strong>
-      <span data-i18n="introBody">Upload any image containing a table, spreadsheet, form, or structured data. The AI reads all text and numbers, preserving rows, columns, and headings. Review and correct the result, then download a clean Excel file.</span>
-    </div>
-
     <div class="how-to" aria-label="Quick guide">
+      <div class="how-to-title" data-i18n="introTitle">How it works</div>
       <div class="how-step">
         <div class="how-step-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </div>
         <div class="how-step-num"><span data-i18n="howStepWord">Step</span> 1</div>
-        <div class="how-step-label" data-i18n="howLabel1">Upload an image or paste a URL</div>
+        <div class="how-step-label" data-i18n="howLabel1">Upload an image or take a photo</div>
       </div>
       <div class="how-step">
         <div class="how-step-icon">
@@ -515,7 +525,7 @@ th:last-child, td:last-child { border-right: 0; }
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span data-i18n="uploadTitle">Add your images</span>
         </div>
-        <div class="card-desc" data-i18n="uploadDesc">Upload up to 10 images (JPG, PNG, WEBP) or paste an image URL. Each image gets its own Excel file.</div>
+        <div class="card-desc" data-i18n="uploadDesc">Upload up to 3 images (JPG, PNG, WEBP) or take a photo. Each image gets its own Excel file.</div>
       </div>
       <div class="divider"></div>
 
@@ -655,7 +665,11 @@ th:last-child, td:last-child { border-right: 0; }
     </div>
 
     <div class="review-grid">
-      <div class="image-panel">
+      <details class="image-panel" id="image-panel">
+        <summary class="image-panel-summary">
+          <span data-i18n="imagePanelTitle">Reference image</span>
+          <svg class="image-panel-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
         <img id="review-image" alt="" />
         <div class="image-hint">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -670,36 +684,51 @@ th:last-child, td:last-child { border-right: 0; }
             <span id="extract-current-label" data-i18n="btnRereadPhoto">Re-extract</span>
           </button>
         </div>
-      </div>
+      </details>
 
       <div>
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-label" data-i18n="statRows">Rows</div>
-            <div class="stat-value" id="stat-rows">0</div>
+        <div class="tbl-toolbar">
+          <div class="tbl-summary">
+            <strong id="stat-rows">0</strong><span data-i18n="statRows">Rows</span>
+            <span class="tbl-summary-sep">·</span>
+            <strong id="stat-cols">0</strong><span data-i18n="statCols">Columns</span>
           </div>
-          <div class="stat">
-            <div class="stat-label" data-i18n="statCols">Columns</div>
-            <div class="stat-value" id="stat-cols">0</div>
-          </div>
+          <button class="btn btn-ghost btn-sm" id="tbl-tools-toggle" onclick="toggleTableTools()" aria-expanded="false" aria-controls="tbl-controls">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <span data-i18n="btnTableTools">Row / column tools</span>
+          </button>
         </div>
 
-        <div class="tbl-controls">
+        <div class="tbl-controls hide" id="tbl-controls">
           <div class="del-group">
-            <span class="del-label" data-i18n="tblDelRow">Delete row</span>
-            <input type="number" min="1" step="1" inputmode="numeric" id="del-row-input" class="del-input" placeholder="#"
-                   oninput="sanitizeIndex(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();deleteRowAt();}" />
-            <button class="btn btn-danger-ghost btn-sm" onclick="deleteRowAt()"><span data-i18n="tblDelBtn">Delete</span></button>
-            <button class="btn btn-ghost btn-sm" onclick="deleteFirstRow()"><span data-i18n="tblFirst">First</span></button>
-            <button class="btn btn-ghost btn-sm" onclick="deleteLastRow()"><span data-i18n="tblLast">Last</span></button>
+            <span class="del-label" id="del-row-select-label-for" data-i18n="tblDelRow">Delete row</span>
+            <div class="del-row">
+              <div class="custom-select" id="del-row-select-wrap">
+                <button type="button" class="custom-select-btn" id="del-row-select-btn"
+                        aria-haspopup="listbox" aria-expanded="false" aria-labelledby="del-row-select-label-for"
+                        onclick="toggleCustomSelect('row')">
+                  <span id="del-row-select-label"></span>
+                  <svg class="custom-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="custom-select-panel hide" id="del-row-select-panel" role="listbox"></div>
+              </div>
+              <button class="btn btn-danger-ghost btn-sm" onclick="deleteRowAt()"><span data-i18n="tblDelBtn">Delete</span></button>
+            </div>
           </div>
           <div class="del-group">
-            <span class="del-label" data-i18n="tblDelCol">Delete column</span>
-            <input type="number" min="1" step="1" inputmode="numeric" id="del-col-input" class="del-input" placeholder="#"
-                   oninput="sanitizeIndex(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();deleteColAt();}" />
-            <button class="btn btn-danger-ghost btn-sm" onclick="deleteColAt()"><span data-i18n="tblDelBtn">Delete</span></button>
-            <button class="btn btn-ghost btn-sm" onclick="deleteFirstCol()"><span data-i18n="tblFirst">First</span></button>
-            <button class="btn btn-ghost btn-sm" onclick="deleteLastCol()"><span data-i18n="tblLast">Last</span></button>
+            <span class="del-label" id="del-col-select-label-for" data-i18n="tblDelCol">Delete column</span>
+            <div class="del-row">
+              <div class="custom-select" id="del-col-select-wrap">
+                <button type="button" class="custom-select-btn" id="del-col-select-btn"
+                        aria-haspopup="listbox" aria-expanded="false" aria-labelledby="del-col-select-label-for"
+                        onclick="toggleCustomSelect('col')">
+                  <span id="del-col-select-label"></span>
+                  <svg class="custom-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="custom-select-panel hide" id="del-col-select-panel" role="listbox"></div>
+              </div>
+              <button class="btn btn-danger-ghost btn-sm" onclick="deleteColAt()"><span data-i18n="tblDelBtn">Delete</span></button>
+            </div>
           </div>
         </div>
 
@@ -767,17 +796,17 @@ const I18N = {
     btnBackAddImages: 'Back to add images',
     btnDownloadThis:  'Download Excel',
     btnBackYourImages:'Back to your images',
+    imagePanelTitle: 'Reference image',
     reviewHintDesktop: 'Compare this image with the table on the right to verify accuracy.',
     reviewHintMobile:  'Compare this image with the table below to verify accuracy.',
     btnReadPhoto:   'Extract data',
     btnRereadPhoto: 'Re-extract',
     statRows: 'Rows', statCols: 'Columns',
+    btnTableTools: 'Row / column tools',
     tblSumNote: 'The green corner value is the grand total — it equals both the sum of all row totals and the sum of all column totals.',
     tblDelRow: 'Delete row', tblDelCol: 'Delete column',
-    tblDelBtn: 'Delete', tblFirst: 'First', tblLast: 'Last',
-    tblErrPositive: 'Enter a positive whole number (1 or higher).',
-    tblErrRangeRow: 'No row {n} — table has {max} row(s).',
-    tblErrRangeCol: 'No column {n} — table has {max} column(s).',
+    tblDelBtn: 'Delete',
+    tblRowOption: 'Row {n}', tblColOption: 'Column {n}',
     tblErrMinRow: 'Cannot delete the last remaining row.',
     tblErrMinCol: 'Cannot delete the last remaining column.',
     tblRowDeleted: 'Deleted row {n}.',
@@ -870,17 +899,17 @@ const I18N = {
     btnBackAddImages: 'ઇમેજ ઉમેરવા',
     btnDownloadThis:  'Excel ડાઉનલોડ',
     btnBackYourImages:'ઇમેજ પર',
+    imagePanelTitle: 'મૂળ ઇમેજ',
     reviewHintDesktop: 'ઇમેજ અને ટેબલ સરખાવી ચોકસાઈ ચકાસો.',
     reviewHintMobile:  'ઇમેજ અને ટેબલ સરખાવી ચોકસાઈ ચકાસો.',
     btnReadPhoto:   'ડેટા કાઢો',
     btnRereadPhoto: 'ફરી કાઢો',
     statRows: 'પંક્તિ', statCols: 'સ્તંભ',
+    btnTableTools: 'પંક્તિ / સ્તંભ સાધનો',
     tblSumNote: 'લીલો ખૂણા-મૂલ્ય = ગ્રાન્ડ ટોટલ — તે બધી પંક્તિ-સરવાળા અને સ્તંભ-સરવાળાનો સરવાળો છે.',
     tblDelRow: 'પંક્તિ કાઢો', tblDelCol: 'સ્તંભ કાઢો',
-    tblDelBtn: 'કાઢો', tblFirst: 'પહેલી', tblLast: 'છેલ્લી',
-    tblErrPositive: 'ધન પૂર્ણાંક દાખલ કરો (૧ કે વધુ).',
-    tblErrRangeRow: 'પંક્તિ {n} નથી — ટેબલમાં {max} પંક્તિ છે.',
-    tblErrRangeCol: 'સ્તંભ {n} નથી — ટેબલમાં {max} સ્તંભ છે.',
+    tblDelBtn: 'કાઢો',
+    tblRowOption: 'પંક્તિ {n}', tblColOption: 'સ્તંભ {n}',
     tblErrMinRow: 'છેલ્લી બાકી પંક્તિ કાઢી શકાતી નથી.',
     tblErrMinCol: 'છેલ્લો બાકી સ્તંભ કાઢી શકાતો નથી.',
     tblRowDeleted: 'પંક્તિ {n} કાઢી.',
@@ -1021,59 +1050,10 @@ let currentIndex = -1;
 let nextId       = 1;
 const BLANK_IMG  = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="200"%3E%3Crect width="320" height="200" fill="%231F2937"/%3E%3C/svg%3E';
 
-/* ── INDEXEDDB PERSISTENCE (survives page reloads on iOS/Android/desktop, no size limit) ── */
-const _IDB_NAME  = 'factory-scanner';
-const _IDB_VER   = 1;
-const _IDB_STORE = 'documents';
-
-function _openDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(_IDB_NAME, _IDB_VER);
-    req.onupgradeneeded = e => e.target.result.createObjectStore(_IDB_STORE, { keyPath: 'id' });
-    req.onsuccess = e => resolve(e.target.result);
-    req.onerror   = e => reject(e.target.error);
-  });
-}
-
-async function persistState() {
-  try {
-    const db = await _openDB();
-    const tx = db.transaction(_IDB_STORE, 'readwrite');
-    const st = tx.objectStore(_IDB_STORE);
-    st.clear();
-    documents.forEach(doc => st.put(doc));
-    await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
-    localStorage.setItem('fsc_nextid', String(nextId));
-  } catch(e) {}
-}
-
-async function restoreState() {
-  try {
-    const db   = await _openDB();
-    const tx   = db.transaction(_IDB_STORE, 'readonly');
-    const docs = await new Promise((res, rej) => {
-      const req = tx.objectStore(_IDB_STORE).getAll();
-      req.onsuccess = e => res(e.target.result);
-      req.onerror   = e => rej(e.target.error);
-    });
-    if (docs && docs.length) {
-      documents = docs.sort((a, b) => a.id - b.id);
-      const sid = localStorage.getItem('fsc_nextid');
-      if (sid) nextId = Math.max(Number(sid), 1);
-      return true;
-    }
-  } catch(e) {}
-  return false;
-}
-
-async function clearPersistedState() {
-  try {
-    const db = await _openDB();
-    const tx = db.transaction(_IDB_STORE, 'readwrite');
-    tx.objectStore(_IDB_STORE).clear();
-    localStorage.removeItem('fsc_nextid');
-  } catch(e) {}
-}
+/* ── No persistence across reloads by design: each visit starts blank. Wipe any
+   IndexedDB/localStorage state left over from an earlier version of this app. ── */
+try { indexedDB.deleteDatabase('factory-scanner'); } catch(e) {}
+try { localStorage.removeItem('fsc_nextid'); } catch(e) {}
 
 /* ── INPUT TAB SWITCHER ── */
 function switchInputTab(tab) {
@@ -1157,7 +1137,6 @@ async function handleFiles(list) {
   }
   fileInput.value = '';
   renderThumbs(); updateButtons();
-  persistState();
   if (documents.length) showStatus(tpl('toastReadyNext', { n: documents.length }), 'success');
 }
 
@@ -1231,7 +1210,6 @@ function removeDocument(i) {
   if (currentIndex === i) currentIndex = -1;
   else if (currentIndex > i) currentIndex--;
   renderThumbs(); updateButtons();
-  persistState();
   showStatus(documents.length ? tpl('toastPhotosOnList', { n: documents.length }) : t('toastAllRemoved'), 'info');
 }
 
@@ -1299,7 +1277,6 @@ async function extractDocument(i) {
     }
     loadTable(doc, data.table);
     doc.status = 'done';
-    persistState();
     return true;
   } catch(err) {
     doc.status = 'error';
@@ -1351,7 +1328,7 @@ function renderDocList() {
       </div>
       <div class="doc-actions">
         <button class="btn btn-primary btn-sm" onclick="openDocument(${i})">${icon('eye',13)} ${escapeHtml(t('btnOpen'))}</button>
-        <button class="btn btn-ghost btn-sm" onclick="extractOneFromList(${i})">${icon(doc.status==='done'?'refresh':'scan',13)} ${escapeHtml(doc.status==='done'?t('btnReread'):t('btnRead'))}</button>
+        <button class="btn btn-ghost btn-sm btn-reextract" onclick="extractOneFromList(${i})">${icon(doc.status==='done'?'refresh':'scan',13)} ${escapeHtml(doc.status==='done'?t('btnReread'):t('btnRead'))}</button>
         <button class="btn btn-success btn-sm" onclick="downloadExcel(${i})" ${doc.table.length?'':'disabled'}>${icon('download',13)} ${escapeHtml(t('btnExcelFile'))}</button>
       </div>
     </div>`).join('');
@@ -1365,7 +1342,10 @@ async function extractOneFromList(i) {
 }
 
 function openDocument(i) {
-  currentIndex = i; showPage('review-page'); setStep(3); renderReview(); clearStatus();
+  currentIndex = i; showPage('review-page'); setStep(3);
+  const panel = document.getElementById('image-panel');
+  if (panel) panel.open = window.matchMedia('(min-width: 681px)').matches;
+  renderReview(); clearStatus();
 }
 function currentDoc() { return documents[currentIndex] || null; }
 
@@ -1381,6 +1361,9 @@ function renderReview() {
   const lbl = document.getElementById('extract-current-label');
   if (lbl) lbl.textContent = doc.status === 'done' ? t('btnRereadPhoto') : t('btnReadPhoto');
   document.getElementById('extract-current-btn').disabled = !doc.imageBase64;
+  document.getElementById('tbl-tools-toggle').classList.toggle('hide', !doc.table.length);
+  document.getElementById('tbl-controls').classList.add('hide');
+  document.getElementById('tbl-tools-toggle').setAttribute('aria-expanded', 'false');
   if (!doc.table.length) {
     document.getElementById('main-table').innerHTML =
       `<tbody><tr><td colspan="99" style="padding:24px;text-align:center;color:var(--gray-500);font-size:13px;line-height:1.5;">${escapeHtml(t('emptyTableMsg'))}</td></tr></tbody>`;
@@ -1451,6 +1434,7 @@ function renderTable() {
 
   document.getElementById('main-table').innerHTML = h;
   refreshStats();
+  populateDeleteSelects();
 }
 
 function origChanged(doc, ri, ci, v) {
@@ -1489,21 +1473,15 @@ function refreshStats() {
   document.getElementById('stat-cols').textContent = d?.numCols || 0;
 }
 
-/* ── TABLE EDITING (delete-only, 1-based, validated) ── */
-// Keep only digits in the index inputs — positive whole numbers, no leading zeros.
-function sanitizeIndex(input) {
-  input.value = input.value.replace(/[^0-9]/g, '').replace(/^0+/, '');
+function toggleTableTools() {
+  const panel = document.getElementById('tbl-controls');
+  const btn   = document.getElementById('tbl-tools-toggle');
+  const show  = panel.classList.contains('hide');
+  panel.classList.toggle('hide', !show);
+  btn.setAttribute('aria-expanded', show ? 'true' : 'false');
 }
 
-// Validate a 1-based index string against [1, max]. Returns the integer or null (and shows why).
-function parseIndex(raw, max, rangeKey) {
-  const s = String(raw == null ? '' : raw).trim();
-  if (!/^[1-9][0-9]*$/.test(s)) { showStatus(t('tblErrPositive'), 'error'); return null; }
-  const n = parseInt(s, 10);
-  if (n > max) { showStatus(tpl(rangeKey, { n, max }), 'error'); return null; }
-  return n;
-}
-
+/* ── TABLE EDITING (delete-only, 1-based) ── */
 function removeRowIndex(n) {           // n = 1-based
   const d = currentDoc(); if (!d) return;
   if (d.table.length <= 1) { showStatus(t('tblErrMinRow'), 'error'); return; }
@@ -1527,24 +1505,68 @@ function removeColIndex(n) {           // n = 1-based
 
 function deleteRowAt() {
   const d = currentDoc(); if (!d || !d.table.length) return;
-  const el = document.getElementById('del-row-input');
-  const n = parseIndex(el.value, d.table.length, 'tblErrRangeRow');
-  if (n === null) return;
-  removeRowIndex(n); el.value = '';
+  if (delSelectValue.row) removeRowIndex(delSelectValue.row);
 }
 function deleteColAt() {
   const d = currentDoc(); if (!d || !d.numCols) return;
-  const el = document.getElementById('del-col-input');
-  const n = parseIndex(el.value, d.numCols, 'tblErrRangeCol');
-  if (n === null) return;
-  removeColIndex(n); el.value = '';
+  if (delSelectValue.col) removeColIndex(delSelectValue.col);
 }
 
-// Quick actions — no input needed.
-function deleteFirstRow() { const d = currentDoc(); if (d && d.table.length) removeRowIndex(1); }
-function deleteLastRow()  { const d = currentDoc(); if (d && d.table.length) removeRowIndex(d.table.length); }
-function deleteFirstCol() { const d = currentDoc(); if (d && d.numCols)      removeColIndex(1); }
-function deleteLastCol()  { const d = currentDoc(); if (d && d.numCols)      removeColIndex(d.numCols); }
+/* ── Custom row/column select (themed replacement for native <select>) ── */
+const delSelectValue = { row: 1, col: 1 };
+
+// Rebuild the row/column dropdowns to match the current table.
+function populateDeleteSelects() {
+  const d = currentDoc(); if (!d) return;
+  buildCustomSelectOptions('row', d.table.length, 'tblRowOption');
+  buildCustomSelectOptions('col', d.numCols, 'tblColOption');
+}
+
+function buildCustomSelectOptions(kind, count, i18nKey) {
+  const panel = document.getElementById(`del-${kind}-select-panel`);
+  const label = document.getElementById(`del-${kind}-select-label`);
+  if (!panel || !label) return;
+  if (!count) { panel.innerHTML = ''; label.textContent = ''; delSelectValue[kind] = 0; return; }
+  if (delSelectValue[kind] < 1 || delSelectValue[kind] > count) delSelectValue[kind] = 1;
+  panel.innerHTML = Array.from({ length: count }, (_, i) => {
+    const n = i + 1;
+    const cls = n === delSelectValue[kind] ? ' active' : '';
+    return `<div class="custom-select-option${cls}" role="option" onclick="selectCustomOption('${kind}',${n})">${escapeHtml(tpl(i18nKey, { n }))}</div>`;
+  }).join('');
+  label.textContent = tpl(i18nKey, { n: delSelectValue[kind] });
+}
+
+function selectCustomOption(kind, n) {
+  delSelectValue[kind] = n;
+  const key = kind === 'row' ? 'tblRowOption' : 'tblColOption';
+  const count = kind === 'row' ? (currentDoc()?.table.length || 0) : (currentDoc()?.numCols || 0);
+  buildCustomSelectOptions(kind, count, key);
+  closeCustomSelect(kind);
+}
+
+function toggleCustomSelect(kind) {
+  const wasOpen = document.getElementById(`del-${kind}-select-wrap`).classList.contains('open');
+  closeCustomSelect('row'); closeCustomSelect('col');
+  if (!wasOpen) openCustomSelect(kind);
+}
+function openCustomSelect(kind) {
+  document.getElementById(`del-${kind}-select-wrap`).classList.add('open');
+  document.getElementById(`del-${kind}-select-panel`).classList.remove('hide');
+  document.getElementById(`del-${kind}-select-btn`).setAttribute('aria-expanded', 'true');
+}
+function closeCustomSelect(kind) {
+  const wrap = document.getElementById(`del-${kind}-select-wrap`);
+  if (!wrap) return;
+  wrap.classList.remove('open');
+  document.getElementById(`del-${kind}-select-panel`).classList.add('hide');
+  document.getElementById(`del-${kind}-select-btn`).setAttribute('aria-expanded', 'false');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.custom-select')) { closeCustomSelect('row'); closeCustomSelect('col'); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeCustomSelect('row'); closeCustomSelect('col'); }
+});
 
 /* ── DOWNLOAD ── */
 async function downloadCurrentExcel() { if (currentIndex >= 0) await downloadExcel(currentIndex); }
@@ -1596,7 +1618,6 @@ function safeFilename(v) {
 
 function resetAll() {
   documents = []; currentIndex = -1; fileInput.value = '';
-  clearPersistedState();
   renderThumbs(); updateButtons(); clearStatus(); showUpload();
 }
 
@@ -1617,19 +1638,11 @@ function buildManual() {
   };
   documents.push(doc);
   currentIndex = documents.length - 1;
-  persistState();
   renderThumbs(); updateButtons(); openDocument(currentIndex);
   showStatus(t('toastManualReady'), 'info');
 }
 
-(async () => {
-  const restored = await restoreState();
-  initLangSwitcher();
-  if (restored && documents.length) {
-    renderThumbs(); updateButtons();
-    showStatus(`${documents.length} image(s) restored.`, 'info');
-  }
-})();
+initLangSwitcher();
 </script>
 </body>
 </html>
